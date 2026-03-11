@@ -1,31 +1,34 @@
-## 3. Proportionality
+# Physics Problem: Proportionality
 
-We are given the Universal Law of Gravitation:
+## 1. Key Definitions and Formulas
+
+The Universal Law of Gravitation is:
 
 $$
 F = G \frac{m_1 m_2}{r^2}
 $$
 
 where:
+
 - \(F\) is the gravitational force,
 - \(G\) is the gravitational constant,
-- \(m_1\) and \(m_2\) are the masses,
+- \(m_1\) and \(m_2\) are the two masses,
 - \(r\) is the distance between their centers.
 
-We want to determine how the force changes if:
-- the distance \(r\) is doubled,
-- both masses \(m_1\) and \(m_2\) are halved.
+We must determine how the force changes if:
+- the distance is doubled,
+- both masses are halved.
 
 ---
 
-## Necessary idea
+## 2. Solving the Problem
 
 We do not need the exact numerical value of the force.  
-We only need to track how the formula changes under the new conditions.
+We only need to compare the new force with the original one.
 
 ---
 
-## Step 1: Write the transformed quantities
+## 3. Step-by-Step Derivation
 
 If the distance is doubled, then:
 
@@ -39,25 +42,19 @@ $$
 m_1 \to \frac{m_1}{2}, \qquad m_2 \to \frac{m_2}{2}
 $$
 
----
-
-## Step 2: Substitute into the formula
-
 The new force is:
 
 $$
 F' = G \frac{\left(\frac{m_1}{2}\right)\left(\frac{m_2}{2}\right)}{(2r)^2}
 $$
 
-Now simplify step by step.
-
-First, the numerator:
+Simplify the numerator:
 
 $$
-\left(\frac{m_1}{2}\right)\left(\frac{m_2}{2}\right)=\frac{m_1m_2}{4}
+\left(\frac{m_1}{2}\right)\left(\frac{m_2}{2}\right) = \frac{m_1m_2}{4}
 $$
 
-Second, the denominator:
+Simplify the denominator:
 
 $$
 (2r)^2 = 4r^2
@@ -73,7 +70,7 @@ $$
 F' = G \frac{m_1m_2}{16r^2}
 $$
 
-But the original force is
+Compare with the original force:
 
 $$
 F = G \frac{m_1m_2}{r^2}
@@ -87,9 +84,9 @@ $$
 
 ---
 
-## Final answer
+## 4. Final Answer
 
-The gravitational force becomes **16 times smaller**.
+The force becomes 16 times smaller:
 
 $$
 F' = \frac{F}{16}

@@ -1,6 +1,8 @@
-## 2. Systems of Equations
+# Physics Problem: Systems of Equations
 
-We are asked to solve the following system of linear equations:
+## 1. Key Definitions and Formulas
+
+We are given the system of equations:
 
 $$
 2x + 3y = 12
@@ -10,49 +12,47 @@ $$
 x - y = 1
 $$
 
----
+A system of equations means that we want to find values of \(x\) and \(y\) that satisfy both equations at the same time.
 
-## Necessary idea
-
-A system of equations means that we are looking for values of the variables that satisfy **both equations at the same time**.
-
-A convenient method here is **substitution**:
-- first solve one equation for one variable,
-- then substitute that expression into the other equation.
+A useful method here is **substitution**:
+- solve one equation for one variable,
+- substitute into the other equation.
 
 ---
 
-## Step 1: Solve the second equation for \(x\)
+## 2. Solving the Problem
 
-From
+We will solve the second equation for \(x\), then substitute into the first equation.
+
+---
+
+## 3. Step-by-Step Derivation
+
+Start with the second equation:
 
 $$
 x - y = 1
 $$
 
-we isolate \(x\):
+Solve for \(x\):
 
 $$
 x = 1 + y
 $$
 
----
-
-## Step 2: Substitute into the first equation
-
-Now substitute \(x = 1 + y\) into
+Now substitute this into the first equation:
 
 $$
 2x + 3y = 12
 $$
 
-This gives:
+So:
 
 $$
 2(1+y) + 3y = 12
 $$
 
-Expand the brackets:
+Expand:
 
 $$
 2 + 2y + 3y = 12
@@ -64,29 +64,23 @@ $$
 2 + 5y = 12
 $$
 
-Subtract \(2\) from both sides:
+Subtract 2 from both sides:
 
 $$
 5y = 10
 $$
 
-Divide by \(5\):
+Divide by 5:
 
 $$
 y = 2
 $$
 
----
-
-## Step 3: Find \(x\)
-
-Use
+Now substitute \(y=2\) into
 
 $$
 x = 1 + y
 $$
-
-Substitute \(y = 2\):
 
 $$
 x = 1 + 2 = 3
@@ -94,9 +88,7 @@ $$
 
 ---
 
-## Final answer
-
-The solution of the system is:
+## 4. Final Answer
 
 $$
 x = 3, \qquad y = 2
