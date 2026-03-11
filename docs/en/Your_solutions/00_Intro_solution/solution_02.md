@@ -12,19 +12,15 @@ $$
 x - y = 1
 $$
 
-A system of equations means that we want to find values of \(x\) and \(y\) that satisfy both equations at the same time.
+A system of equations means that we want to find values of $x$ and $y$ that satisfy both equations at the same time.
 
-A useful method here is **substitution**:
-- solve one equation for one variable,
-- substitute into the other equation.
-
----
+A useful method here is substitution:
+1. solve one equation for one variable,
+2. substitute into the other equation.
 
 ## 2. Solving the Problem
 
-We will solve the second equation for \(x\), then substitute into the first equation.
-
----
+We will solve the second equation for $x$, and then substitute into the first equation.
 
 ## 3. Step-by-Step Derivation
 
@@ -34,7 +30,7 @@ $$
 x - y = 1
 $$
 
-Solve for \(x\):
+Solve for $x$:
 
 $$
 x = 1 + y
@@ -64,19 +60,19 @@ $$
 2 + 5y = 12
 $$
 
-Subtract 2 from both sides:
+Subtract $2$ from both sides:
 
 $$
 5y = 10
 $$
 
-Divide by 5:
+Divide by $5$:
 
 $$
 y = 2
 $$
 
-Now substitute \(y=2\) into
+Now substitute $y=2$ into
 
 $$
 x = 1 + y
@@ -85,8 +81,6 @@ $$
 $$
 x = 1 + 2 = 3
 $$
-
----
 
 ## 4. Final Answer
 

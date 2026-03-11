@@ -8,36 +8,27 @@ $$
 \vec{a} = [2,\,1,\,-3], \qquad \vec{b} = [4,\,-2,\,1]
 $$
 
-Before solving the problem, let us recall the most important vector operations.
+Before solving the problem, let us recall the main vector operations.
 
 ### Magnitude of a vector
-For a vector
 
-$$
-\vec{v} = [v_x, v_y, v_z]
-$$
-
-its magnitude is
+For a vector $\vec{v} = [v_x, v_y, v_z]$, its magnitude is:
 
 $$
 |\vec{v}| = \sqrt{v_x^2 + v_y^2 + v_z^2}
 $$
 
 ### Dot product
-For vectors
 
-$$
-\vec{a} = [a_x,a_y,a_z], \qquad \vec{b} = [b_x,b_y,b_z]
-$$
-
-the dot product is
+For vectors $\vec{a} = [a_x,a_y,a_z]$ and $\vec{b} = [b_x,b_y,b_z]$, the dot product is:
 
 $$
 \vec{a}\cdot\vec{b} = a_x b_x + a_y b_y + a_z b_z
 $$
 
 ### Cross product
-The cross product in \(\mathbb{R}^3\) is
+
+The cross product in $\mathbb{R}^3$ is:
 
 $$
 \vec{a}\times\vec{b} =
@@ -49,7 +40,8 @@ a_x b_y - a_y b_x
 $$
 
 ### Angle between two vectors
-The angle \(\theta\) between two vectors satisfies
+
+The angle $\theta$ between two vectors satisfies:
 
 $$
 \vec{a}\cdot\vec{b} = |\vec{a}|\,|\vec{b}|\,\cos\theta
@@ -61,24 +53,20 @@ $$
 \theta = \arccos\left(\frac{\vec{a}\cdot\vec{b}}{|\vec{a}|\,|\vec{b}|}\right)
 $$
 
----
-
 ## 2. Solving the Problem
 
 We must calculate:
 
-- the magnitude of each vector,
-- the dot product,
-- the cross product,
-- the angle between the vectors.
-
----
+1. the magnitude of each vector,
+2. the dot product,
+3. the cross product,
+4. the angle between the vectors.
 
 ## 3. Step-by-Step Derivation
 
 ### (a) Magnitude of each vector
 
-For \(\vec{a}\):
+For $\vec{a}$:
 
 $$
 |\vec{a}| = \sqrt{2^2 + 1^2 + (-3)^2}
@@ -88,7 +76,7 @@ $$
 |\vec{a}| = \sqrt{4 + 1 + 9} = \sqrt{14}
 $$
 
-For \(\vec{b}\):
+For $\vec{b}$:
 
 $$
 |\vec{b}| = \sqrt{4^2 + (-2)^2 + 1^2}
@@ -147,7 +135,7 @@ $$
 
 ### (d) Angle between the vectors
 
-Use
+Use:
 
 $$
 \theta = \arccos\left(\frac{\vec{a}\cdot\vec{b}}{|\vec{a}|\,|\vec{b}|}\right)
@@ -168,8 +156,6 @@ Numerically,
 $$
 \theta \approx 79.9^\circ
 $$
-
----
 
 ## 4. Final Answer
 

@@ -16,19 +16,15 @@ $$
 
 We want to find the total distance the fly travels before the bicycle reaches the wall.
 
----
-
 ## 2. Solving the Problem
 
 Although the fly moves back and forth many times, the easiest method is:
 1. find how long the bicycle takes to reach the wall,
 2. multiply that time by the fly’s speed.
 
----
-
 ## 3. Step-by-Step Derivation
 
-The bicycle travels 10 meters at speed \(1 \text{ m/s}\), so the time is:
+The bicycle travels 10 meters at speed $1 \text{ m/s}$, so the time is:
 
 $$
 t = \frac{\text{distance}}{\text{speed}} = \frac{10}{1} = 10 \text{ s}
@@ -53,8 +49,6 @@ So the fly’s total distance is:
 $$
 d = vt = 2 \cdot 10 = 20
 $$
-
----
 
 ## 4. Final Answer
 

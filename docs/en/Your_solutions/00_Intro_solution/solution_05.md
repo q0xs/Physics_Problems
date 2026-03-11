@@ -2,11 +2,11 @@
 
 ## 1. Key Definitions and Formulas
 
-A vector \(\vec{A}\) has:
-- magnitude \(15\),
-- angle \(60^\circ\) with the horizontal axis.
+A vector $\vec{A}$ has:
+- magnitude $15$,
+- angle $60^\circ$ with the horizontal axis.
 
-For a vector of magnitude \(A\) and angle \(\theta\), its components are:
+For a vector of magnitude $A$ and angle $\theta$, its components are:
 
 $$
 A_x = A\cos\theta
@@ -17,16 +17,12 @@ A_y = A\sin\theta
 $$
 
 where:
-- \(A_x\) is the horizontal component,
-- \(A_y\) is the vertical component.
-
----
+- $A_x$ is the horizontal component,
+- $A_y$ is the vertical component.
 
 ## 2. Solving the Problem
 
 We need to calculate the horizontal and vertical components of the vector.
-
----
 
 ## 3. Step-by-Step Derivation
 
@@ -75,8 +71,6 @@ Approximate value:
 $$
 A_y \approx 12.99
 $$
-
----
 
 ## 4. Final Answer
 

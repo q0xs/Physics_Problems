@@ -10,9 +10,9 @@ $$
 
 in the first quadrant.
 
-If the upper-right corner of the rectangle is \((x,y)\), then:
-- width = \(x\),
-- height = \(y\),
+If the upper-right corner of the rectangle is $(x,y)$, then:
+- width = $x$,
+- height = $y$,
 - and because the point lies on the curve:
 
 $$
@@ -25,20 +25,16 @@ $$
 A = x \cdot y
 $$
 
----
-
 ## 2. Solving the Problem
 
 We want to maximize the area, so we:
-1. express the area as a function of \(x\),
+1. express the area as a function of $x$,
 2. differentiate,
 3. find the critical point.
 
----
-
 ## 3. Step-by-Step Derivation
 
-Substitute \(y = 3 - x^2\) into the area formula:
+Substitute $y = 3 - x^2$ into the area formula:
 
 $$
 A(x) = x(3 - x^2)
@@ -74,7 +70,7 @@ $$
 x = 1
 $$
 
-We take \(x=1\) because we are in the first quadrant.
+We take $x=1$ because we are in the first quadrant.
 
 Now find the height:
 
@@ -91,8 +87,6 @@ The maximum area is:
 $$
 A = 1 \cdot 2 = 2
 $$
-
----
 
 ## 4. Final Answer
 

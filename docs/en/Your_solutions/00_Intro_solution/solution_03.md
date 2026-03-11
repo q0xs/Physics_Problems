@@ -9,24 +9,19 @@ F = G \frac{m_1 m_2}{r^2}
 $$
 
 where:
-
-- \(F\) is the gravitational force,
-- \(G\) is the gravitational constant,
-- \(m_1\) and \(m_2\) are the two masses,
-- \(r\) is the distance between their centers.
+- $F$ is the gravitational force,
+- $G$ is the gravitational constant,
+- $m_1$ and $m_2$ are the two masses,
+- $r$ is the distance between their centers.
 
 We must determine how the force changes if:
 - the distance is doubled,
 - both masses are halved.
 
----
-
 ## 2. Solving the Problem
 
 We do not need the exact numerical value of the force.  
 We only need to compare the new force with the original one.
-
----
 
 ## 3. Step-by-Step Derivation
 
@@ -70,7 +65,7 @@ $$
 F' = G \frac{m_1m_2}{16r^2}
 $$
 
-Compare with the original force:
+Compare this with the original force:
 
 $$
 F = G \frac{m_1m_2}{r^2}
@@ -81,8 +76,6 @@ Therefore:
 $$
 F' = \frac{F}{16}
 $$
-
----
 
 ## 4. Final Answer
 

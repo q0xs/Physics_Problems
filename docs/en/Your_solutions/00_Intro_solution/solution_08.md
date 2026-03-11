@@ -8,7 +8,7 @@ $$
 f(x) = \sin(x)
 $$
 
-from \(x=0\) to \(x=\pi\).
+from $x=0$ to $x=\pi$.
 
 So we need to compute the definite integral:
 
@@ -16,21 +16,17 @@ $$
 \int_0^\pi \sin(x)\,dx
 $$
 
-The antiderivative of \(\sin(x)\) is:
+The antiderivative of $\sin(x)$ is:
 
 $$
 \int \sin(x)\,dx = -\cos(x)
 $$
-
----
 
 ## 2. Solving the Problem
 
 We will use the Fundamental Theorem of Calculus:
 1. find the antiderivative,
 2. evaluate it at the upper and lower limits.
-
----
 
 ## 3. Step-by-Step Derivation
 
@@ -81,8 +77,6 @@ Therefore:
 $$
 1 - (-1) = 2
 $$
-
----
 
 ## 4. Final Answer
 

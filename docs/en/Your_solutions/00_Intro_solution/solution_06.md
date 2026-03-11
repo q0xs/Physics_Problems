@@ -11,6 +11,7 @@ $$
 To find local maxima or minima, we use derivatives.
 
 ### First derivative
+
 Critical points occur where:
 
 $$
@@ -18,10 +19,9 @@ f'(x) = 0
 $$
 
 ### Second derivative test
-- If \(f''(x) > 0\), the point is a local minimum.
-- If \(f''(x) < 0\), the point is a local maximum.
 
----
+- If $f''(x) > 0$, the point is a local minimum.
+- If $f''(x) < 0$, the point is a local maximum.
 
 ## 2. Solving the Problem
 
@@ -29,8 +29,6 @@ We will:
 1. find the first derivative,
 2. determine the critical point,
 3. use the second derivative to classify it.
-
----
 
 ## 3. Step-by-Step Derivation
 
@@ -66,7 +64,7 @@ $$
 f''(x) > 0
 $$
 
-the function has a **local minimum** at \(x=2\).
+the function has a local minimum at $x=2$.
 
 Now find the function value:
 
@@ -81,8 +79,6 @@ $$
 $$
 f(2) = 12 - 24 + 7 = -5
 $$
-
----
 
 ## 4. Final Answer
 
