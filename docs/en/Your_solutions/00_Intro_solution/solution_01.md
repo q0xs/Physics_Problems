@@ -1,176 +1,246 @@
-# Physics Problem: Vector Algebra
+# Task 01 – Vector Algebra
 
-## 1. Key Definitions and Formulas
+## Problem Statement
 
-We are given two vectors in three-dimensional space:
+Given two vectors in three-dimensional space,
 
-$$
-\vec{a} = [2,\,1,\,-3], \qquad \vec{b} = [4,\,-2,\,1]
-$$
+$\vec{a} = [2, 1, -3]$
 
-Before solving the problem, let us recall the main vector operations.
+and
 
-### Magnitude of a vector
+$\vec{b} = [4, -2, 1]$,
 
-For a vector $\vec{v} = [v_x, v_y, v_z]$, its magnitude is:
+determine:
+
+a) the magnitude of each vector
+
+b) the dot product $\vec{a} \cdot \vec{b}$
+
+c) the cross product $\vec{a} \times \vec{b}$
+
+d) the angle between $\vec{a}$ and $\vec{b}$
+
+## Theory
+
+A vector in three-dimensional space can be written in component form as
+
+$\vec{v} = [v_x, v_y, v_z]$,
+
+where $v_x$, $v_y$, and $v_z$ are its components along the coordinate axes.
+
+The magnitude of a vector is its length in space. For a vector $\vec{v}$, the magnitude is
 
 $$
 |\vec{v}| = \sqrt{v_x^2 + v_y^2 + v_z^2}
 $$
 
-### Dot product
-
-For vectors $\vec{a} = [a_x,a_y,a_z]$ and $\vec{b} = [b_x,b_y,b_z]$, the dot product is:
+The dot product of two vectors measures how strongly they point in the same direction. For vectors $\vec{a}$ and $\vec{b}$,
 
 $$
-\vec{a}\cdot\vec{b} = a_x b_x + a_y b_y + a_z b_z
+\vec{a} \cdot \vec{b} = a_x b_x + a_y b_y + a_z b_z
 $$
 
-### Cross product
-
-The cross product in $\mathbb{R}^3$ is:
+The dot product is also related to the angle $\theta$ between the vectors:
 
 $$
-\vec{a}\times\vec{b} =
-\begin{bmatrix}
+\vec{a} \cdot \vec{b} = |\vec{a}| |\vec{b}| \cos\theta
+$$
+
+The cross product produces a vector perpendicular to both original vectors. In component form,
+
+$$
+\vec{a} \times \vec{b} =
+\begin{pmatrix}
 a_y b_z - a_z b_y \\
 a_z b_x - a_x b_z \\
 a_x b_y - a_y b_x
-\end{bmatrix}
+\end{pmatrix}
 $$
 
-### Angle between two vectors
-
-The angle $\theta$ between two vectors satisfies:
+The angle between the vectors can therefore be found from
 
 $$
-\vec{a}\cdot\vec{b} = |\vec{a}|\,|\vec{b}|\,\cos\theta
+\cos\theta = \frac{\vec{a} \cdot \vec{b}}{|\vec{a}| |\vec{b}|}
 $$
 
-Therefore,
+## Step-by-Step Solution
 
-$$
-\theta = \arccos\left(\frac{\vec{a}\cdot\vec{b}}{|\vec{a}|\,|\vec{b}|}\right)
-$$
+### Magnitude of $\vec{a}$
 
-## 2. Solving the Problem
+For
 
-We must calculate:
+$\vec{a} = [2, 1, -3]$,
 
-1. the magnitude of each vector,
-2. the dot product,
-3. the cross product,
-4. the angle between the vectors.
-
-## 3. Step-by-Step Derivation
-
-### (a) Magnitude of each vector
-
-For $\vec{a}$:
+the magnitude is
 
 $$
 |\vec{a}| = \sqrt{2^2 + 1^2 + (-3)^2}
 $$
 
+Calculate each square:
+
 $$
-|\vec{a}| = \sqrt{4 + 1 + 9} = \sqrt{14}
+|\vec{a}| = \sqrt{4 + 1 + 9}
 $$
 
-For $\vec{b}$:
+$$
+|\vec{a}| = \sqrt{14}
+$$
+
+Thus, the magnitude of $\vec{a}$ is
+
+$$
+|\vec{a}| = \sqrt{14}
+$$
+
+### Magnitude of $\vec{b}$
+
+For
+
+$\vec{b} = [4, -2, 1]$,
+
+the magnitude is
 
 $$
 |\vec{b}| = \sqrt{4^2 + (-2)^2 + 1^2}
 $$
 
-$$
-|\vec{b}| = \sqrt{16 + 4 + 1} = \sqrt{21}
-$$
-
-### (b) Dot product
+Calculate each square:
 
 $$
-\vec{a}\cdot\vec{b} = (2)(4) + (1)(-2) + (-3)(1)
+|\vec{b}| = \sqrt{16 + 4 + 1}
 $$
 
 $$
-\vec{a}\cdot\vec{b} = 8 - 2 - 3 = 3
+|\vec{b}| = \sqrt{21}
 $$
 
-### (c) Cross product
-
-Using the formula:
+Thus, the magnitude of $\vec{b}$ is
 
 $$
-\vec{a}\times\vec{b} =
-\begin{bmatrix}
-a_y b_z - a_z b_y \\
-a_z b_x - a_x b_z \\
-a_x b_y - a_y b_x
-\end{bmatrix}
+|\vec{b}| = \sqrt{21}
 $$
 
-First component:
+### Dot Product $\vec{a} \cdot \vec{b}$
+
+Using the definition of the dot product,
 
 $$
-(1)(1) - (-3)(-2) = 1 - 6 = -5
+\vec{a} \cdot \vec{b} = 2 \cdot 4 + 1 \cdot (-2) + (-3) \cdot 1
 $$
 
-Second component:
+Compute each term:
 
 $$
-(-3)(4) - (2)(1) = -12 - 2 = -14
-$$
-
-Third component:
-
-$$
-(2)(-2) - (1)(4) = -4 - 4 = -8
-$$
-
-So,
-
-$$
-\vec{a}\times\vec{b} = [-5,\,-14,\,-8]
-$$
-
-### (d) Angle between the vectors
-
-Use:
-
-$$
-\theta = \arccos\left(\frac{\vec{a}\cdot\vec{b}}{|\vec{a}|\,|\vec{b}|}\right)
-$$
-
-Substitute the values:
-
-$$
-\theta = \arccos\left(\frac{3}{\sqrt{14}\sqrt{21}}\right)
+\vec{a} \cdot \vec{b} = 8 - 2 - 3
 $$
 
 $$
-\theta = \arccos\left(\frac{3}{\sqrt{294}}\right)
+\vec{a} \cdot \vec{b} = 3
 $$
 
-Numerically,
+### Cross Product $\vec{a} \times \vec{b}$
+
+Substitute the vector components into the cross product formula:
+
+$$
+\vec{a} \times \vec{b} =
+\begin{pmatrix}
+1 \cdot 1 - (-3)(-2) \\
+(-3) \cdot 4 - 2 \cdot 1 \\
+2 \cdot (-2) - 1 \cdot 4
+\end{pmatrix}
+$$
+
+Now simplify each component:
+
+$$
+\vec{a} \times \vec{b} =
+\begin{pmatrix}
+1 - 6 \\
+-12 - 2 \\
+-4 - 4
+\end{pmatrix}
+$$
+
+$$
+\vec{a} \times \vec{b} =
+\begin{pmatrix}
+-5 \\
+-14 \\
+-8
+\end{pmatrix}
+$$
+
+### Angle Between the Vectors
+
+Use the relation
+
+$$
+\cos\theta = \frac{\vec{a} \cdot \vec{b}}{|\vec{a}| |\vec{b}|}
+$$
+
+Substitute the values already found:
+
+$$
+\cos\theta = \frac{3}{\sqrt{14}\sqrt{21}}
+$$
+
+Combine the radicals:
+
+$$
+\cos\theta = \frac{3}{\sqrt{294}}
+$$
+
+Take the inverse cosine:
+
+$$
+\theta = \cos^{-1}\left(\frac{3}{\sqrt{294}}\right)
+$$
+
+For a numerical value,
 
 $$
 \theta \approx 79.9^\circ
 $$
 
-## 4. Final Answer
+## Final Result
+
+The magnitudes are
 
 $$
-|\vec{a}| = \sqrt{14}, \qquad |\vec{b}| = \sqrt{21}
+|\vec{a}| = \sqrt{14}
 $$
 
-$$
-\vec{a}\cdot\vec{b} = 3
-$$
+and
 
 $$
-\vec{a}\times\vec{b} = [-5,\,-14,\,-8]
+|\vec{b}| = \sqrt{21}
 $$
 
+The dot product is
+
 $$
-\theta = \arccos\left(\frac{3}{\sqrt{294}}\right)\approx 79.9^\circ
+\vec{a} \cdot \vec{b} = 3
 $$
+
+The cross product is
+
+$$
+\vec{a} \times \vec{b} =
+\begin{pmatrix}
+-5 \\
+-14 \\
+-8
+\end{pmatrix}
+$$
+
+The angle between the vectors is
+
+$$
+\theta = \cos^{-1}\left(\frac{3}{\sqrt{294}}\right) \approx 79.9^\circ
+$$
+
+## Interpretation
+
+The vector magnitudes describe the lengths of the two vectors in space. The positive dot product shows that the angle between them is less than $90^\circ$, so the vectors form an acute angle. The cross product gives a new vector perpendicular to both $\vec{a}$ and $\vec{b}$, which is important in geometry and physics when determining orientations and areas.

@@ -1,28 +1,26 @@
-# Physics Problem: Systems of Equations
+# Task 02 – Systems of Equations
 
-## 1. Key Definitions and Formulas
+## Problem Statement
 
-We are given the system of equations:
+Find the values of $x$ and $y$ that satisfy both equations:
 
 $$
 2x + 3y = 12
 $$
 
+and
+
 $$
 x - y = 1
 $$
 
-A system of equations means that we want to find values of $x$ and $y$ that satisfy both equations at the same time.
+## Theory
 
-A useful method here is substitution:
-1. solve one equation for one variable,
-2. substitute into the other equation.
+A system of linear equations consists of two or more equations that must be satisfied simultaneously. A common method of solution is substitution.
 
-## 2. Solving the Problem
+In the substitution method, one variable is isolated in one equation and then inserted into the other equation. This reduces the system to a single equation in one unknown.
 
-We will solve the second equation for $x$, and then substitute into the first equation.
-
-## 3. Step-by-Step Derivation
+## Step-by-Step Solution
 
 Start with the second equation:
 
@@ -30,34 +28,32 @@ $$
 x - y = 1
 $$
 
-Solve for $x$:
+Solve this equation for $x$:
 
 $$
-x = 1 + y
+x = y + 1
 $$
 
-Now substitute this into the first equation:
+Now substitute this expression for $x$ into the first equation:
 
 $$
 2x + 3y = 12
 $$
 
-So:
-
 $$
-2(1+y) + 3y = 12
+2(y + 1) + 3y = 12
 $$
 
-Expand:
+Expand the parentheses:
 
 $$
-2 + 2y + 3y = 12
+2y + 2 + 3y = 12
 $$
 
 Combine like terms:
 
 $$
-2 + 5y = 12
+5y + 2 = 12
 $$
 
 Subtract $2$ from both sides:
@@ -66,24 +62,42 @@ $$
 5y = 10
 $$
 
-Divide by $5$:
+Divide both sides by $5$:
 
 $$
 y = 2
 $$
 
-Now substitute $y=2$ into
+Now substitute $y = 2$ into the expression
 
 $$
-x = 1 + y
+x = y + 1
+$$
+
+Then
+
+$$
+x = 2 + 1
 $$
 
 $$
-x = 1 + 2 = 3
+x = 3
 $$
 
-## 4. Final Answer
+## Final Result
+
+The solution of the system is
 
 $$
-x = 3, \qquad y = 2
+x = 3
 $$
+
+and
+
+$$
+y = 2
+$$
+
+## Interpretation
+
+The ordered pair $(3, 2)$ satisfies both linear equations at the same time. Geometrically, this point is the intersection of the two straight lines represented by the equations.

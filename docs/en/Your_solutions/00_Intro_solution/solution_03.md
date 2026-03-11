@@ -1,43 +1,71 @@
-# Physics Problem: Proportionality
+# Task 03 – Proportionality
 
-## 1. Key Definitions and Formulas
+## Problem Statement
 
-The Universal Law of Gravitation is:
+The Universal Law of Gravitation is
 
 $$
 F = G \frac{m_1 m_2}{r^2}
 $$
 
 where:
-- $F$ is the gravitational force,
-- $G$ is the gravitational constant,
-- $m_1$ and $m_2$ are the two masses,
-- $r$ is the distance between their centers.
 
-We must determine how the force changes if:
-- the distance is doubled,
-- both masses are halved.
+$F$ is the gravitational force
 
-## 2. Solving the Problem
+$G$ is the gravitational constant
 
-We do not need the exact numerical value of the force.  
-We only need to compare the new force with the original one.
+$m_1$ and $m_2$ are the two masses
 
-## 3. Step-by-Step Derivation
+$r$ is the distance between their centers
 
-If the distance is doubled, then:
+Determine the factor by which the force changes if the distance $r$ is doubled and both masses are halved.
+
+## Theory
+
+The gravitational force is directly proportional to the product of the masses and inversely proportional to the square of the distance:
 
 $$
-r \to 2r
+F \propto \frac{m_1 m_2}{r^2}
 $$
 
-If both masses are halved, then:
+This means:
+
+- if a mass is multiplied by some factor, the force is multiplied by the same factor
+- if the distance is multiplied by some factor, the force is divided by the square of that factor
+
+To determine the overall change, each modification is applied carefully to the original formula.
+
+## Step-by-Step Solution
+
+The original force is
 
 $$
-m_1 \to \frac{m_1}{2}, \qquad m_2 \to \frac{m_2}{2}
+F = G \frac{m_1 m_2}{r^2}
 $$
 
-The new force is:
+The new masses are
+
+$$
+m_1' = \frac{m_1}{2}
+$$
+
+and
+
+$$
+m_2' = \frac{m_2}{2}
+$$
+
+The new distance is
+
+$$
+r' = 2r
+$$
+
+Substitute these new quantities into the gravitational formula:
+
+$$
+F' = G \frac{m_1' m_2'}{(r')^2}
+$$
 
 $$
 F' = G \frac{\left(\frac{m_1}{2}\right)\left(\frac{m_2}{2}\right)}{(2r)^2}
@@ -46,41 +74,43 @@ $$
 Simplify the numerator:
 
 $$
-\left(\frac{m_1}{2}\right)\left(\frac{m_2}{2}\right) = \frac{m_1m_2}{4}
+F' = G \frac{\frac{m_1 m_2}{4}}{4r^2}
 $$
 
-Simplify the denominator:
+Now divide by $4r^2$:
 
 $$
-(2r)^2 = 4r^2
+F' = G \frac{m_1 m_2}{16r^2}
 $$
 
-So:
+Compare this with the original expression
 
 $$
-F' = G \frac{m_1m_2/4}{4r^2}
+F = G \frac{m_1 m_2}{r^2}
 $$
 
-$$
-F' = G \frac{m_1m_2}{16r^2}
-$$
-
-Compare this with the original force:
+Therefore,
 
 $$
-F = G \frac{m_1m_2}{r^2}
+F' = \frac{1}{16} F
 $$
 
-Therefore:
+## Final Result
+
+The gravitational force becomes
 
 $$
-F' = \frac{F}{16}
+F' = \frac{1}{16} F
 $$
 
-## 4. Final Answer
+So the force is reduced by a factor of $16$.
 
-The force becomes 16 times smaller:
+## Interpretation
+
+Halving both masses reduces the product $m_1 m_2$ by a factor of $4$. Doubling the distance increases $r^2$ by another factor of $4$. These two effects combine to give a total reduction by a factor of
 
 $$
-F' = \frac{F}{16}
+4 \cdot 4 = 16
 $$
+
+Therefore, the new force is one sixteenth of the original force.

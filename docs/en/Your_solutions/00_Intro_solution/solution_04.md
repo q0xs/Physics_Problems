@@ -1,26 +1,30 @@
-# Physics Problem: Rearranging Formulas
+# Task 04 – Rearranging Formulas
 
-## 1. Key Definitions and Formulas
+## Problem Statement
 
-Before solving the problem, it is essential to understand the variables involved in the formula for a simple pendulum:
-
-- **Period ($T$):** the time required for one complete oscillation.
-- **Length ($L$):** the distance from the pivot point to the pendulum bob.
-- **Acceleration due to gravity ($g$):** the gravitational acceleration.
-
-The pendulum formula is:
+The period of a simple pendulum is given by
 
 $$
 T = 2\pi \sqrt{\frac{L}{g}}
 $$
 
-## 2. Solving the Problem
+where:
 
-We want to rearrange the equation so that $g$ is the subject.
+$T$ is the period
 
-## 3. Step-by-Step Derivation
+$L$ is the pendulum length
 
-Start with:
+$g$ is the acceleration due to gravity
+
+Rearrange the equation to obtain a formula for $g$.
+
+## Theory
+
+Rearranging a formula means isolating the desired variable on one side of the equation. In this problem, the variable $g$ appears inside a square root and in the denominator of the fraction $\frac{L}{g}$, so the equation must be simplified step by step using inverse operations.
+
+## Step-by-Step Solution
+
+Start from the given formula:
 
 $$
 T = 2\pi \sqrt{\frac{L}{g}}
@@ -32,13 +36,13 @@ $$
 \frac{T}{2\pi} = \sqrt{\frac{L}{g}}
 $$
 
-Square both sides:
+Square both sides to remove the square root:
 
 $$
 \left(\frac{T}{2\pi}\right)^2 = \frac{L}{g}
 $$
 
-Distribute the square:
+Expand the square on the left-hand side:
 
 $$
 \frac{T^2}{4\pi^2} = \frac{L}{g}
@@ -47,19 +51,23 @@ $$
 Multiply both sides by $g$:
 
 $$
-g \cdot \frac{T^2}{4\pi^2} = L
+g \frac{T^2}{4\pi^2} = L
 $$
 
-Now isolate $g$:
+Now multiply both sides by $\frac{4\pi^2}{T^2}$:
 
 $$
-g = \frac{4\pi^2L}{T^2}
+g = \frac{4\pi^2 L}{T^2}
 $$
 
-## 4. Final Answer
+## Final Result
 
-The rearranged formula is:
+The formula for the gravitational acceleration is
 
 $$
-g = \frac{4\pi^2L}{T^2}
+g = \frac{4\pi^2 L}{T^2}
 $$
+
+## Interpretation
+
+This form is useful in experiments with pendulums. If the pendulum length $L$ and period $T$ are measured, the local value of $g$ can be calculated directly. The result also shows that $g$ increases with pendulum length and decreases with the square of the period.

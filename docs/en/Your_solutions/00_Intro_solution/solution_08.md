@@ -1,85 +1,89 @@
-# Physics Problem: Definite Integrals
+# Task 08 – Definite Integrals
 
-## 1. Key Definitions and Formulas
+## Problem Statement
 
-We want to calculate the area under the curve:
+Calculate the area under the curve of the function
 
 $$
 f(x) = \sin(x)
 $$
 
-from $x=0$ to $x=\pi$.
-
-So we need to compute the definite integral:
+from
 
 $$
-\int_0^\pi \sin(x)\,dx
+x = 0
 $$
 
-The antiderivative of $\sin(x)$ is:
+to
 
 $$
-\int \sin(x)\,dx = -\cos(x)
+x = \pi
 $$
 
-## 2. Solving the Problem
+## Theory
 
-We will use the Fundamental Theorem of Calculus:
-1. find the antiderivative,
-2. evaluate it at the upper and lower limits.
-
-## 3. Step-by-Step Derivation
-
-Start with:
+The area under a curve on an interval $[a, b]$ is given by the definite integral
 
 $$
-\int_0^\pi \sin(x)\,dx
+\int_a^b f(x) \, dx
 $$
 
-Use the antiderivative:
+If the function is nonnegative on the interval, then the value of the definite integral is equal to the geometric area between the curve and the $x$-axis.
+
+For the sine function, $\sin(x)$ is nonnegative on the interval from $0$ to $\pi$, so the integral directly gives the area.
+
+An antiderivative of $\sin(x)$ is
 
 $$
-\int \sin(x)\,dx = -\cos(x)
+\int \sin(x) \, dx = -\cos(x)
 $$
 
-So:
+## Step-by-Step Solution
+
+The required area is
 
 $$
-\int_0^\pi \sin(x)\,dx = \left[-\cos(x)\right]_0^\pi
+\int_0^\pi \sin(x) \, dx
 $$
 
-This means:
+Use the antiderivative of $\sin(x)$:
 
 $$
--\cos(\pi) - \left(-\cos(0)\right)
+\int_0^\pi \sin(x) \, dx = \left[-\cos(x)\right]_0^\pi
 $$
 
-We know:
+Now evaluate at the upper and lower limits.
+
+At the upper limit $x = \pi$,
 
 $$
-\cos(\pi) = -1, \qquad \cos(0)=1
+-\cos(\pi) = -(-1) = 1
 $$
 
-Substitute:
+At the lower limit $x = 0$,
 
 $$
--\cos(\pi) = -(-1)=1
+-\cos(0) = -(1) = -1
 $$
 
-and
+Subtract the lower-limit value from the upper-limit value:
 
 $$
--\cos(0) = -1
+\int_0^\pi \sin(x) \, dx = 1 - (-1)
 $$
 
-Therefore:
-
 $$
-1 - (-1) = 2
+\int_0^\pi \sin(x) \, dx = 2
 $$
 
-## 4. Final Answer
+## Final Result
+
+The area under the curve is
 
 $$
-\int_0^\pi \sin(x)\,dx = 2
+2
 $$
+
+## Interpretation
+
+The graph of $\sin(x)$ forms one positive arch between $x = 0$ and $x = \pi$. Because the curve stays above the $x$-axis on this interval, the definite integral equals the full geometric area under the curve. The total area of this arch is $2$ square units.

@@ -1,59 +1,91 @@
-# Physics Problem: Logic and Series
+# Task 07 – Logic and Series
 
-## 1. Key Definitions and Formulas
+## Problem Statement
 
-A bicycle is 10 meters from a wall and moves toward it at a constant speed of:
+A bicycle is $10$ meters from a wall and moves toward it at a constant speed of $1 \text{ m/s}$. A fly starts from the bicycle's front wheel and flies toward the wall at $2 \text{ m/s}$. When it reaches the wall, it instantly turns around and flies back toward the bicycle. This motion repeats until the bicycle reaches the wall.
 
-$$
-1 \text{ m/s}
-$$
+Determine the total distance traveled by the fly before it is crushed.
 
-A fly starts from the bicycle and flies back and forth between the bicycle and the wall at:
+## Theory
 
-$$
-2 \text{ m/s}
-$$
+At first glance, the motion seems complicated because the fly performs infinitely many back-and-forth trips. However, the key idea is that the bicycle reaches the wall in a finite amount of time, and during that entire time the fly continues moving at a constant speed.
 
-We want to find the total distance the fly travels before the bicycle reaches the wall.
-
-## 2. Solving the Problem
-
-Although the fly moves back and forth many times, the easiest method is:
-1. find how long the bicycle takes to reach the wall,
-2. multiply that time by the fly’s speed.
-
-## 3. Step-by-Step Derivation
-
-The bicycle travels 10 meters at speed $1 \text{ m/s}$, so the time is:
+The distance traveled by an object moving at constant speed is
 
 $$
-t = \frac{\text{distance}}{\text{speed}} = \frac{10}{1} = 10 \text{ s}
+d = vt
 $$
 
-So the bicycle reaches the wall after 10 seconds.
+where:
 
-Now the fly moves with speed:
+$d$ is distance
+
+$v$ is speed
+
+$t$ is time
+
+Therefore, if the total travel time of the fly is known, the total distance can be found directly.
+
+## Step-by-Step Solution
+
+### Time for the Bicycle to Reach the Wall
+
+The bicycle starts $10$ meters away from the wall and moves at a speed of
 
 $$
-2 \text{ m/s}
+v_{\text{bike}} = 1 \text{ m/s}
 $$
 
-for the same total time:
+The time needed to reach the wall is
 
 $$
-10 \text{ s}
+t = \frac{d}{v}
 $$
 
-So the fly’s total distance is:
+Substitute the known values:
 
 $$
-d = vt = 2 \cdot 10 = 20
+t = \frac{10}{1}
 $$
 
-## 4. Final Answer
+$$
+t = 10 \text{ s}
+$$
 
-The fly travels a total distance of:
+So the bicycle reaches the wall after $10$ seconds.
+
+### Distance Traveled by the Fly
+
+The fly moves continuously during these same $10$ seconds with speed
+
+$$
+v_{\text{fly}} = 2 \text{ m/s}
+$$
+
+Use the distance formula:
+
+$$
+d_{\text{fly}} = v_{\text{fly}} t
+$$
+
+Substitute the values:
+
+$$
+d_{\text{fly}} = 2 \cdot 10
+$$
+
+$$
+d_{\text{fly}} = 20 \text{ m}
+$$
+
+## Final Result
+
+The total distance traveled by the fly is
 
 $$
 20 \text{ m}
 $$
+
+## Interpretation
+
+Although the fly changes direction infinitely many times, the total flight time is finite because the bicycle reaches the wall after exactly $10$ seconds. Since the fly never stops moving during that interval, its total distance is simply its speed multiplied by the total time. This problem is a classic example showing that infinitely many separate motions can still produce a finite total result.
