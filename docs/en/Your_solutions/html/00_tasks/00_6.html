@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation: Function Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .math-container { font-size: 1.25rem; line-height: 1.8; }
+        .step-card { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-left: 4px solid transparent;
+        }
+        .step-card:hover { 
+            transform: translateX(8px); 
+            background-color: #f8fafc;
+            border-left-color: #ef4444;
+        }
+
+        .presentation-gradient {
+            background: radial-gradient(circle at top right, #f8fafc, #f1f5f9);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+    </style>
+</head>
+<body class="presentation-gradient text-slate-900 min-h-screen">
+
+    <div class="max-w-7xl mx-auto px-6 py-16">
+        <!-- Presentation Header -->
+        <header class="mb-16 text-center">
+            <div class="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-widest text-red-600 uppercase bg-red-50 rounded-full">
+                Calculus & Analysis Series
+            </div>
+            <h1 class="text-5xl font-black tracking-tight text-slate-900 mb-6">Local Extrema Analysis</h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Using the first and second derivative tests to identify the local minima of the quadratic function $f(x) = 3x^2 - 12x + 7$.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+            <!-- Left Column: Graph Visualizer -->
+            <div class="lg:col-span-6 space-y-8">
+                <div class="glass-panel p-10 rounded-3xl shadow-2xl flex flex-col items-center">
+                    <h3 class="w-full text-xl font-bold mb-8 text-slate-800 border-b border-slate-100 pb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        Function Visualization
+                    </h3>
+                    
+                    <div class="w-full h-80 relative">
+                        <canvas id="functionChart"></canvas>
+                    </div>
+
+                    <div class="mt-8 grid grid-cols-3 gap-4 w-full">
+                        <div class="p-3 bg-red-50 rounded-xl border border-red-100 text-center">
+                            <span class="text-[10px] font-black uppercase text-red-600 block mb-1">Vertex (Min)</span>
+                            <span class="text-xl font-bold text-red-700">(2, -5)</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                            <span class="text-[10px] font-black uppercase text-slate-600 block mb-1">Concavity</span>
+                            <span class="text-xl font-bold text-slate-700">Upward</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                            <span class="text-[10px] font-black uppercase text-slate-600 block mb-1">y-intercept</span>
+                            <span class="text-xl font-bold text-slate-700">7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory Box -->
+                <div class="bg-slate-900 p-8 rounded-3xl shadow-2xl text-white">
+                    <h3 class="text-sm font-bold tracking-widest text-red-400 uppercase mb-4">The Second Derivative Test</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                        If $f'(c) = 0$, then:
+                    </p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center space-x-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            <span>$f''(c) > 0 \implies$ Local Minimum</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                            <span>$f''(c) < 0 \implies$ Local Maximum</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Column: Step-by-Step Derivation -->
+            <div class="lg:col-span-6">
+                <div class="glass-panel p-10 rounded-3xl shadow-2xl h-full">
+                    <h2 class="text-2xl font-black text-slate-900 mb-8 border-b border-slate-100 pb-4">Analytical Solution</h2>
+                    
+                    <div class="space-y-8 math-container">
+                        <!-- Step 01 -->
+                        <div class="step-card p-5 rounded-2xl border-l-4">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="flex items-center justify-center w-7 h-7 bg-red-600 text-white rounded-lg text-xs font-bold">01</span>
+                                <h4 class="font-bold text-slate-800">First Derivative</h4>
+                            </div>
+                            <div id="step-1" class="bg-white/50 p-3 rounded-xl text-lg"></div>
+                        </div>
+
+                        <!-- Step 02 -->
+                        <div class="step-card p-5 rounded-2xl border-l-4">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="flex items-center justify-center w-7 h-7 bg-red-600 text-white rounded-lg text-xs font-bold">02</span>
+                                <h4 class="font-bold text-slate-800">Critical Point</h4>
+                            </div>
+                            <div id="step-2" class="bg-white/50 p-3 rounded-xl text-lg"></div>
+                        </div>
+
+                        <!-- Step 03 -->
+                        <div class="step-card p-5 rounded-2xl border-l-4">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="flex items-center justify-center w-7 h-7 bg-red-600 text-white rounded-lg text-xs font-bold">03</span>
+                                <h4 class="font-bold text-slate-800">Classification</h4>
+                            </div>
+                            <div id="step-3" class="bg-white/50 p-3 rounded-xl text-lg"></div>
+                        </div>
+
+                        <!-- Final Summary -->
+                        <div class="mt-10 p-8 bg-gradient-to-br from-red-600 to-red-800 text-white rounded-3xl shadow-xl relative overflow-hidden">
+                            <div class="relative z-10">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-red-200 mb-4 block">Final Result</span>
+                                <div id="final-math" class="text-3xl font-bold mb-4"></div>
+                                <div class="h-px bg-red-400/30 w-full mb-6"></div>
+                                <p class="text-red-100 text-sm leading-relaxed">
+                                    The point $(2, -5)$ is the absolute minimum of the function. As the coefficient of $x^2$ is positive ($3 > 0$), the parabola opens upward, confirming our result.
+                                </p>
+                            </div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white opacity-5 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function renderMath() {
+            const steps = {
+                'step-1': "f'(x) = \\frac{d}{dx}(3x^2 - 12x + 7) = 6x - 12",
+                'step-2': "6x - 12 = 0 \\implies 6x = 12 \\implies x = 2",
+                'step-3': "f''(x) = 6 > 0 \\therefore \\text{Local Minimum at } x=2",
+                'final-math': "f(2) = -5"
+            };
+
+            for (const [id, tex] of Object.entries(steps)) {
+                katex.render(tex, document.getElementById(id), {
+                    throwOnError: false,
+                    displayMode: true
+                });
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('functionChart').getContext('2d');
+            const dataX = [];
+            const dataY = [];
+            
+            // Generate data points for f(x) = 3x^2 - 12x + 7
+            for (let x = -1; x <= 5; x += 0.1) {
+                dataX.push(x.toFixed(1));
+                dataY.push(3 * x * x - 12 * x + 7);
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dataX,
+                    datasets: [{
+                        label: 'f(x) = 3x² - 12x + 7',
+                        data: dataY,
+                        borderColor: '#ef4444',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Local Minimum',
+                        data: [{x: '2.0', y: -5}],
+                        backgroundColor: '#1e293b',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#f1f5f9' },
+                            title: { display: true, text: 'x' }
+                        },
+                        y: {
+                            grid: { color: '#f1f5f9' },
+                            title: { display: true, text: 'f(x)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = () => {
+            renderMath();
+            initChart();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravitational Proportionality Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        .math-container { font-size: 1.1rem; line-height: 1.6; }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #6366f1;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .mass-circle { transition: all 0.3s ease; }
+        .force-line { transition: stroke-width 0.3s ease, stroke 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <div class="max-w-6xl mx-auto px-4 py-10">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-black text-slate-900 mb-3">Gravitational Proportionality</h1>
+            <p class="text-slate-600 max-w-2xl mx-auto">Visualize how changes in mass and distance affect the force between two bodies according to the Universal Law of Gravitation.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Left Panel: Interactive Controls -->
+            <div class="lg:col-span-4 sticky top-10 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+                    <h2 class="text-xl font-bold mb-6 flex items-center text-slate-800">
+                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        Adjust Factors
+                    </h2>
+                    
+                    <div class="space-y-8">
+                        <!-- Mass 1 Factor -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-bold text-slate-700">Mass $m_1$ factor</label>
+                                <span id="m1-val" class="text-indigo-600 font-mono font-bold">0.5x</span>
+                            </div>
+                            <input type="range" id="m1-slider" min="0.25" max="4" step="0.25" value="0.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        </div>
+
+                        <!-- Mass 2 Factor -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-bold text-slate-700">Mass $m_2$ factor</label>
+                                <span id="m2-val" class="text-indigo-600 font-mono font-bold">0.5x</span>
+                            </div>
+                            <input type="range" id="m2-slider" min="0.25" max="4" step="0.25" value="0.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        </div>
+
+                        <!-- Distance Factor -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-bold text-slate-700">Distance $r$ factor</label>
+                                <span id="r-val" class="text-rose-600 font-mono font-bold">2.0x</span>
+                            </div>
+                            <input type="range" id="r-slider" min="0.5" max="3" step="0.25" value="2" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider-thumb">
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100">
+                            <button onclick="resetToQuestion()" class="w-full bg-slate-100 text-slate-600 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors">
+                                Reset to Question Values
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Summary -->
+                <div class="bg-indigo-600 p-6 rounded-2xl shadow-xl text-white">
+                    <h3 class="text-xs font-black text-indigo-200 uppercase tracking-widest mb-2">Resulting Force Factor</h3>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="force-factor-display" class="text-5xl font-black">1/16</span>
+                        <span class="text-indigo-200 text-lg">× Original F</span>
+                    </div>
+                    <p id="force-description" class="mt-4 text-indigo-100 text-sm leading-relaxed">
+                        The force is reduced by a factor of 16.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Panel: Visualization & Solution -->
+            <div class="lg:col-span-8 space-y-8">
+                <!-- Visual Representation -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                    <h3 class="text-lg font-bold mb-6 text-slate-800">Geometric Visualization</h3>
+                    <svg id="viz-svg" viewBox="0 0 600 200" class="w-full h-auto">
+                        <!-- Connecting Line (Force) -->
+                        <line id="force-line" x1="150" y1="100" x2="450" y2="100" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4" />
+                        
+                        <!-- Mass 1 -->
+                        <circle id="mass1" cx="150" cy="100" r="30" fill="#6366f1" class="mass-circle" />
+                        <text x="150" y="145" text-anchor="middle" class="text-[12px] font-bold fill-slate-500">m₁</text>
+                        
+                        <!-- Mass 2 -->
+                        <circle id="mass2" cx="450" cy="100" r="30" fill="#6366f1" class="mass-circle" />
+                        <text x="450" y="145" text-anchor="middle" class="text-[12px] font-bold fill-slate-500">m₂</text>
+
+                        <!-- Force Arrows -->
+                        <path id="arrow1" d="M190,100 L230,100" stroke="#f43f5e" stroke-width="4" marker-end="url(#arrowhead)" />
+                        <path id="arrow2" d="M410,100 L370,100" stroke="#f43f5e" stroke-width="4" marker-end="url(#arrowhead)" />
+                        
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#f43f5e" />
+                            </marker>
+                        </defs>
+                    </svg>
+                    <div class="mt-4 flex justify-between text-[10px] uppercase font-black text-slate-400 tracking-widest px-10">
+                        <span>Body 1</span>
+                        <span id="dist-label">Distance Factor: 2.0x</span>
+                        <span>Body 2</span>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Solution -->
+                <div class="bg-white p-10 rounded-2xl shadow-xl border border-slate-200">
+                    <h2 class="text-3xl font-black mb-8 text-slate-900">Mathematical Derivation</h2>
+                    <div id="solution-output" class="math-container space-y-8">
+                        <!-- Solution injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const m1Slider = document.getElementById('m1-slider');
+        const m2Slider = document.getElementById('m2-slider');
+        const rSlider = document.getElementById('r-slider');
+
+        const m1ValDisp = document.getElementById('m1-val');
+        const m2ValDisp = document.getElementById('m2-val');
+        const rValDisp = document.getElementById('r-val');
+        const forceFactorDisp = document.getElementById('force-factor-display');
+        const forceDesc = document.getElementById('force-description');
+
+        function formatFraction(decimal) {
+            if (decimal === 1) return "1";
+            if (decimal === 0.0625) return "1/16";
+            if (decimal === 0.125) return "1/8";
+            if (decimal === 0.25) return "1/4";
+            if (decimal === 0.5) return "1/2";
+            if (decimal === 2) return "2";
+            if (decimal === 4) return "4";
+            
+            // Basic fraction finder for common values
+            for (let d = 2; d <= 64; d++) {
+                let n = Math.round(decimal * d);
+                if (Math.abs(decimal - n / d) < 0.0001) {
+                    return n === 1 ? `1/${d}` : `${n}/${d}`;
+                }
+            }
+            return decimal.toFixed(3);
+        }
+
+        function update() {
+            const m1 = parseFloat(m1Slider.value);
+            const m2 = parseFloat(m2Slider.value);
+            const r = parseFloat(rSlider.value);
+
+            m1ValDisp.innerText = m1 + 'x';
+            m2ValDisp.innerText = m2 + 'x';
+            rValDisp.innerText = r + 'x';
+
+            const forceFactor = (m1 * m2) / (r * r);
+            forceFactorDisp.innerText = formatFraction(forceFactor);
+            
+            if (forceFactor < 1) {
+                forceDesc.innerText = `The force is reduced by a factor of ${Math.round(1/forceFactor)}.`;
+            } else if (forceFactor > 1) {
+                forceDesc.innerText = `The force is increased by a factor of ${forceFactor.toFixed(2)}.`;
+            } else {
+                forceDesc.innerText = `The force remains unchanged.`;
+            }
+
+            // Update Visualization
+            const m1Circle = document.getElementById('mass1');
+            const m2Circle = document.getElementById('mass2');
+            const distLabel = document.getElementById('dist-label');
+            const arrow1 = document.getElementById('arrow1');
+            const arrow2 = document.getElementById('arrow2');
+
+            // Scale radii based on mass (square root for area proportionality)
+            const r1 = 20 * Math.sqrt(m1);
+            const r2 = 20 * Math.sqrt(m2);
+            m1Circle.setAttribute('r', r1);
+            m2Circle.setAttribute('r', r2);
+
+            // Distance scaling (center masses)
+            const centerX = 300;
+            const spread = 100 * r;
+            const x1 = centerX - spread;
+            const x2 = centerX + spread;
+            
+            m1Circle.setAttribute('cx', x1);
+            m2Circle.setAttribute('cx', x2);
+            document.querySelectorAll('text')[0].setAttribute('x', x1);
+            document.querySelectorAll('text')[1].setAttribute('x', x2);
+            
+            const line = document.getElementById('force-line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('x2', x2);
+
+            // Arrow sizing based on force factor
+            const arrowLen = Math.max(10, 40 * Math.sqrt(forceFactor));
+            arrow1.setAttribute('d', `M${x1 + r1 + 5},100 L${x1 + r1 + 5 + arrowLen},100`);
+            arrow2.setAttribute('d', `M${x2 - r2 - 5},100 L${x2 - r2 - 5 - arrowLen},100`);
+            
+            distLabel.innerText = `Distance Factor: ${r}x`;
+
+            updateMath(m1, m2, r, forceFactor);
+        }
+
+        function updateMath(m1, m2, r, finalFactor) {
+            const output = document.getElementById('solution-output');
+            
+            output.innerHTML = `
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">1. New Parameters</h3>
+                    <p>Based on your selections:</p>
+                    <div class="grid grid-cols-3 gap-4 mt-4">
+                        <div class="bg-indigo-50 p-3 rounded-lg text-center border border-indigo-100">
+                            $m_1' = ${m1}m_1$
+                        </div>
+                        <div class="bg-indigo-50 p-3 rounded-lg text-center border border-indigo-100">
+                            $m_2' = ${m2}m_2$
+                        </div>
+                        <div class="bg-rose-50 p-3 rounded-lg text-center border border-rose-100">
+                            $r' = ${r}r$
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">2. Substitution</h3>
+                    <p>Substitute the new values into the Universal Law of Gravitation:</p>
+                    $$ F' = G \\frac{(${m1}m_1)(${m2}m_2)}{(${r}r)^2} $$
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">3. Simplification</h3>
+                    $$ F' = G \\frac{${(m1 * m2).toFixed(4)} \\cdot m_1 m_2}{${(r * r).toFixed(4)} \\cdot r^2} $$
+                    $$ F' = \\left( \\frac{${(m1 * m2).toFixed(4)}}{${(r * r).toFixed(4)}} \\right) \\cdot G \\frac{m_1 m_2}{r^2} $$
+                    <div class="mt-6 p-6 bg-slate-900 text-white rounded-xl shadow-lg border-l-8 border-indigo-500">
+                        <p class="text-indigo-300 uppercase text-xs font-black tracking-widest mb-2">Final Proportionality</p>
+                        <span class="text-3xl font-black">F' = ${formatFraction(finalFactor)} F</span>
+                    </div>
+                </div>
+            `;
+
+            renderMathInElement(output, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ]
+            });
+        }
+
+        function resetToQuestion() {
+            m1Slider.value = 0.5;
+            m2Slider.value = 0.5;
+            rSlider.value = 2;
+            update();
+        }
+
+        m1Slider.addEventListener('input', update);
+        m2Slider.addEventListener('input', update);
+        rSlider.addEventListener('input', update);
+
+        window.onload = update;
+    </script>
+</body>
+</html>

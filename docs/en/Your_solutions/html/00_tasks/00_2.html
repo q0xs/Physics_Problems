@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systems of Equations Solver</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <!-- Chart.js for 2D graphing -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .math-container { font-size: 1.1rem; line-height: 1.6; }
+        #graph-container { height: 400px; width: 100%; position: relative; }
+        .katex-display { margin: 0.5em 0 !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <div class="max-w-6xl mx-auto px-4 py-10">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-black text-slate-900 mb-3">Systems of Equations Solver</h1>
+            <p class="text-slate-600 max-w-2xl mx-auto">Explore linear systems through algebraic substitution and geometric visualization.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Left Panel: Controls -->
+            <div class="lg:col-span-4 sticky top-10 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+                    <h2 class="text-xl font-bold mb-6 flex items-center text-slate-800">
+                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        Linear Equations
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Equation 1 -->
+                        <div class="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100">
+                            <label class="block text-sm font-bold text-indigo-800 mb-3">Eq 1: $ax + by = c$</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div><span class="text-[10px] text-indigo-400 block mb-1">a</span><input type="number" id="a1" value="2" class="w-full p-2 bg-white border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></div>
+                                <div><span class="text-[10px] text-indigo-400 block mb-1">b</span><input type="number" id="b1" value="3" class="w-full p-2 bg-white border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></div>
+                                <div><span class="text-[10px] text-indigo-400 block mb-1">c</span><input type="number" id="c1" value="12" class="w-full p-2 bg-white border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></div>
+                            </div>
+                        </div>
+
+                        <!-- Equation 2 -->
+                        <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
+                            <label class="block text-sm font-bold text-emerald-800 mb-3">Eq 2: $dx + ey = f$</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div><span class="text-[10px] text-emerald-400 block mb-1">d</span><input type="number" id="a2" value="1" class="w-full p-2 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all"></div>
+                                <div><span class="text-[10px] text-emerald-400 block mb-1">e</span><input type="number" id="b2" value="-1" class="w-full p-2 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all"></div>
+                                <div><span class="text-[10px] text-emerald-400 block mb-1">f</span><input type="number" id="c2" value="1" class="w-full p-2 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all"></div>
+                            </div>
+                        </div>
+
+                        <button onclick="solveSystem()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg">
+                            Solve System
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Legend</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center text-sm">
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full mr-3"></div>
+                            <span class="text-slate-700">Equation 1</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <div class="w-3 h-3 bg-emerald-500 rounded-full mr-3"></div>
+                            <span class="text-slate-700">Equation 2</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <div class="w-3 h-3 bg-rose-500 rounded-full mr-3 border-2 border-white shadow-sm"></div>
+                            <span class="text-slate-700 font-bold">Intersection Point</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Graph & Solution -->
+            <div class="lg:col-span-8 space-y-8">
+                <!-- Graph View -->
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+                    <div id="graph-container">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Results -->
+                <div class="bg-white p-10 rounded-2xl shadow-xl border border-slate-200 min-h-[400px]">
+                    <h2 class="text-3xl font-black mb-8 text-slate-900">Substitution Method Solution</h2>
+                    <div id="solution-output" class="math-container space-y-12">
+                        <!-- Solution injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let myChart = null;
+
+        function solveSystem() {
+            const a1 = parseFloat(document.getElementById('a1').value);
+            const b1 = parseFloat(document.getElementById('b1').value);
+            const c1 = parseFloat(document.getElementById('c1').value);
+            const a2 = parseFloat(document.getElementById('a2').value);
+            const b2 = parseFloat(document.getElementById('b2').value);
+            const c2 = parseFloat(document.getElementById('c2').value);
+
+            // Cramer's rule for the intersection
+            const determinant = (a1 * b2) - (a2 * b1);
+            const output = document.getElementById('solution-output');
+
+            if (determinant === 0) {
+                output.innerHTML = `<p class="text-rose-600 font-bold">No unique solution exists. The lines are either parallel or identical.</p>`;
+                updateGraph(a1, b1, c1, a2, b2, c2, null, null);
+                return;
+            }
+
+            const x = (c1 * b2 - c2 * b1) / determinant;
+            const y = (a1 * c2 - a2 * c1) / determinant;
+
+            // Build dynamic text solution
+            output.innerHTML = generateSolutionHTML(a1, b1, c1, a2, b2, c2, x, y);
+            
+            // Render Math
+            renderMathInElement(output, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ]
+            });
+
+            updateGraph(a1, b1, c1, a2, b2, c2, x, y);
+        }
+
+        function generateSolutionHTML(a1, b1, c1, a2, b2, c2, x, y) {
+            // Strings for formatting
+            const eq1 = `${a1}x + ${b1}y = ${c1}`;
+            const eq2 = `${a2}x + ${b2}y = ${c2}`;
+            
+            // Steps based on rearranging Eq 2 (assuming standard problem layout)
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">1. Start with the equations</h3>
+                        <p>Given the system:</p>
+                        $$ (1) \\quad ${eq1} $$
+                        $$ (2) \\quad ${eq2} $$
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">2. Isolate a variable</h3>
+                        <p>Let's solve Equation (2) for $x$:</p>
+                        $$ ${a2}x = ${-b2}y + ${c2} $$
+                        ${a2 !== 1 ? `$$ x = \\frac{${-b2}y + ${c2}}{${a2}} $$` : `$$ x = ${-b2 === 1 ? 'y' : (-b2 === -1 ? '-y' : -b2 + 'y')} + ${c2} $$`}
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">3. Substitute into the other equation</h3>
+                        <p>Substitute this expression for $x$ into Equation (1):</p>
+                        $$ ${a1}(${-b2/a2}y + ${c2/a2}) + ${b1}y = ${c1} $$
+                        <p>Expanding and combining terms leads to:</p>
+                        $$ ${((a1 * -b2/a2) + b1).toFixed(2)}y + ${(a1 * c2/a2).toFixed(2)} = ${c1} $$
+                        $$ y = ${y.toFixed(2)} $$
+                    </div>
+
+                    <div class="p-6 bg-slate-900 text-white rounded-xl shadow-inner">
+                        <h3 class="text-xl font-bold mb-4">Final Result</h3>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-white/10 p-4 rounded-lg">
+                                <span class="block text-slate-400 text-sm uppercase">Value of X</span>
+                                <span class="text-3xl font-black text-indigo-400">${Number.isInteger(x) ? x : x.toFixed(2)}</span>
+                            </div>
+                            <div class="bg-white/10 p-4 rounded-lg">
+                                <span class="block text-slate-400 text-sm uppercase">Value of Y</span>
+                                <span class="text-3xl font-black text-emerald-400">${Number.isInteger(y) ? y : y.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-sm text-slate-400 text-center italic">Intersection Point: (${x.toFixed(2)}, ${y.toFixed(2)})</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateGraph(a1, b1, c1, a2, b2, c2, solX, solY) {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            
+            // Generate data points for lines
+            // ax + by = c  =>  y = (c - ax) / b
+            const range = 10;
+            const startX = (solX !== null) ? solX - 5 : -5;
+            const endX = (solX !== null) ? solX + 5 : 5;
+            
+            const labels = [];
+            const data1 = [];
+            const data2 = [];
+
+            for (let i = startX; i <= endX; i += 0.5) {
+                labels.push(i.toFixed(1));
+                data1.push((c1 - a1 * i) / b1);
+                data2.push((c2 - a2 * i) / b2);
+            }
+
+            const chartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Equation 1',
+                        data: data1,
+                        borderColor: '#6366f1',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        tension: 0
+                    },
+                    {
+                        label: 'Equation 2',
+                        data: data2,
+                        borderColor: '#10b981',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        tension: 0
+                    }
+                ]
+            };
+
+            // Add intersection point if it exists
+            if (solX !== null) {
+                chartData.datasets.push({
+                    label: 'Solution',
+                    data: labels.map((l, idx) => parseFloat(l) === parseFloat(solX.toFixed(1)) ? solY : null),
+                    borderColor: '#f43f5e',
+                    backgroundColor: '#f43f5e',
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    showLine: false
+                });
+            }
+
+            if (myChart) myChart.destroy();
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false },
+                    scales: {
+                        x: { title: { display: true, text: 'X axis' } },
+                        y: { title: { display: true, text: 'Y axis' } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        window.onload = solveSystem;
+    </script>
+</body>
+</html>

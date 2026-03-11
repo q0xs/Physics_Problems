@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation: Vector Decomposition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        .math-container { font-size: 1.25rem; line-height: 1.8; }
+        .step-card { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-left: 4px solid transparent;
+        }
+        .step-card:hover { 
+            transform: translateX(8px); 
+            background-color: #f8fafc;
+            border-left-color: #10b981;
+        }
+
+        .presentation-gradient {
+            background: radial-gradient(circle at top right, #f8fafc, #f1f5f9);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .vector-arrow { transition: all 0.3s ease-out; }
+    </style>
+</head>
+<body class="presentation-gradient text-slate-900 min-h-screen">
+
+    <div class="max-w-7xl mx-auto px-6 py-16">
+        <!-- Presentation Header -->
+        <header class="mb-16 text-center">
+            <div class="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-widest text-emerald-600 uppercase bg-emerald-50 rounded-full">
+                Physics & Mathematics Series
+            </div>
+            <h1 class="text-5xl font-black tracking-tight text-slate-900 mb-6">Vector Decomposition</h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Decomposing vector $\vec{A}$ into its horizontal ($A_x$) and vertical ($A_y$) components using trigonometric identities.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+            <!-- Left Column: Visualizer & Controls -->
+            <div class="lg:col-span-5 space-y-8">
+                <!-- Visual Simulation Card -->
+                <div class="glass-panel p-10 rounded-3xl shadow-2xl flex flex-col items-center">
+                    <h3 class="w-full text-xl font-bold mb-8 text-slate-800 border-b border-slate-100 pb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 013 15.487V5.414a2 2 0 012.828-1.828L9 5m0 15l6-3m-6 3V5m6 12l5.447 2.724A2 2 0 0021 17.513V7.414a2 2 0 00-2.828-1.828L15 7m0 10V7"></path></svg>
+                        Vector Visualization
+                    </h3>
+                    
+                    <svg width="320" height="320" viewBox="0 0 220 220" class="bg-white rounded-xl shadow-inner border border-slate-100">
+                        <!-- Grid Lines -->
+                        <line x1="20" y1="200" x2="200" y2="200" stroke="#e2e8f0" stroke-width="1" />
+                        <line x1="20" y1="20" x2="20" y2="200" stroke="#e2e8f0" stroke-width="1" />
+                        
+                        <!-- Axis -->
+                        <line x1="20" y1="200" x2="210" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-slate)" />
+                        <line x1="20" y1="200" x2="20" y2="10" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-slate)" />
+                        
+                        <!-- Component Projections (Dashed) -->
+                        <line id="proj-x" x1="20" y1="200" x2="110" y2="200" stroke="#10b981" stroke-width="3" stroke-dasharray="2" class="vector-arrow" />
+                        <line id="proj-y" x1="20" y1="200" x2="20" y2="44" stroke="#3b82f6" stroke-width="3" stroke-dasharray="2" class="vector-arrow" />
+                        
+                        <!-- Arc for Angle -->
+                        <path id="angle-arc" d="M 50 200 A 30 30 0 0 0 35 174" fill="none" stroke="#f59e0b" stroke-width="2" />
+                        <text x="55" y="185" class="text-[10px] fill-amber-600 font-bold">θ</text>
+
+                        <!-- Main Vector -->
+                        <line id="vector-main" x1="20" y1="200" x2="110" y2="44" stroke="#1e293b" stroke-width="4" marker-end="url(#arrow-main)" class="vector-arrow" />
+                        
+                        <defs>
+                            <marker id="arrow-slate" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+                            </marker>
+                            <marker id="arrow-main" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                                <polygon points="0 0, 8 3, 0 6" fill="#1e293b" />
+                            </marker>
+                        </defs>
+                    </svg>
+
+                    <div class="mt-8 grid grid-cols-2 gap-4 w-full">
+                        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100 text-center">
+                            <span class="text-[10px] font-black uppercase text-emerald-600 block mb-1">Horizontal (Ax)</span>
+                            <span id="val-ax" class="text-xl font-bold text-emerald-700">7.50</span>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-xl border border-blue-100 text-center">
+                            <span class="text-[10px] font-black uppercase text-blue-600 block mb-1">Vertical (Ay)</span>
+                            <span id="val-ay" class="text-xl font-bold text-blue-700">12.99</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Lab Card -->
+                <div class="bg-slate-900 p-8 rounded-3xl shadow-2xl text-white">
+                    <h3 class="text-sm font-bold tracking-widest text-emerald-400 uppercase mb-8">Vector Parameters</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase">Magnitude (A)</label>
+                                <span id="label-a" class="text-emerald-400 font-bold">15</span>
+                            </div>
+                            <input type="range" id="input-a" min="5" max="30" value="15" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase">Angle (θ) [deg]</label>
+                                <span id="label-theta" class="text-emerald-400 font-bold">60°</span>
+                            </div>
+                            <input type="range" id="input-theta" min="0" max="90" value="60" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Step-by-Step Derivation -->
+            <div class="lg:col-span-7">
+                <div class="glass-panel p-12 rounded-3xl shadow-2xl h-full">
+                    <h2 class="text-3xl font-black text-slate-900 mb-10 border-b border-slate-100 pb-4">Mathematical Derivation</h2>
+                    
+                    <div id="math-steps" class="space-y-10 math-container">
+                        <!-- Content Injected via JS -->
+                    </div>
+
+                    <!-- Final Summary -->
+                    <div class="mt-12 p-8 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-3xl shadow-xl relative overflow-hidden">
+                        <div class="relative z-10">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-200 mb-4 block">Resolution Summary</span>
+                            <div id="final-result-math" class="text-3xl font-bold mb-4"></div>
+                            <div class="h-px bg-emerald-400/30 w-full mb-6"></div>
+                            <p class="text-emerald-100 text-sm leading-relaxed">
+                                The vector is resolved into perpendicular projections. At $60^\circ$, the vertical component is exactly $\sqrt{3}$ times larger than the horizontal component.
+                            </p>
+                        </div>
+                        <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-white opacity-5 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputA = document.getElementById('input-a');
+        const inputTheta = document.getElementById('input-theta');
+        const labelA = document.getElementById('label-a');
+        const labelTheta = document.getElementById('label-theta');
+        const valAx = document.getElementById('val-ax');
+        const valAy = document.getElementById('val-ay');
+
+        function update() {
+            const A = parseFloat(inputA.value);
+            const thetaDeg = parseFloat(inputTheta.value);
+            const thetaRad = thetaDeg * (Math.PI / 180);
+
+            labelA.innerText = A;
+            labelTheta.innerText = thetaDeg + '°';
+
+            const ax = A * Math.cos(thetaRad);
+            const ay = A * Math.sin(thetaRad);
+
+            valAx.innerText = ax.toFixed(2);
+            valAy.innerText = ay.toFixed(2);
+
+            // Update SVG
+            const scale = 5; 
+            const xEnd = 20 + (ax * scale);
+            const yEnd = 200 - (ay * scale);
+            
+            document.getElementById('vector-main').setAttribute('x2', xEnd);
+            document.getElementById('vector-main').setAttribute('y2', yEnd);
+            document.getElementById('proj-x').setAttribute('x2', xEnd);
+            document.getElementById('proj-y').setAttribute('y2', yEnd);
+            
+            // Update Arc
+            const arcRadius = 30;
+            const arcX = 20 + arcRadius * Math.cos(-thetaRad);
+            const arcY = 200 + arcRadius * Math.sin(-thetaRad);
+            const largeArc = thetaDeg > 180 ? 1 : 0;
+            document.getElementById('angle-arc').setAttribute('d', `M ${20 + arcRadius} 200 A ${arcRadius} ${arcRadius} 0 0 0 ${arcX} ${arcY}`);
+
+            renderMath(A, thetaDeg, ax, ay);
+        }
+
+        function renderMath(A, theta, ax, ay) {
+            const container = document.getElementById('math-steps');
+            const isSpecial = theta === 60;
+            
+            container.innerHTML = `
+                <div class="step-card p-6 rounded-2xl">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <span class="flex items-center justify-center w-8 h-8 bg-emerald-600 text-white rounded-lg text-sm font-bold">01</span>
+                        <h4 class="text-lg font-bold text-slate-800">Horizontal Component ($A_x$)</h4>
+                    </div>
+                    <div class="bg-white/50 p-4 rounded-xl">
+                        $$ A_x = A \\cos\\theta = ${A} \\cos ${theta}^\\circ $$
+                        $$ A_x = ${ax.toFixed(2)} $$
+                    </div>
+                </div>
+
+                <div class="step-card p-6 rounded-2xl">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <span class="flex items-center justify-center w-8 h-8 bg-emerald-600 text-white rounded-lg text-sm font-bold">02</span>
+                        <h4 class="text-lg font-bold text-slate-800">Vertical Component ($A_y$)</h4>
+                    </div>
+                    <div class="bg-white/50 p-4 rounded-xl">
+                        $$ A_y = A \\sin\\theta = ${A} \\sin ${theta}^\\circ $$
+                        $$ A_y = ${ay.toFixed(2)} $$
+                    </div>
+                </div>
+            `;
+
+            const finalMath = document.getElementById('final-result-math');
+            finalMath.innerText = ''; // Clear
+            katex.render(`\\vec{A} = (${ax.toFixed(2)}) \\hat{i} + (${ay.toFixed(2)}) \\hat{j}`, finalMath, { displayMode: true });
+
+            renderMathInElement(container, {
+                delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}]
+            });
+        }
+
+        inputA.addEventListener('input', update);
+        inputTheta.addEventListener('input', update);
+
+        window.onload = update;
+    </script>
+</body>
+</html>

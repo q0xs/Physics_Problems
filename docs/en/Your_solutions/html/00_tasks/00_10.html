@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation: Infinite Series - The Ant's Path</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        .math-container { font-size: 1.05rem; line-height: 1.5; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .step-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .step-card:hover {
+            transform: translateX(5px);
+            border-left-color: #8b5cf6;
+            background: #f5f3ff;
+        }
+        canvas {
+            image-rendering: antialiased;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen font-sans">
+
+    <div class="max-w-7xl mx-auto px-6 py-10">
+        <!-- Presentation Header -->
+        <header class="mb-10 text-center">
+            <div class="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest text-violet-600 uppercase bg-violet-50 rounded-full">
+                Mathematical Analysis Series
+            </div>
+            <h1 class="text-4xl font-black tracking-tight text-slate-900 mb-4">The Converging Path of an Ant</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+                Exploring infinite sums through an ant's spiral movement at the origin.
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Left Column: Simulation & Visualization -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="glass-panel p-8 rounded-3xl shadow-xl">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-slate-800">Ant Path Simulation</h3>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="resetSim()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-bold transition">Reset</button>
+                            <button id="playBtn" onclick="toggleSim()" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-sm font-bold transition shadow-lg">Start Journey</button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Container -->
+                    <div class="relative bg-white rounded-2xl border border-slate-100 shadow-inner overflow-hidden" style="height: 420px;">
+                        <canvas id="antCanvas" class="w-full h-full"></canvas>
+                        
+                        <!-- Target Marker Legend -->
+                        <div class="absolute top-4 right-4 bg-white/80 p-2 rounded-lg border border-slate-100 text-[10px] space-y-1">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                <span class="font-bold">Limit $(\frac{\pi}{4}, \frac{\ln 2}{2})$</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats HUD -->
+                    <div class="mt-6 grid grid-cols-3 gap-4">
+                        <div class="p-3 bg-violet-50 rounded-xl text-center border border-violet-100">
+                            <span class="block text-[10px] font-black text-violet-400 uppercase mb-1">Step Count ($n$)</span>
+                            <span id="stepStat" class="text-xl font-bold text-violet-700">0</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl text-center border border-slate-100">
+                            <span class="block text-[10px] font-black text-slate-400 uppercase mb-1">Current Position</span>
+                            <span id="posStat" class="text-sm font-mono font-bold text-slate-700">(0.00, 0.00)</span>
+                        </div>
+                        <div class="p-3 bg-emerald-50 rounded-xl text-center border border-emerald-100">
+                            <span class="block text-[10px] font-black text-emerald-400 uppercase mb-1">Last Step Size</span>
+                            <span id="sizeStat" class="text-xl font-bold text-emerald-700">0.00m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-8 rounded-3xl shadow-xl text-white">
+                    <h4 class="text-sm font-bold text-violet-400 uppercase tracking-widest mb-4">Geometric Intuition</h4>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Even though the ant takes infinitely many steps, the distance traveled along each axis shrinks fast enough that the total displacement remains finite. This demonstrates <b>conditional convergence</b> where the alternating signs allow the series to "settle" at a specific coordinate.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column: Mathematical Solution -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="glass-panel p-10 rounded-3xl shadow-xl">
+                    <h2 class="text-2xl font-black text-slate-900 mb-8 border-b border-slate-100 pb-4">Step-by-Step Logic</h2>
+                    
+                    <div id="solutionSteps" class="space-y-6 math-container">
+                        <!-- Step 1: Decomposition -->
+                        <div class="step-card p-4 rounded-xl">
+                            <h5 class="text-violet-600 text-xs font-black uppercase mb-2">Step 01: Motion Components</h5>
+                            <p class="text-slate-600 text-xs mb-3">Decompose the 2D movement into $x$ (East/West) and $y$ (North/South) series.</p>
+                            <div id="math-components" class="bg-white/50 p-2 rounded text-sm"></div>
+                        </div>
+
+                        <!-- Step 2: X Calculation -->
+                        <div class="step-card p-4 rounded-xl">
+                            <h5 class="text-violet-600 text-xs font-black uppercase mb-2">Step 02: Horizontal Limit</h5>
+                            <p class="text-slate-600 text-xs mb-3">Recognize the Gregory-Leibniz series for $\pi/4$.</p>
+                            <div id="math-x" class="bg-white/50 p-2 rounded text-sm"></div>
+                        </div>
+
+                        <!-- Step 3: Y Calculation -->
+                        <div class="step-card p-4 rounded-xl">
+                            <h5 class="text-violet-600 text-xs font-black uppercase mb-2">Step 03: Vertical Limit</h5>
+                            <p class="text-slate-600 text-xs mb-3">Factor out $1/2$ to reveal the Alternating Harmonic Series.</p>
+                            <div id="math-y" class="bg-white/50 p-2 rounded text-sm"></div>
+                        </div>
+
+                        <!-- Final Result -->
+                        <div class="mt-8 p-6 bg-gradient-to-br from-violet-600 to-indigo-800 text-white rounded-2xl shadow-lg relative overflow-hidden">
+                            <div class="relative z-10 text-center">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-violet-200 mb-2 block">Final Position</span>
+                                <div id="math-final" class="text-xl font-bold mb-1"></div>
+                                <p class="text-violet-100 text-[10px]">$\approx (0.7854, 0.3466)$</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Math Rendering ---
+        function renderMath() {
+            const steps = {
+                'math-components': "x = 1 - \\frac{1}{3} + \\frac{1}{5} - \\cdots \\quad y = \\frac{1}{2} - \\frac{1}{4} + \\frac{1}{6} - \\cdots",
+                'math-x': "x = \\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1} = \\frac{\\pi}{4}",
+                'math-y': "y = \\frac{1}{2} \\sum_{n=1}^{\\infty} \\frac{(-1)^{n-1}}{n} = \\frac{\\ln 2}{2}",
+                'math-final': "P = \\left( \\frac{\\pi}{4}, \\frac{\\ln 2}{2} \\right)"
+            };
+            for (const [id, tex] of Object.entries(steps)) {
+                katex.render(tex, document.getElementById(id), { displayMode: true });
+            }
+        }
+
+        // --- Simulation Logic ---
+        const canvas = document.getElementById('antCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let animationId;
+        let isPlaying = false;
+        let currentStep = 1;
+        let points = [{x: 0, y: 0}];
+        
+        const limitX = Math.PI / 4;
+        const limitY = Math.log(2) / 2;
+
+        function resize() {
+            canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+            canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const w = canvas.offsetWidth;
+            const h = canvas.offsetHeight;
+            const zoom = 250; 
+            const centerX = w * 0.25;
+            const centerY = h * 0.65;
+
+            const toPxX = (x) => centerX + x * zoom;
+            const toPxY = (y) => centerY - y * zoom;
+
+            // Draw Axes
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, centerY); ctx.lineTo(w, centerY);
+            ctx.moveTo(centerX, 0); ctx.lineTo(centerX, h);
+            ctx.stroke();
+
+            // Draw Target Limit Point
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(toPxX(limitX), toPxY(limitY), 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Path
+            if (points.length > 1) {
+                ctx.beginPath();
+                ctx.strokeStyle = '#8b5cf6';
+                ctx.lineWidth = 2;
+                ctx.lineJoin = 'round';
+                ctx.moveTo(toPxX(points[0].x), toPxY(points[0].y));
+                for(let i=1; i < points.length; i++) {
+                    ctx.lineTo(toPxX(points[i].x), toPxY(points[i].y));
+                }
+                ctx.stroke();
+            }
+
+            // Draw Ant (Current Position)
+            const head = points[points.length - 1];
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(toPxX(head.x), toPxY(head.y), 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function update() {
+            if (!isPlaying) return;
+
+            if (currentStep > 200) {
+                isPlaying = false;
+                document.getElementById('playBtn').innerText = "Reached Limit";
+                document.getElementById('playBtn').disabled = true;
+                return;
+            }
+
+            const stepSize = 1 / currentStep;
+            const last = points[points.length - 1];
+            let next = {x: last.x, y: last.y};
+
+            // Pattern: 1:E, 2:N, 3:W, 4:S, 5:E ...
+            const direction = currentStep % 4;
+            if (direction === 1) next.x += stepSize;      // East
+            else if (direction === 2) next.y += stepSize; // North
+            else if (direction === 3) next.x -= stepSize; // West
+            else if (direction === 0) next.y -= stepSize; // South
+
+            points.push(next);
+            
+            // UI Updates
+            document.getElementById('stepStat').innerText = currentStep;
+            document.getElementById('posStat').innerText = `(${next.x.toFixed(4)}, ${next.y.toFixed(4)})`;
+            document.getElementById('sizeStat').innerText = stepSize.toFixed(3) + "m";
+
+            currentStep++;
+            draw();
+
+            // Slower animation for early steps, faster for later ones
+            const delay = currentStep < 20 ? 300 : 50;
+            setTimeout(() => {
+                if(isPlaying) requestAnimationFrame(update);
+            }, delay);
+        }
+
+        function toggleSim() {
+            isPlaying = !isPlaying;
+            document.getElementById('playBtn').innerText = isPlaying ? "Pause" : "Resume";
+            if (isPlaying) update();
+        }
+
+        function resetSim() {
+            isPlaying = false;
+            currentStep = 1;
+            points = [{x: 0, y: 0}];
+            document.getElementById('playBtn').innerText = "Start Journey";
+            document.getElementById('playBtn').disabled = false;
+            document.getElementById('stepStat').innerText = "0";
+            document.getElementById('posStat').innerText = "(0.00, 0.00)";
+            document.getElementById('sizeStat').innerText = "0.00m";
+            draw();
+        }
+
+        window.onload = () => {
+            renderMath();
+            resize();
+        };
+        window.onresize = resize;
+    </script>
+</body>
+</html>
