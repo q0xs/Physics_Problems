@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projectile Motion Simulator - Task 01</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8fafc;
+        }
+        .canvas-container {
+            background: linear-gradient(to bottom, #87CEEB, #E0F6FF);
+            border-bottom: 4px solid #4ade80;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        #projectile {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            transform: translate(-50%, 50%);
+            z-index: 10;
+        }
+        .trajectory-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800">Projectile Motion Simulator</h1>
+            <p class="text-slate-600 italic">Task 01: Analysis of Motion without Air Resistance</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Control Panel -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-sliders-h mr-2 text-blue-500"></i> Parameters
+                </h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Initial Velocity ($v_0$): <span id="v0Val">100</span> m/s</label>
+                        <input type="range" id="v0Input" min="10" max="200" value="100" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Launch Angle ($\theta$): <span id="thetaVal">37</span>°</label>
+                        <input type="range" id="thetaInput" min="1" max="89" value="37" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Gravity ($g$): <span id="gVal">9.81</span> m/s²</label>
+                        <input type="range" id="gInput" min="1.6" max="20" step="0.01" value="9.81" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100">
+                        <button id="playBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-play mr-2"></i> Launch Projectile
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <h3 class="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Calculated Results</h3>
+                    <div class="space-y-2 text-sm text-blue-900">
+                        <div class="flex justify-between">
+                            <span>Time of Flight ($T$):</span>
+                            <span id="resTOF" class="font-mono font-bold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Max Height ($H_{max}$):</span>
+                            <span id="resH" class="font-mono font-bold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Range ($R$):</span>
+                            <span id="resRange" class="font-mono font-bold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Velocity X ($v_{0x}$):</span>
+                            <span id="resVx" class="font-mono font-bold">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Velocity Y ($v_{0y}$):</span>
+                            <span id="resVy" class="font-mono font-bold">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Area -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Animation Canvas -->
+                <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-lg font-semibold text-slate-700 italic">Visual Simulation</h2>
+                        <span id="timer" class="text-xs font-mono bg-slate-100 px-2 py-1 rounded">Time: 0.00s</span>
+                    </div>
+                    <div id="simContainer" class="canvas-container w-full h-64 md:h-80">
+                        <div id="projectile"></div>
+                        <!-- Ground markers could go here -->
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200">
+                    <h2 class="text-lg font-semibold text-slate-700 mb-2">Trajectory Plot ($y$ vs $x$)</h2>
+                    <div class="h-64">
+                        <canvas id="trajectoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theory Section -->
+        <footer class="mt-12 bg-slate-800 text-slate-300 p-8 rounded-xl">
+            <h2 class="text-2xl font-bold text-white mb-4 underline decoration-blue-500">Mathematical Background</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+                <div>
+                    <h3 class="text-blue-400 font-bold mb-2">Equations of Motion</h3>
+                    <p class="mb-2">Horizontal position: $x(t) = v_0 \cos(\theta) t$</p>
+                    <p class="mb-2">Vertical position: $y(t) = v_0 \sin(\theta) t - \frac{1}{2}gt^2$</p>
+                    <p>Since air resistance is neglected ($F_{drag}=0$), horizontal velocity remains constant.</p>
+                </div>
+                <div>
+                    <h3 class="text-blue-400 font-bold mb-2">Key Derived Values</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>$T = \frac{2v_0 \sin\theta}{g}$</li>
+                        <li>$H_{max} = \frac{(v_0 \sin\theta)^2}{2g}$</li>
+                        <li>$R = \frac{v_0^2 \sin(2\theta)}{g}$</li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const v0Input = document.getElementById('v0Input');
+        const thetaInput = document.getElementById('thetaInput');
+        const gInput = document.getElementById('gInput');
+        const v0Val = document.getElementById('v0Val');
+        const thetaVal = document.getElementById('thetaVal');
+        const gVal = document.getElementById('gVal');
+        const playBtn = document.getElementById('playBtn');
+        const projectile = document.getElementById('projectile');
+        const simContainer = document.getElementById('simContainer');
+        const timerDisplay = document.getElementById('timer');
+
+        // Result displays
+        const resTOF = document.getElementById('resTOF');
+        const resH = document.getElementById('resH');
+        const resRange = document.getElementById('resRange');
+        const resVx = document.getElementById('resVx');
+        const resVy = document.getElementById('resVy');
+
+        // State variables
+        let animationId = null;
+        let startTime = null;
+        let isAnimating = false;
+        let chart = null;
+
+        // Initialize Chart
+        function initChart() {
+            const ctx = document.getElementById('trajectoryChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Projectile Path',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { 
+                            type: 'linear', 
+                            title: { display: true, text: 'Distance (m)' },
+                            min: 0
+                        },
+                        y: { 
+                            type: 'linear', 
+                            title: { display: true, text: 'Height (m)' },
+                            min: 0
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function calculateResults() {
+            const v0 = parseFloat(v0Input.value);
+            const theta = parseFloat(thetaInput.value) * (Math.PI / 180);
+            const g = parseFloat(gInput.value);
+
+            const v0x = v0 * Math.cos(theta);
+            const v0y = v0 * Math.sin(theta);
+            const tof = (2 * v0y) / g;
+            const hMax = (v0y * v0y) / (2 * g);
+            const range = (v0 * v0 * Math.sin(2 * theta)) / g;
+
+            resTOF.innerText = tof.toFixed(2) + ' s';
+            resH.innerText = hMax.toFixed(2) + ' m';
+            resRange.innerText = range.toFixed(2) + ' m';
+            resVx.innerText = v0x.toFixed(2) + ' m/s';
+            resVy.innerText = v0y.toFixed(2) + ' m/s';
+
+            updateChart(v0, theta, g, tof, range, hMax);
+            return { v0x, v0y, g, tof, range, hMax };
+        }
+
+        function updateChart(v0, theta, g, tof, range, hMax) {
+            const points = [];
+            const steps = 100;
+            for (let i = 0; i <= steps; i++) {
+                const t = (tof * i) / steps;
+                const x = v0 * Math.cos(theta) * t;
+                const y = v0 * Math.sin(theta) * t - 0.5 * g * t * t;
+                points.push({ x: x, y: y });
+            }
+            chart.data.datasets[0].data = points;
+            
+            // Adjust scale to fit path nicely
+            chart.options.scales.x.max = range * 1.1;
+            chart.options.scales.y.max = hMax * 1.2;
+            
+            chart.update();
+        }
+
+        function startLaunch() {
+            if (isAnimating) {
+                cancelAnimationFrame(animationId);
+                // Clear old trajectory dots
+                document.querySelectorAll('.trajectory-dot').forEach(d => d.remove());
+            }
+
+            const params = calculateResults();
+            isAnimating = true;
+            startTime = performance.now();
+            playBtn.innerHTML = '<i class="fas fa-redo mr-2"></i> Reset & Launch';
+            
+            // Scaling factors for animation
+            const containerWidth = simContainer.clientWidth;
+            const containerHeight = simContainer.clientHeight;
+            // Scale based on total range and height to fit in box
+            const scaleX = (containerWidth * 0.9) / params.range;
+            const scaleY = (containerHeight * 0.8) / params.hMax;
+            const scale = Math.min(scaleX, scaleY);
+
+            function animate(now) {
+                let t = (now - startTime) / 1000; // in seconds
+                // Slow down simulation slightly for visibility (0.5x speed)
+                const simT = t * 0.8;
+
+                if (simT > params.tof) {
+                    isAnimating = false;
+                    timerDisplay.innerText = `Time: ${params.tof.toFixed(2)}s (Landed)`;
+                    return;
+                }
+
+                const x = params.v0x * simT;
+                const y = params.v0y * simT - 0.5 * params.g * simT * simT;
+
+                // Position projectile (y is inverted in CSS top)
+                const visualX = x * scale + 20;
+                const visualY = containerHeight - (y * scale) - 20;
+
+                projectile.style.left = visualX + 'px';
+                projectile.style.top = visualY + 'px';
+                timerDisplay.innerText = `Time: ${simT.toFixed(2)}s`;
+
+                // Leave trail
+                if (Math.floor(simT * 20) % 2 === 0) {
+                    const dot = document.createElement('div');
+                    dot.className = 'trajectory-dot';
+                    dot.style.left = visualX + 'px';
+                    dot.style.top = visualY + 'px';
+                    simContainer.appendChild(dot);
+                }
+
+                animationId = requestAnimationFrame(animate);
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Event Listeners
+        v0Input.addEventListener('input', () => {
+            v0Val.innerText = v0Input.value;
+            calculateResults();
+        });
+        thetaInput.addEventListener('input', () => {
+            thetaVal.innerText = thetaInput.value;
+            calculateResults();
+        });
+        gInput.addEventListener('input', () => {
+            gVal.innerText = gInput.value;
+            calculateResults();
+        });
+        playBtn.addEventListener('click', startLaunch);
+
+        // Initial setup
+        window.addEventListener('load', () => {
+            initChart();
+            calculateResults();
+            // Set initial position
+            projectile.style.left = '20px';
+            projectile.style.top = (simContainer.clientHeight - 20) + 'px';
+        });
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            if (!isAnimating) {
+                projectile.style.top = (simContainer.clientHeight - 20) + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
