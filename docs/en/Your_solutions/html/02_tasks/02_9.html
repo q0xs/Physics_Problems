@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Throw with Linear Drag - Task 09</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        input[type=range] { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Kinematics Lab</h1>
+                <p class="text-slate-500 mt-1">Task 09 – Vertical Throw with Linear Drag</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-sim" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-orange-600 shadow-sm">Simulation</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Controls and Real-time Math -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <div id="view-sim" class="space-y-6">
+                    <!-- Config Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2 text-orange-900">
+                            <span class="w-2 h-6 bg-orange-500 rounded-full"></span>
+                            Initial Parameters
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <label class="text-slate-600 font-medium">Initial Velocity (v₀)</label>
+                                    <span class="font-mono font-bold text-orange-600" id="val-v0">15 m/s</span>
+                                </div>
+                                <input type="range" id="input-v0" min="5" max="30" step="1" value="15" class="w-full accent-orange-500">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <label class="text-slate-600 font-medium">Drag Coefficient (k)</label>
+                                    <span class="font-mono font-bold text-blue-600" id="val-k">0.40</span>
+                                </div>
+                                <input type="range" id="input-k" min="0" max="2" step="0.05" value="0.4" class="w-full accent-blue-500">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <label class="text-slate-600 font-medium">Mass (m)</label>
+                                    <span class="font-mono font-bold text-slate-700" id="val-m">1.0 kg</span>
+                                </div>
+                                <input type="range" id="input-m" min="0.5" max="5" step="0.1" value="1" class="w-full accent-slate-500">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-slate-100 flex gap-3">
+                            <button id="start-btn" onclick="toggleSim()" class="flex-1 bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-orange-200 active:scale-95">Launch Particle</button>
+                            <button onclick="resetSim()" class="px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Results -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Analytical Comparison</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase">Vacuum (k=0)</p>
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-sm text-slate-600">Max Height</span>
+                                    <span class="font-mono font-bold text-slate-900" id="res-vac-h">21.47 m</span>
+                                </div>
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-sm text-slate-600">Ascent Time</span>
+                                    <span class="font-mono font-bold text-slate-900" id="res-vac-t">1.53 s</span>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-orange-50 border border-orange-100">
+                                <p class="text-xs font-bold text-orange-400 mb-2 uppercase">With Drag (k)</p>
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-sm text-slate-600">Max Height</span>
+                                    <span class="font-mono font-bold text-orange-600" id="res-drag-h">17.22 m</span>
+                                </div>
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-sm text-slate-600">Ascent Time</span>
+                                    <span class="font-mono font-bold text-orange-600" id="res-drag-t">1.19 s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6 animate-in fade-in duration-300">
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 border-b pb-2 mb-4">Equation of Motion</h2>
+                        <p class="text-sm leading-relaxed mb-4">Under linear drag, the total force is the sum of weight and air resistance:</p>
+                        <div class="math-card">\[m\frac{dv}{dt} = -mg - kv\]</div>
+                        <p class="text-sm">As \(v\) increases in magnitude downward, drag increases until it balances gravity, reaching <strong>Terminal Velocity</strong>:</p>
+                        <div class="math-card text-center">\[v_{term} = \frac{mg}{k}\]</div>
+                    </section>
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 border-b pb-2 mb-4">Analytical Solutions</h2>
+                        <div class="space-y-4 text-[13px]">
+                            <p><strong>Velocity:</strong> \(v(t) = (v_0 + \frac{mg}{k})e^{-kt/m} - \frac{mg}{k}\)</p>
+                            <p><strong>Height:</strong> \(x(t) = 10 + \frac{m}{k}(v_0 + \frac{mg}{k})(1 - e^{-kt/m}) - \frac{mg}{k}t\)</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right: Simulation and Graphs -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Simulation Canvas -->
+                    <div class="bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden h-[400px] relative">
+                        <div class="absolute top-4 left-4 z-10 flex gap-2">
+                            <span class="bg-slate-800/80 backdrop-blur px-3 py-1 rounded-lg text-[10px] font-bold text-white uppercase border border-slate-700">Live Visual</span>
+                        </div>
+                        <canvas id="physicsCanvas" class="w-full h-full"></canvas>
+                        <!-- Legend Overlay -->
+                        <div class="absolute bottom-4 right-4 flex flex-col gap-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                <span class="text-xs text-slate-400">Drag Motion</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-slate-500 rounded-full"></div>
+                                <span class="text-xs text-slate-400">Vacuum Motion</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trajectory Chart -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 h-[400px]">
+                        <h3 class="text-slate-900 font-bold text-sm mb-4">Height vs. Time</h3>
+                        <div class="h-[320px]">
+                            <canvas id="chartCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Velocity Chart -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-slate-900 font-bold text-sm mb-4">Velocity vs. Time (Analytical vs. Simulation)</h3>
+                    <div class="h-[200px]">
+                        <canvas id="vChartCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const g = 9.81;
+        const x0 = 10;
+        
+        // State Variables
+        let m = 1, k = 0.4, v0 = 15;
+        let isRunning = false;
+        let time = 0;
+        let lastTimestamp = 0;
+        
+        // Physics Objects
+        let dragBall = { y: x0, v: v0, trail: [] };
+        let vacBall = { y: x0, v: v0, trail: [] };
+        
+        // Canvas & Chart Elements
+        const canvas = document.getElementById('physicsCanvas');
+        const ctx = canvas.getContext('2d');
+        let hChart, vChart;
+
+        function initCharts() {
+            const hCtx = document.getElementById('chartCanvas').getContext('2d');
+            const vCtx = document.getElementById('vChartCanvas').getContext('2d');
+            
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                scales: {
+                    x: { type: 'linear', title: { display: true, text: 'Time (s)' }, min: 0, max: 4 },
+                    y: { title: { display: true, text: 'Value' } }
+                },
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } }
+            };
+
+            hChart = new Chart(hCtx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: 'With Drag (x)', data: [], borderColor: '#f97316', borderWidth: 2, pointRadius: 0 },
+                        { label: 'Vacuum (x₀)', data: [], borderColor: '#94a3b8', borderWidth: 1, borderDash: [4, 4], pointRadius: 0 }
+                    ]
+                },
+                options: { ...commonOptions, scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, min: 0, max: 40 } } }
+            });
+
+            vChart = new Chart(vCtx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: 'With Drag (v)', data: [], borderColor: '#0ea5e9', borderWidth: 2, pointRadius: 0 },
+                        { label: 'Vacuum (v₀)', data: [], borderColor: '#94a3b8', borderWidth: 1, borderDash: [4, 4], pointRadius: 0 }
+                    ]
+                },
+                options: { ...commonOptions, scales: { ...commonOptions.scales, y: { ...commonOptions.scales.y, min: -20, max: 30 } } }
+            });
+        }
+
+        function updateMath() {
+            m = parseFloat(document.getElementById('input-m').value);
+            k = parseFloat(document.getElementById('input-k').value);
+            v0 = parseFloat(document.getElementById('input-v0').value);
+
+            document.getElementById('val-m').innerText = `${m.toFixed(1)} kg`;
+            document.getElementById('val-k').innerText = k.toFixed(2);
+            document.getElementById('val-v0').innerText = `${v0} m/s`;
+
+            // Analytical Results
+            const t_max_vac = v0 / g;
+            const h_max_vac = x0 + (v0 * v0) / (2 * g);
+            
+            document.getElementById('res-vac-t').innerText = `${t_max_vac.toFixed(2)} s`;
+            document.getElementById('res-vac-h').innerText = `${h_max_vac.toFixed(2)} m`;
+
+            if (k > 0) {
+                const t_max_drag = (m / k) * Math.log(1 + (k * v0) / (m * g));
+                const h_max_drag = x0 + (m * v0) / k - (m * m * g / (k * k)) * Math.log(1 + (k * v0) / (m * g));
+                document.getElementById('res-drag-t').innerText = `${t_max_drag.toFixed(2)} s`;
+                document.getElementById('res-drag-h').innerText = `${h_max_drag.toFixed(2)} m`;
+            } else {
+                document.getElementById('res-drag-t').innerText = `${t_max_vac.toFixed(2)} s`;
+                document.getElementById('res-drag-h').innerText = `${h_max_vac.toFixed(2)} m`;
+            }
+        }
+
+        function toggleSim() {
+            if (!isRunning && (dragBall.y <= 0 && vacBall.y <= 0)) resetSim();
+            isRunning = !isRunning;
+            document.getElementById('start-btn').innerText = isRunning ? "Pause" : "Resume Launch";
+        }
+
+        function resetSim() {
+            isRunning = false;
+            time = 0;
+            dragBall = { y: x0, v: v0, trail: [] };
+            vacBall = { y: x0, v: v0, trail: [] };
+            hChart.data.datasets.forEach(d => d.data = []);
+            vChart.data.datasets.forEach(d => d.data = []);
+            hChart.update('none');
+            vChart.update('none');
+            document.getElementById('start-btn').innerText = "Launch Particle";
+            updateMath();
+        }
+
+        function physicsLoop(timestamp) {
+            const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.02);
+            lastTimestamp = timestamp;
+
+            if (isRunning) {
+                time += dt;
+
+                // Drag Ball (Numerical Integration)
+                if (dragBall.y > 0 || dragBall.v > 0) {
+                    const dragAcc = -g - (k / m) * dragBall.v;
+                    dragBall.v += dragAcc * dt;
+                    dragBall.y += dragBall.v * dt;
+                    if (dragBall.y < 0) dragBall.y = 0;
+                }
+
+                // Vacuum Ball (Analytical for accuracy)
+                if (vacBall.y > 0 || vacBall.v > 0) {
+                    vacBall.v = v0 - g * time;
+                    vacBall.y = x0 + v0 * time - 0.5 * g * time * time;
+                    if (vacBall.y < 0) vacBall.y = 0;
+                }
+
+                // Update Charts every few frames
+                if (Math.floor(time * 100) % 2 === 0) {
+                    hChart.data.datasets[0].data.push({x: time, y: dragBall.y});
+                    hChart.data.datasets[1].data.push({x: time, y: vacBall.y});
+                    vChart.data.datasets[0].data.push({x: time, y: dragBall.v});
+                    vChart.data.datasets[1].data.push({x: time, y: vacBall.v});
+                    hChart.update('none');
+                    vChart.update('none');
+                }
+
+                if (dragBall.y <= 0 && vacBall.y <= 0) isRunning = false;
+            }
+
+            draw();
+            requestAnimationFrame(physicsLoop);
+        }
+
+        function draw() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+            
+            const scale = 8; // Pixels per meter
+            const groundY = rect.height - 40;
+            const centerX = rect.width / 2;
+
+            // Draw Ground
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, groundY);
+            ctx.lineTo(rect.width, groundY);
+            ctx.stroke();
+
+            // Vacuum Ball
+            const vacY = groundY - (vacBall.y * scale);
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.arc(centerX - 40, vacY, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = '10px Inter';
+            ctx.fillText("Vacuum", centerX - 65, vacY - 15);
+
+            // Drag Ball
+            const dragY = groundY - (dragBall.y * scale);
+            ctx.fillStyle = '#f97316';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(249, 115, 22, 0.4)';
+            ctx.beginPath();
+            ctx.arc(centerX + 40, dragY, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#fb923c';
+            ctx.fillText("Air Drag", centerX + 20, dragY - 15);
+
+            // Vector Arrow for Velocity (Drag Ball)
+            if (Math.abs(dragBall.v) > 0.5) {
+                const arrowLen = dragBall.v * 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX + 40, dragY);
+                ctx.lineTo(centerX + 40, dragY - arrowLen);
+                ctx.strokeStyle = dragBall.v > 0 ? '#4ade80' : '#f87171';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+        }
+
+        // Event Listeners
+        document.querySelectorAll('input').forEach(i => i.addEventListener('input', () => {
+            if (!isRunning) {
+                updateMath();
+                resetSim();
+            }
+        }));
+
+        document.getElementById('tab-sim').onclick = () => {
+            document.getElementById('view-sim').classList.remove('hidden');
+            document.getElementById('view-theory').classList.add('hidden');
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-orange-600 shadow-sm';
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        };
+        document.getElementById('tab-theory').onclick = () => {
+            document.getElementById('view-sim').classList.add('hidden');
+            document.getElementById('view-theory').classList.remove('hidden');
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-orange-600 shadow-sm';
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        };
+
+        // Initialize
+        initCharts();
+        updateMath();
+        requestAnimationFrame(physicsLoop);
+    </script>
+</body>
+</html>

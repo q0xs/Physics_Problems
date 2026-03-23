@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Block Dynamics - Task 07</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        input[type=range] { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Dynamics Lab</h1>
+                <p class="text-slate-500 mt-1">Task 07 – Two-Block System with Wall Tie</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-sim" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-blue-600 shadow-sm">Simulation</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Controls and Analysis -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div id="view-sim" class="space-y-6">
+                    <!-- Config Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2 text-blue-900">
+                            <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
+                            Physical Constants
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <label class="text-slate-600 font-medium">Applied Force (F)</label>
+                                        <span class="font-mono font-bold text-blue-600" id="val-F">45 N</span>
+                                    </div>
+                                    <input type="range" id="input-F" min="0" max="100" step="1" value="45" class="w-full accent-blue-500">
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <label class="text-slate-600 font-medium">Upper Mass (m₁)</label>
+                                        <span class="font-mono font-bold text-slate-700" id="val-m1">5 kg</span>
+                                    </div>
+                                    <input type="range" id="input-m1" min="1" max="20" step="0.5" value="5" class="w-full accent-slate-500">
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <label class="text-slate-600 font-medium">Lower Mass (m₂)</label>
+                                        <span class="font-mono font-bold text-slate-700" id="val-m2">10 kg</span>
+                                    </div>
+                                    <input type="range" id="input-m2" min="5" max="30" step="1" value="10" class="w-full accent-slate-500">
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <label class="text-slate-600 font-medium">Friction (μₖ)</label>
+                                        <span class="font-mono font-bold text-rose-500" id="val-mu">0.20</span>
+                                    </div>
+                                    <input type="range" id="input-mu" min="0" max="0.5" step="0.01" value="0.2" class="w-full accent-rose-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Forces Dashboard -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-blue-600 rounded-2xl shadow-lg p-5 text-white">
+                            <h3 class="text-[10px] font-bold opacity-70 uppercase mb-1">Acceleration</h3>
+                            <div class="flex items-baseline gap-1">
+                                <p class="text-3xl font-bold" id="res-a">0.58</p>
+                                <span class="text-sm opacity-70">m/s²</span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-1">Friction (Top)</h3>
+                            <div class="flex items-baseline gap-1">
+                                <p class="text-xl font-bold text-rose-600" id="res-f12">9.81</p>
+                                <span class="text-xs text-slate-400 font-medium">N</span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-1">Friction (Floor)</h3>
+                            <div class="flex items-baseline gap-1">
+                                <p class="text-xl font-bold text-rose-600" id="res-ff">29.43</p>
+                                <span class="text-xs text-slate-400 font-medium">N</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculation Breakdown -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-sm font-bold text-slate-900 mb-4">Step-by-Step Logic</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between border-b border-slate-50 pb-2">
+                                <span class="text-slate-500">Normal Force (m₁ on m₂)</span>
+                                <span class="font-mono text-slate-700" id="step-n12">49.05 N</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-50 pb-2">
+                                <span class="text-slate-500">Normal Force (Floor)</span>
+                                <span class="font-mono text-slate-700" id="step-nf">147.15 N</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-50 pb-2">
+                                <span class="text-slate-500">Net Horizontal Force</span>
+                                <span class="font-mono text-blue-600 font-bold" id="step-fnet">5.76 N</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6 animate-in fade-in duration-300">
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 border-b pb-2 mb-4">Dual Friction Sources</h2>
+                        <p class="leading-relaxed mb-4">The lower block (\(m_2\)) is sliding against two surfaces simultaneously. Since the upper block (\(m_1\)) is tethered to the wall, it cannot move, creating relative motion at the interface.</p>
+                        <div class="math-card">
+                            <strong>Interface Friction:</strong> \(f_{12} = \mu_k (m_1 g)\)
+                        </div>
+                        <div class="math-card">
+                            <strong>Floor Friction:</strong> \(f_{f} = \mu_k (m_1 + m_2)g\)
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 border-b pb-2 mb-4">Equation of Motion</h2>
+                        <div class="math-card">
+                            \[F - f_{12} - f_f = m_2 a\]
+                        </div>
+                        <p class="text-sm italic text-slate-500">Note: If \(F < f_{12} + f_f\), the acceleration is 0 as static friction would hold the block in place.</p>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right: Physics Canvas -->
+            <div class="lg:col-span-5 relative">
+                <div class="sticky top-8 bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
+                    <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <h3 class="text-white font-bold text-sm">Mechanical Model</h3>
+                        </div>
+                        <button id="run-btn" onclick="toggleSim()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-xl text-xs font-bold transition-all active:scale-95">
+                            Run Sim
+                        </button>
+                    </div>
+
+                    <canvas id="physicsCanvas" class="w-full h-[450px]"></canvas>
+                    
+                    <div class="p-6 bg-slate-950/50 border-t border-slate-800">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Velocity</span>
+                            <span id="sim-v" class="text-blue-400 font-mono text-sm">0.00 m/s</span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                            <div id="v-bar" class="h-full bg-blue-500 transition-all duration-100" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants
+        const g = 9.81;
+        const pixelsPerMeter = 100;
+
+        // User Parameters
+        let F = 45, m1 = 5, m2 = 10, mu = 0.2;
+
+        // Sim State
+        let isRunning = false;
+        let x = 150; 
+        let v = 0;
+        let lastTime = 0;
+
+        const canvas = document.getElementById('physicsCanvas');
+        const ctx = canvas.getContext('2d');
+        const fInput = document.getElementById('input-F');
+        const m1Input = document.getElementById('input-m1');
+        const m2Input = document.getElementById('input-m2');
+        const muInput = document.getElementById('input-mu');
+
+        function updateLogic() {
+            F = parseFloat(fInput.value);
+            m1 = parseFloat(m1Input.value);
+            m2 = parseFloat(m2Input.value);
+            mu = parseFloat(muInput.value);
+
+            document.getElementById('val-F').innerText = `${F} N`;
+            document.getElementById('val-m1').innerText = `${m1} kg`;
+            document.getElementById('val-m2').innerText = `${m2} kg`;
+            document.getElementById('val-mu').innerText = mu.toFixed(2);
+
+            const n12 = m1 * g;
+            const nf = (m1 + m2) * g;
+            const f12 = mu * n12;
+            const ff = mu * nf;
+            const fNet = Math.max(0, F - f12 - ff);
+            const a = fNet / m2;
+
+            document.getElementById('res-a').innerText = a.toFixed(2);
+            document.getElementById('res-f12').innerText = f12.toFixed(2);
+            document.getElementById('res-ff').innerText = ff.toFixed(2);
+            document.getElementById('step-n12').innerText = `${n12.toFixed(2)} N`;
+            document.getElementById('step-nf').innerText = `${nf.toFixed(2)} N`;
+            document.getElementById('step-fnet').innerText = `${fNet.toFixed(2)} N`;
+
+            if(!isRunning) {
+                v = 0;
+                x = 150;
+            }
+        }
+
+        function toggleSim() {
+            isRunning = !isRunning;
+            document.getElementById('run-btn').innerText = isRunning ? "Reset" : "Run Sim";
+            if(!isRunning) updateLogic();
+        }
+
+        function draw(timestamp) {
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.032);
+            lastTime = timestamp;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            const floorY = 320;
+            const m2W = m2 * 8; // Scale width by mass for visual
+            const m2H = 50;
+            const m1W = m1 * 8;
+            const m1H = 40;
+
+            // Update Physics
+            if(isRunning) {
+                const n12 = m1 * g;
+                const nf = (m1 + m2) * g;
+                const f12 = mu * n12;
+                const ff = mu * nf;
+                const fNet = Math.max(0, F - f12 - ff);
+                const a = fNet / m2;
+                
+                v += a * dt;
+                x += v * dt * pixelsPerMeter;
+
+                if (x > rect.width) x = -m2W; // Loop
+            }
+
+            // Draw Wall
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, 100, 15, 250);
+
+            // Draw Floor
+            ctx.beginPath();
+            ctx.moveTo(0, floorY);
+            ctx.lineTo(rect.width, floorY);
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw M2 (Lower Block)
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(x, floorY - m2H, m2W, m2H);
+            ctx.strokeStyle = '#60a5fa';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, floorY - m2H, m2W, m2H);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 12px Inter';
+            ctx.fillText(`m2: ${m2}kg`, x + 5, floorY - m2H + 20);
+
+            // Draw M1 (Upper Block) - Tethered to wall
+            // It stays fixed at x=50 visually
+            const m1X = 60;
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(m1X, floorY - m2H - m1H, m1W, m1H);
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.strokeRect(m1X, floorY - m2H - m1H, m1W, m1H);
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(`m1: ${m1}kg`, m1X + 5, floorY - m2H - m1H + 20);
+
+            // Draw Tether Line
+            ctx.beginPath();
+            ctx.moveTo(15, floorY - m2H - (m1H/2));
+            ctx.lineTo(m1X, floorY - m2H - (m1H/2));
+            ctx.strokeStyle = '#ef4444';
+            ctx.setLineDash([5, 3]);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Force Arrow (Applied to M2)
+            if (F > 0) {
+                const arrowX = x + m2W;
+                const arrowLen = F * 1.5;
+                ctx.beginPath();
+                ctx.moveTo(arrowX, floorY - m2H/2);
+                ctx.lineTo(arrowX + arrowLen, floorY - m2H/2);
+                ctx.lineTo(arrowX + arrowLen - 10, floorY - m2H/2 - 5);
+                ctx.moveTo(arrowX + arrowLen, floorY - m2H/2);
+                ctx.lineTo(arrowX + arrowLen - 10, floorY - m2H/2 + 5);
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillText(`F = ${F}N`, arrowX + 5, floorY - m2H/2 - 10);
+            }
+
+            // Friction Arrows (Resisting M2)
+            if (isRunning && v > 0) {
+                // Top friction arrow
+                ctx.beginPath();
+                ctx.moveTo(x + 20, floorY - m2H);
+                ctx.lineTo(x - 30, floorY - m2H);
+                ctx.strokeStyle = '#ef4444';
+                ctx.stroke();
+                // Bottom friction arrow
+                ctx.beginPath();
+                ctx.moveTo(x + 20, floorY);
+                ctx.lineTo(x - 30, floorY);
+                ctx.stroke();
+            }
+
+            // UI Updates
+            document.getElementById('sim-v').innerText = `${v.toFixed(2)} m/s`;
+            document.getElementById('v-bar').style.width = Math.min(100, v * 10) + '%';
+
+            requestAnimationFrame(draw);
+        }
+
+        [fInput, m1Input, m2Input, muInput].forEach(inp => inp.oninput = updateLogic);
+        
+        document.getElementById('tab-sim').onclick = () => {
+            document.getElementById('view-sim').classList.remove('hidden');
+            document.getElementById('view-theory').classList.add('hidden');
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-blue-600 shadow-sm';
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        };
+        document.getElementById('tab-theory').onclick = () => {
+            document.getElementById('view-sim').classList.add('hidden');
+            document.getElementById('view-theory').classList.remove('hidden');
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-blue-600 shadow-sm';
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        };
+
+        updateLogic();
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonic Motion - Task 02</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax for high-quality LaTeX rendering -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        input[type=range] { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Mass-Spring Dynamics</h1>
+                <p class="text-slate-500 mt-1">Task 02 – Simple Harmonic Motion Analysis</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-calc" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-indigo-600 shadow-sm">Analysis</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Problem Inputs & Results -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div id="view-calculators" class="space-y-6">
+                    <!-- Input Section -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <span class="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                            System Parameters
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mass (m)</label>
+                                <div class="relative">
+                                    <input type="number" id="mass-input" value="10" step="0.5" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                    <span class="absolute right-3 top-3 text-slate-400 text-sm">kg</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Amplitude (A)</label>
+                                <div class="relative">
+                                    <input type="number" id="amp-input" value="0.2" step="0.01" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                    <span class="absolute right-3 top-3 text-slate-400 text-sm">m</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Ang. Freq (ω)</label>
+                                <div class="relative">
+                                    <input type="number" id="freq-input" value="31.4159" step="0.1" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                    <span class="absolute right-3 top-3 text-slate-400 text-sm">rad/s</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-xs text-slate-400 italic font-mono">Current Equation: x(t) = <span id="eq-display">0.2 cos(10π t)</span></p>
+                    </div>
+
+                    <!-- Output Results -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-tight mb-1">Spring Constant (k)</h3>
+                                <p class="text-3xl font-bold text-indigo-600" id="res-k">9869.6</p>
+                                <p class="text-sm text-slate-400">N/m (Stiffness)</p>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-slate-50">
+                                <div class="flex items-center gap-2 text-xs text-slate-500 font-mono">
+                                    k = m · ω²
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-tight mb-1">Total Energy (E)</h3>
+                                <p class="text-3xl font-bold text-rose-500" id="res-e">197.4</p>
+                                <p class="text-sm text-slate-400">Joules (Mechanical)</p>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-slate-50">
+                                <div class="flex items-center gap-2 text-xs text-slate-500 font-mono">
+                                    E = ½ · k · A²
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-900 rounded-2xl p-6 text-white shadow-lg overflow-hidden relative">
+                        <div class="relative z-10">
+                            <h3 class="text-lg font-bold mb-2">Energy Balance</h3>
+                            <div class="flex gap-4 items-end h-16">
+                                <div class="flex-1 flex flex-col items-center gap-1">
+                                    <div id="bar-ke" class="w-full bg-blue-400 rounded-t-md transition-all duration-75" style="height: 50%"></div>
+                                    <span class="text-[10px] opacity-70 uppercase tracking-widest">Kinetic</span>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center gap-1">
+                                    <div id="bar-pe" class="w-full bg-amber-400 rounded-t-md transition-all duration-75" style="height: 50%"></div>
+                                    <span class="text-[10px] opacity-70 uppercase tracking-widest">Potential</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-0 right-0 p-8 opacity-10">
+                            <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6 animate-in fade-in duration-300">
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">Core Principles</h2>
+                        <p class="leading-relaxed">A mass on a spring performs <strong>Simple Harmonic Motion (SHM)</strong> when the restoring force is proportional to the displacement. The position \(x(t)\) follows a sinusoidal function:</p>
+                        <div class="math-card">\[x(t) = A \cos(\omega t + \phi)\]</div>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">Spring Stiffness</h2>
+                        <p>The angular frequency is determined by the ratio of the spring stiffness to the mass:</p>
+                        <div class="math-card">\[\omega = \sqrt{\frac{k}{m}} \implies k = m\omega^2\]</div>
+                    </section>
+
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">Mechanical Energy</h2>
+                        <p>Total energy \(E\) is the sum of Kinetic and Potential energy. In an ideal system (no damping), it remains constant:</p>
+                        <div class="math-card">\[E_{total} = \frac{1}{2} k A^2 = \frac{1}{2} m \omega^2 A^2\]</div>
+                        <div class="p-4 bg-blue-50 border-l-4 border-blue-500 text-sm text-blue-800 rounded-r-lg">
+                            <strong>Note:</strong> While position \(x\) varies with \(\cos\), velocity \(v\) varies with \(\sin\). The energy oscillates between spring potential (\(\frac{1}{2}kx^2\)) and kinetic (\(\frac{1}{2}mv^2\)).
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+
+            <!-- Simulation View -->
+            <div class="lg:col-span-5 relative">
+                <div class="sticky top-8 bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col">
+                    <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 backdrop-blur-md">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                            <h3 class="text-white font-semibold">Live Simulation</h3>
+                        </div>
+                        <span id="time-display" class="text-indigo-400 font-mono text-xs bg-indigo-500/10 px-2 py-1 rounded">t = 0.000s</span>
+                    </div>
+
+                    <canvas id="springCanvas" class="w-full bg-slate-950 h-[350px] cursor-crosshair"></canvas>
+                    
+                    <div class="p-6 bg-slate-900 border-t border-slate-800 space-y-5">
+                        <div class="flex justify-between items-center">
+                            <label class="text-slate-400 text-sm font-medium">Simulation Speed</label>
+                            <span id="speed-label" class="text-white font-mono text-sm">1.0x</span>
+                        </div>
+                        <input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="1" class="w-full accent-indigo-500">
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="restartSim()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 active:scale-95">Restart</button>
+                            <button id="pause-btn" onclick="togglePause()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold py-3 rounded-xl transition-all border border-slate-700">Pause</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Physics State
+        let m = 10;
+        let A = 0.2;
+        let w = 10 * Math.PI;
+        let k = 0;
+        let E = 0;
+        
+        let simTime = 0;
+        let simSpeed = 1.0;
+        let isPaused = false;
+        let lastTimestamp = 0;
+
+        // Elements
+        const canvas = document.getElementById('springCanvas');
+        const ctx = canvas.getContext('2d');
+        const massInput = document.getElementById('mass-input');
+        const ampInput = document.getElementById('amp-input');
+        const freqInput = document.getElementById('freq-input');
+        const resK = document.getElementById('res-k');
+        const resE = document.getElementById('res-e');
+        const eqDisplay = document.getElementById('eq-display');
+        const timeDisplay = document.getElementById('time-display');
+        const barKe = document.getElementById('bar-ke');
+        const barPe = document.getElementById('bar-pe');
+
+        // Tab Logic
+        document.getElementById('tab-calc').onclick = () => switchTab('calculators');
+        document.getElementById('tab-theory').onclick = () => switchTab('theory');
+
+        function switchTab(tab) {
+            document.getElementById('view-calculators').classList.toggle('hidden', tab !== 'calculators');
+            document.getElementById('view-theory').classList.toggle('hidden', tab !== 'theory');
+            document.getElementById('tab-calc').className = tab === 'calculators' ? 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-indigo-600 shadow-sm' : 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+            document.getElementById('tab-theory').className = tab === 'theory' ? 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-indigo-600 shadow-sm' : 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        }
+
+        function updatePhysics() {
+            m = parseFloat(massInput.value) || 1;
+            A = parseFloat(ampInput.value) || 0;
+            w = parseFloat(freqInput.value) || 0;
+            
+            k = m * w * w;
+            E = 0.5 * k * A * A;
+
+            resK.innerText = k.toLocaleString(undefined, {maximumFractionDigits: 1});
+            resE.innerText = E.toLocaleString(undefined, {maximumFractionDigits: 1});
+            
+            // Format ω display
+            let wText = w.toFixed(2);
+            if (Math.abs(w - 10 * Math.PI) < 0.1) wText = "10π";
+            eqDisplay.innerText = `${A} cos(${wText} t)`;
+        }
+
+        [massInput, ampInput, freqInput].forEach(inp => inp.oninput = updatePhysics);
+
+        document.getElementById('speed-slider').oninput = (e) => {
+            simSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-label').innerText = simSpeed.toFixed(1) + 'x';
+        };
+
+        function restartSim() { simTime = 0; }
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('pause-btn').innerText = isPaused ? 'Resume' : 'Pause';
+        }
+
+        // Animation Loop
+        function draw(timestamp) {
+            const dt = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            if (!isPaused) {
+                simTime += dt * simSpeed;
+            }
+
+            timeDisplay.innerText = `t = ${simTime.toFixed(3)}s`;
+
+            // Canvas Setup
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            const centerX = rect.width / 2;
+            const ceilingY = 40;
+            const restLength = 150;
+            const visualScale = 200; // Pixels per meter
+
+            // Calculate current physics values
+            const x = A * Math.cos(w * simTime); // displacement
+            const v = -A * w * Math.sin(w * simTime); // velocity
+            
+            const currentPE = 0.5 * k * x * x;
+            const currentKE = 0.5 * m * v * v;
+            const totalE = currentPE + currentKE || 1; // prevent div by zero
+
+            // Update energy bars
+            barPe.style.height = (currentPE / totalE * 100) + '%';
+            barKe.style.height = (currentKE / totalE * 100) + '%';
+
+            const massY = ceilingY + restLength + (x * visualScale);
+
+            // Draw Ceiling
+            ctx.beginPath();
+            ctx.moveTo(centerX - 60, ceilingY);
+            ctx.lineTo(centerX + 60, ceilingY);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw Spring (Zig-zag)
+            ctx.beginPath();
+            ctx.moveTo(centerX, ceilingY);
+            const loops = 15;
+            const springWidth = 20;
+            const springSpan = massY - ceilingY;
+            for(let i = 0; i <= loops; i++) {
+                const stepY = ceilingY + (springSpan / loops) * i;
+                const stepX = centerX + (i % 2 === 0 ? springWidth : -springWidth) * (i === 0 || i === loops ? 0 : 1);
+                ctx.lineTo(stepX, stepY);
+            }
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+
+            // Draw Mass (Rectangle)
+            const massSize = Math.max(30, Math.min(60, 20 + m/2));
+            ctx.fillStyle = '#6366f1';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(99, 102, 241, 0.4)';
+            ctx.fillRect(centerX - massSize/2, massY, massSize, massSize);
+            ctx.shadowBlur = 0;
+            
+            // Draw mass highlights
+            ctx.strokeStyle = '#4338ca';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(centerX - massSize/2, massY, massSize, massSize);
+
+            // Draw labels
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '10px monospace';
+            ctx.fillText(`x = ${x.toFixed(3)} m`, centerX + massSize/2 + 10, massY + massSize/2);
+            ctx.fillText(`v = ${v.toFixed(2)} m/s`, centerX + massSize/2 + 10, massY + massSize/2 + 12);
+
+            requestAnimationFrame(draw);
+        }
+
+        updatePhysics();
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>

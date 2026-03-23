@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulum Physics Explorer - 02_1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-block {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            text-align: center;
+            font-family: serif;
+            font-size: 1.125rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Pendulum Physics</h1>
+                <p class="text-slate-500 mt-1">Task 01 – Pendulum Period and Gravitational Dependence</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-calc" class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white text-blue-600 shadow-sm">Calculators</button>
+                <button id="tab-theory" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory & Solution</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left Side: Interactive Content -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Calculators View -->
+                <div id="view-calculators" class="space-y-6">
+                    <!-- Problem 1 Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-blue-50/50 border-b border-slate-200 p-4">
+                            <h2 class="text-lg font-semibold text-slate-800">1. Period on Another Celestial Body</h2>
+                        </div>
+                        <div class="p-5 space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700">Earth Period (s)</label>
+                                    <input type="number" id="earth-period-input" value="4" step="0.1" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700">Gravity (Ratio to Earth)</label>
+                                    <select id="gravity-select" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <option value="0.16666">Moon (1/6)</option>
+                                        <option value="0.38">Mars (0.38)</option>
+                                        <option value="custom">Custom Ratio</option>
+                                    </select>
+                                    <input type="number" id="custom-ratio-input" value="0.16666" step="0.01" class="hidden w-full p-2.5 mt-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between border border-slate-100 gap-4">
+                                <div>
+                                    <p class="text-sm text-slate-500">Calculated Period</p>
+                                    <p class="text-3xl font-bold text-blue-600"><span id="res-period">9.80</span> <span class="text-lg text-slate-500 font-normal">s</span></p>
+                                </div>
+                                <button onclick="simSet('period')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors w-full md:w-auto">Simulate</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Problem 2 Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-emerald-50/50 border-b border-slate-200 p-4">
+                            <h2 class="text-lg font-semibold text-slate-800">2. Length for Target Period</h2>
+                        </div>
+                        <div class="p-5 space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700">Target Period (s)</label>
+                                    <input type="number" id="target-period-input" value="1" step="0.1" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-medium text-slate-700">Earth Gravity (m/s²)</label>
+                                    <input type="number" id="g-input" value="9.81" step="0.01" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between border border-slate-100 gap-4">
+                                <div>
+                                    <p class="text-sm text-slate-500">Required Length</p>
+                                    <p class="text-3xl font-bold text-emerald-600"><span id="res-length">0.248</span> <span class="text-lg text-slate-500 font-normal">m</span></p>
+                                </div>
+                                <button onclick="simSet('length')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors w-full md:w-auto">Simulate</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View (Hidden by default) -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b pb-2 mb-4">Theory</h2>
+                        <p>The period of a simple pendulum is:</p>
+                        <div class="math-block">T = 2π √(L / g)</div>
+                        <p class="mt-4">Thus, the period depends on gravity as:</p>
+                        <div class="math-block">T ∝ 1 / √g</div>
+                    </section>
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b pb-2 mb-4">Solution</h2>
+                        <h3 class="font-bold">1. Moon Period</h3>
+                        <div class="math-block">T<sub>Moon</sub> = T<sub>Earth</sub> × √(g<sub>Earth</sub> / g<sub>Moon</sub>)</div>
+                        <p id="theory-calc-1" class="text-slate-600 italic">For 4s on Earth, T<sub>Moon</sub> ≈ 9.80s</p>
+                        
+                        <h3 class="font-bold mt-6">2. Length for 1s on Earth</h3>
+                        <div class="math-block">L = g × (T / 2π)²</div>
+                        <p id="theory-calc-2" class="text-slate-600 italic">For 1s period, L ≈ 0.248m</p>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right Side: Simulation (Sticky) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-8 bg-slate-900 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+                        <h3 class="text-white font-semibold flex items-center gap-2">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                            Live Visualizer
+                        </h3>
+                        <span id="sim-label" class="text-blue-400 text-xs font-mono px-2 py-1 bg-blue-500/10 rounded">Earth (4.00s)</span>
+                    </div>
+                    <canvas id="pendulumCanvas" class="bg-slate-950 w-full h-[300px]"></canvas>
+                    <div class="p-5 space-y-4 bg-slate-900">
+                        <div class="flex justify-between text-sm text-slate-400">
+                            <span>Sim Speed</span>
+                            <span id="speed-val">1.0x</span>
+                        </div>
+                        <input type="range" id="speed-slider" min="0.5" max="5" step="0.5" value="1" class="w-full accent-blue-500">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="resetSim('earth')" class="py-2 text-xs bg-slate-800 text-slate-300 rounded-lg hover:bg-slate-700 transition-colors">Reset Earth</button>
+                            <button onclick="resetSim('moon')" class="py-2 text-xs bg-slate-800 text-slate-300 rounded-lg hover:bg-slate-700 transition-colors">Load Moon</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentPeriod = 4;
+        let simSpeed = 1;
+        let phase = 0;
+        let lastTime = performance.now();
+
+        // Elements
+        const canvas = document.getElementById('pendulumCanvas');
+        const ctx = canvas.getContext('2d');
+        const resPeriod = document.getElementById('res-period');
+        const resLength = document.getElementById('res-length');
+        const simLabel = document.getElementById('sim-label');
+
+        // Tabs
+        document.getElementById('tab-calc').onclick = () => switchTab('calculators');
+        document.getElementById('tab-theory').onclick = () => switchTab('theory');
+
+        function switchTab(tab) {
+            document.getElementById('view-calculators').classList.toggle('hidden', tab !== 'calculators');
+            document.getElementById('view-theory').classList.toggle('hidden', tab !== 'theory');
+            document.getElementById('tab-calc').className = tab === 'calculators' ? 'px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white text-blue-600 shadow-sm' : 'px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+            document.getElementById('tab-theory').className = tab === 'theory' ? 'px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white text-blue-600 shadow-sm' : 'px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        }
+
+        // Logic
+        function updateCalculations() {
+            const tEarth = parseFloat(document.getElementById('earth-period-input').value) || 0;
+            const gType = document.getElementById('gravity-select').value;
+            const gRatio = gType === 'custom' ? (parseFloat(document.getElementById('custom-ratio-input').value) || 0.1) : parseFloat(gType);
+            
+            const tMoon = tEarth / Math.sqrt(gRatio);
+            resPeriod.innerText = tMoon.toFixed(2);
+            
+            const tTarget = parseFloat(document.getElementById('target-period-input').value) || 0;
+            const gVal = parseFloat(document.getElementById('g-input').value) || 9.81;
+            const len = gVal * Math.pow(tTarget / (2 * Math.PI), 2);
+            resLength.innerText = len.toFixed(3);
+
+            document.getElementById('theory-calc-1').innerText = `For ${tEarth}s on Earth, T_Other ≈ ${tMoon.toFixed(2)}s`;
+            document.getElementById('theory-calc-2').innerText = `For ${tTarget}s period, L ≈ ${len.toFixed(3)}m`;
+        }
+
+        document.querySelectorAll('input, select').forEach(el => el.oninput = () => {
+            if (el.id === 'gravity-select') {
+                document.getElementById('custom-ratio-input').classList.toggle('hidden', el.value !== 'custom');
+            }
+            updateCalculations();
+        });
+
+        function simSet(type) {
+            phase = 0;
+            if (type === 'period') {
+                currentPeriod = parseFloat(resPeriod.innerText);
+                simLabel.innerText = `Other Body (${currentPeriod.toFixed(2)}s)`;
+            } else {
+                currentPeriod = parseFloat(document.getElementById('target-period-input').value);
+                simLabel.innerText = `Custom Length (${currentPeriod.toFixed(2)}s)`;
+            }
+        }
+
+        function resetSim(preset) {
+            phase = 0;
+            if (preset === 'earth') {
+                currentPeriod = 4;
+                simLabel.innerText = "Earth (4.00s)";
+            } else {
+                currentPeriod = 9.80;
+                simLabel.innerText = "Moon (9.80s)";
+            }
+        }
+
+        document.getElementById('speed-slider').oninput = (e) => {
+            simSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-val').innerText = simSpeed.toFixed(1) + 'x';
+        };
+
+        // Animation
+        function animate(time) {
+            const dt = (time - lastTime) / 1000;
+            lastTime = time;
+
+            const safeDt = Math.min(dt, 0.1);
+            phase += (2 * Math.PI / currentPeriod) * safeDt * simSpeed;
+
+            // Handle resize
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr || canvas.height !== rect.height * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+            
+            const pivotX = rect.width / 2;
+            const pivotY = 40;
+            const stringLen = 180;
+            const angle = (Math.PI / 6) * Math.cos(phase);
+
+            const bobX = pivotX + stringLen * Math.sin(angle);
+            const bobY = pivotY + stringLen * Math.cos(angle);
+
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(pivotX, pivotY);
+            ctx.lineTo(bobX, bobY);
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw bob
+            ctx.beginPath();
+            ctx.arc(bobX, bobY, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#3b82f6';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw pivot
+            ctx.beginPath();
+            ctx.arc(pivotX, pivotY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fill();
+
+            requestAnimationFrame(animate);
+        }
+
+        updateCalculations();
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>

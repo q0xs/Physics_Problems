@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rebound & Energy Loss - Task 06</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        input[type=range] { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Energy Decay Lab</h1>
+                <p class="text-slate-500 mt-1">Task 06 – Rebound Height with Energy Dissipation</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-sim" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-emerald-600 shadow-sm">Simulation</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Controls and Analysis -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div id="view-sim" class="space-y-6">
+                    <!-- Config Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2 text-emerald-900">
+                            <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
+                            Bouncing Parameters
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <label class="text-slate-600 font-medium">Initial Height (h₀)</label>
+                                        <span class="font-mono font-bold text-emerald-600" id="val-h0">2.0 m</span>
+                                    </div>
+                                    <input type="range" id="input-h0" min="1.0" max="5.0" step="0.1" value="2.0" class="w-full accent-emerald-500">
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <label class="text-slate-600 font-medium">Energy Loss per Bounce</label>
+                                        <span class="font-mono font-bold text-rose-500" id="val-loss">30%</span>
+                                    </div>
+                                    <input type="range" id="input-loss" min="0" max="90" step="5" value="30" class="w-full accent-rose-500">
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 flex flex-col justify-center">
+                                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Predicted Sequence</h3>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-xs font-mono">
+                                        <span>Bounce 1:</span>
+                                        <span id="calc-h1" class="font-bold text-slate-700">1.40 m</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs font-mono">
+                                        <span>Bounce 2:</span>
+                                        <span id="calc-h2" class="font-bold text-emerald-600 underline">0.98 m</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs font-mono">
+                                        <span>Bounce 3:</span>
+                                        <span id="calc-h3" class="font-bold text-slate-500">0.69 m</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Energy Monitor -->
+                    <div class="bg-slate-900 rounded-2xl shadow-xl p-6 text-white overflow-hidden relative">
+                        <div class="relative z-10">
+                            <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-4">Geometric Decay Analysis</h3>
+                            <div class="grid grid-cols-3 gap-4 mb-6">
+                                <div class="text-center">
+                                    <p class="text-[10px] opacity-50 mb-1">COEFFICIENT (r)</p>
+                                    <p class="text-xl font-mono font-bold" id="res-r">0.70</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-[10px] opacity-50 mb-1">H₂ FORMULA</p>
+                                    <p class="text-xl font-mono font-bold">h₀ · r²</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-[10px] opacity-50 mb-1">TOTAL LOSS</p>
+                                    <p class="text-xl font-mono font-bold text-rose-400" id="res-total-loss">51%</p>
+                                </div>
+                            </div>
+                            <div class="h-20 flex items-end gap-1" id="decay-bars">
+                                <!-- Bars generated by JS -->
+                            </div>
+                        </div>
+                        <div class="absolute top-0 right-0 p-8 opacity-10">
+                            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-8 animate-in fade-in duration-300">
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b pb-3 mb-4 text-emerald-800">Potential Energy & Height</h2>
+                        <p class="leading-relaxed">Mechanical energy \(E\) at the peak of a bounce is purely gravitational potential energy:</p>
+                        <div class="math-card">\[E = mgh \implies h \propto E\]</div>
+                        <p>Because \(m\) and \(g\) are constant, any fractional loss in energy results in the same fractional loss in height.</p>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b pb-3 mb-4 text-emerald-800">Geometric Sequences</h2>
+                        <p class="leading-relaxed">If the ball retains a fraction \(r\) of its energy after each bounce, the heights form a geometric progression:</p>
+                        <div class="math-card">\[h_n = h_0 \cdot r^n\]</div>
+                        <p>In this specific task:</p>
+                        <div class="math-card">\[h_0 = 2.0, \quad r = 1 - 0.30 = 0.70\]</div>
+                        <div class="math-card">\[h_2 = 2.0 \cdot (0.70)^2 = 0.98\ \mathrm{m}\]</div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Animation -->
+            <div class="lg:col-span-5 relative">
+                <div class="sticky top-8 bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                            <h3 class="text-slate-800 font-bold text-sm tracking-tight">Gravity Box</h3>
+                        </div>
+                        <button id="drop-btn" onclick="dropBall()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-200 active:scale-95">
+                            Drop Ball
+                        </button>
+                    </div>
+
+                    <canvas id="bounceCanvas" class="w-full h-[500px] bg-white cursor-crosshair"></canvas>
+                    
+                    <div class="p-4 bg-slate-50 flex justify-center gap-6 border-t border-slate-100">
+                        <div class="text-center">
+                            <span class="block text-[10px] text-slate-400 font-bold uppercase">Current Height</span>
+                            <span id="sim-h" class="text-emerald-600 font-mono font-bold">0.00 m</span>
+                        </div>
+                        <div class="text-center border-l border-slate-200 pl-6">
+                            <span class="block text-[10px] text-slate-400 font-bold uppercase">Bounce Count</span>
+                            <span id="sim-count" class="text-slate-700 font-mono font-bold">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parameters
+        let h0 = 2.0, loss = 0.30;
+        
+        // Sim State
+        let state = 'idle'; 
+        let ballY = 0; // In meters from ground
+        let velocity = 0;
+        let bounceCount = 0;
+        let lastTime = 0;
+        let currentMaxH = 2.0;
+        const g = 9.81;
+        const pixelsPerMeter = 80;
+        const groundY = 450; // Global reference for canvas ground line
+
+        const canvas = document.getElementById('bounceCanvas');
+        const ctx = canvas.getContext('2d');
+        const h0Input = document.getElementById('input-h0');
+        const lossInput = document.getElementById('input-loss');
+
+        function updateMath() {
+            h0 = parseFloat(h0Input.value);
+            loss = parseInt(lossInput.value) / 100;
+            const r = 1 - loss;
+
+            document.getElementById('val-h0').innerText = `${h0.toFixed(1)} m`;
+            document.getElementById('val-loss').innerText = `${(loss*100).toFixed(0)}%`;
+            document.getElementById('res-r').innerText = r.toFixed(2);
+            
+            const h1 = h0 * r;
+            const h2 = h0 * Math.pow(r, 2);
+            const h3 = h0 * Math.pow(r, 3);
+            
+            document.getElementById('calc-h1').innerText = `${h1.toFixed(2)} m`;
+            document.getElementById('calc-h2').innerText = `${h2.toFixed(2)} m`;
+            document.getElementById('calc-h3').innerText = `${h3.toFixed(2)} m`;
+            
+            document.getElementById('res-total-loss').innerText = `${((1 - Math.pow(r, 2)) * 100).toFixed(0)}%`;
+
+            // Update decay bars
+            const barContainer = document.getElementById('decay-bars');
+            barContainer.innerHTML = '';
+            for(let i=0; i<8; i++) {
+                const heightVal = h0 * Math.pow(r, i);
+                const bar = document.createElement('div');
+                bar.className = 'flex-1 bg-emerald-500/30 rounded-t-sm transition-all duration-500 border-t-2 border-emerald-400';
+                if(i === 2) bar.classList.add('bg-emerald-400');
+                bar.style.height = `${(heightVal / 5) * 100}%`;
+                barContainer.appendChild(bar);
+            }
+
+            if(state === 'idle') {
+                ballY = h0;
+                currentMaxH = h0;
+                bounceCount = 0;
+            }
+        }
+
+        function dropBall() {
+            state = 'falling';
+            ballY = h0;
+            velocity = 0;
+            bounceCount = 0;
+            currentMaxH = h0;
+            document.getElementById('drop-btn').innerText = "Reset";
+        }
+
+        function resetSim() {
+            state = 'idle';
+            updateMath();
+            document.getElementById('drop-btn').innerText = "Drop Ball";
+        }
+
+        h0Input.oninput = updateMath;
+        lossInput.oninput = updateMath;
+
+        function draw(timestamp) {
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.032);
+            lastTime = timestamp;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+            const ballRadius = 12;
+
+            // Draw Ground
+            ctx.beginPath();
+            ctx.moveTo(0, groundY);
+            ctx.lineTo(rect.width, groundY);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Height Markers
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.font = '10px Inter';
+            ctx.fillStyle = '#94a3b8';
+            for(let i=1; i<=5; i++) {
+                const markerY = groundY - (i * pixelsPerMeter);
+                ctx.beginPath();
+                ctx.moveTo(50, markerY);
+                ctx.lineTo(rect.width, markerY);
+                ctx.stroke();
+                ctx.fillText(`${i}m`, 20, markerY + 4);
+            }
+            ctx.setLineDash([]);
+
+            if (state !== 'idle') {
+                // Gravity Physics
+                velocity -= g * dt; // Downward is negative
+                ballY += velocity * dt;
+
+                // Bounce Logic
+                if (ballY <= 0) {
+                    ballY = 0;
+                    bounceCount++;
+                    const r = 1 - loss;
+                    velocity = Math.abs(velocity) * Math.sqrt(r);
+                    
+                    // Update stats
+                    document.getElementById('sim-count').innerText = bounceCount;
+                    
+                    // Check if energy is depleted
+                    if (velocity < 0.2) state = 'idle';
+                }
+            }
+
+            // Draw Ball Shadow
+            const shadowSize = Math.max(5, 20 - ballY * 10);
+            const shadowOpacity = Math.max(0, 0.2 - ballY * 0.05);
+            ctx.beginPath();
+            ctx.ellipse(rect.width/2, groundY, shadowSize, shadowSize/3, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(0,0,0,${shadowOpacity})`;
+            ctx.fill();
+
+            // Draw Ball
+            const visualY = groundY - (ballY * pixelsPerMeter);
+            ctx.beginPath();
+            ctx.arc(rect.width/2, visualY - ballRadius, ballRadius, 0, Math.PI * 2);
+            const grad = ctx.createRadialGradient(rect.width/2 - 4, visualY - ballRadius - 4, 2, rect.width/2, visualY - ballRadius, ballRadius);
+            grad.addColorStop(0, '#6ee7b7');
+            grad.addColorStop(1, '#059669');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = '#065f46';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Draw Measurement Line
+            if (state !== 'idle') {
+                ctx.beginPath();
+                ctx.moveTo(rect.width/2 + 20, visualY - ballRadius);
+                ctx.lineTo(rect.width/2 + 60, visualY - ballRadius);
+                ctx.strokeStyle = '#10b981';
+                ctx.setLineDash([2, 2]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            document.getElementById('sim-h').innerText = `${Math.max(0, ballY).toFixed(2)} m`;
+
+            requestAnimationFrame(draw);
+        }
+
+        updateMath();
+        requestAnimationFrame(draw);
+
+        // Click to drop logic on canvas
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            // Calculate height relative to groundY
+            const clickY = groundY - (e.clientY - rect.top);
+            h0Input.value = Math.max(1, Math.min(5, clickY / pixelsPerMeter)).toFixed(1);
+            updateMath();
+            dropBall();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonic Oscillator - Task 08</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        input[type=range] { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Energy & Force Lab</h1>
+                <p class="text-slate-500 mt-1">Task 08 – Harmonic Oscillator Potential Energy</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-sim" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-indigo-600 shadow-sm">Simulation</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Controls and Analysis -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <div id="view-sim" class="space-y-6">
+                    <!-- Config Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2 text-indigo-900">
+                            <span class="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                            System Properties
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <label class="text-slate-600 font-medium">Spring Constant (k)</label>
+                                    <span class="font-mono font-bold text-indigo-600" id="val-k">10 N/m</span>
+                                </div>
+                                <input type="range" id="input-k" min="1" max="50" step="1" value="10" class="w-full accent-indigo-500">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <label class="text-slate-600 font-medium">Mass (m)</label>
+                                    <span class="font-mono font-bold text-slate-700" id="val-m">2.0 kg</span>
+                                </div>
+                                <input type="range" id="input-m" min="0.5" max="10" step="0.5" value="2" class="w-full accent-slate-500">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <label class="text-slate-600 font-medium">Displacement (x)</label>
+                                    <span class="font-mono font-bold text-emerald-600" id="val-x">1.0 m</span>
+                                </div>
+                                <input type="range" id="input-x" min="-2.5" max="2.5" step="0.1" value="1.0" class="w-full accent-emerald-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Metrics -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-indigo-600 rounded-2xl shadow-lg p-5 text-white">
+                            <h3 class="text-[10px] font-bold opacity-70 uppercase mb-1">Restoring Force (F)</h3>
+                            <div class="flex items-baseline gap-1">
+                                <p class="text-2xl font-bold" id="res-F">-10.0</p>
+                                <span class="text-sm opacity-70">N</span>
+                            </div>
+                        </div>
+                        <div class="bg-emerald-600 rounded-2xl shadow-lg p-5 text-white">
+                            <h3 class="text-[10px] font-bold opacity-70 uppercase mb-1">Potential Energy (U)</h3>
+                            <div class="flex items-baseline gap-1">
+                                <p class="text-2xl font-bold" id="res-U">5.00</p>
+                                <span class="text-sm opacity-70">J</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Physics Insight -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-sm font-bold text-slate-900 mb-4">Oscillation Data</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between border-b border-slate-50 pb-2">
+                                <span class="text-slate-500">Angular Frequency (ω)</span>
+                                <span class="font-mono text-slate-700" id="data-omega">2.24 rad/s</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-50 pb-2">
+                                <span class="text-slate-500">Period (T)</span>
+                                <span class="font-mono text-slate-700" id="data-period">2.81 s</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-50 pb-2">
+                                <span class="text-slate-500">Force Derivative (-dU/dx)</span>
+                                <span class="font-mono text-indigo-600 font-bold" id="data-deriv">-10.0 N</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6 animate-in fade-in duration-300">
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 border-b pb-2 mb-4">The Restoring Force</h2>
+                        <p class="leading-relaxed mb-4">Hooke's Law describes a force that is directly proportional to displacement but in the opposite direction:</p>
+                        <div class="math-card">\[F(x) = -kx\]</div>
+                    </section>
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 border-b pb-2 mb-4">Work & Potential Energy</h2>
+                        <p class="leading-relaxed mb-4">The work done to displace the mass is stored as potential energy \(U\):</p>
+                        <div class="math-card">
+                            \[U(x) = -\int_0^x F(x')dx' = \int_0^x kx' dx' = \frac{1}{2}kx^2\]
+                        </div>
+                        <p class="mt-4">This quadratic relationship creates a <strong>parabolic potential well</strong>, which is the hallmark of any stable equilibrium point in nature.</p>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Visualizer -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Canvas Visualization -->
+                <div class="bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
+                    <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></div>
+                            <h3 class="text-white font-bold text-sm">Harmonic Motion Simulation</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="play-btn" onclick="toggleSim()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95">
+                                Play
+                            </button>
+                            <button onclick="resetSim()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                    <canvas id="oscillatorCanvas" class="w-full h-[220px] bg-slate-900"></canvas>
+                </div>
+
+                <!-- Dual Graph -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-slate-900 font-bold text-sm mb-4">Correlation: Force vs. Potential Energy</h3>
+                    <div class="h-[300px]">
+                        <canvas id="graphCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('oscillatorCanvas');
+        const ctx = canvas.getContext('2d');
+        const kInput = document.getElementById('input-k');
+        const mInput = document.getElementById('input-m');
+        const xInput = document.getElementById('input-x');
+
+        // State
+        let k = 10, m = 2, x = 1, v = 0, t = 0;
+        let isRunning = false;
+        let lastTimestamp = 0;
+        let chart;
+
+        function initChart() {
+            const ctxChart = document.getElementById('graphCanvas').getContext('2d');
+            
+            const labels = [];
+            for(let i = -3; i <= 3; i += 0.1) labels.push(i.toFixed(1));
+
+            chart = new Chart(ctxChart, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Potential Energy U(x) [J]',
+                            data: labels.map(lx => 0.5 * k * lx * lx),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Force F(x) [N]',
+                            data: labels.map(lx => -k * lx),
+                            borderColor: '#6366f1',
+                            borderDash: [5, 5],
+                            tension: 0,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { title: { display: true, text: 'Displacement x [m]' } },
+                        y: { 
+                            type: 'linear', display: true, position: 'left',
+                            title: { display: true, text: 'Energy (J)' }
+                        },
+                        y1: {
+                            type: 'linear', display: true, position: 'right',
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Force (N)' }
+                        }
+                    },
+                    plugins: {
+                        annotation: { /* We can add custom indicators later if needed */ }
+                    }
+                }
+            });
+        }
+
+        function updateLogic() {
+            if(!isRunning) {
+                k = parseFloat(kInput.value);
+                m = parseFloat(mInput.value);
+                x = parseFloat(xInput.value);
+                v = 0;
+            } else {
+                k = parseFloat(kInput.value);
+                m = parseFloat(mInput.value);
+            }
+
+            const F = -k * x;
+            const U = 0.5 * k * x * x;
+            const omega = Math.sqrt(k / m);
+            const period = 2 * Math.PI / omega;
+
+            document.getElementById('val-k').innerText = `${k} N/m`;
+            document.getElementById('val-m').innerText = `${m.toFixed(1)} kg`;
+            document.getElementById('val-x').innerText = `${x.toFixed(2)} m`;
+            document.getElementById('res-F').innerText = F.toFixed(1);
+            document.getElementById('res-U').innerText = U.toFixed(2);
+            document.getElementById('data-omega').innerText = `${omega.toFixed(2)} rad/s`;
+            document.getElementById('data-period').innerText = `${period.toFixed(2)} s`;
+            document.getElementById('data-deriv').innerText = `${(-k * x).toFixed(1)} N`;
+
+            // Update Chart Data
+            chart.data.datasets[0].data = chart.data.labels.map(lx => 0.5 * k * lx * lx);
+            chart.data.datasets[1].data = chart.data.labels.map(lx => -k * lx);
+            chart.update('none');
+        }
+
+        function toggleSim() {
+            isRunning = !isRunning;
+            document.getElementById('play-btn').innerText = isRunning ? "Pause" : "Play";
+            document.getElementById('play-btn').className = isRunning 
+                ? "bg-rose-600 hover:bg-rose-500 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+                : "bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all";
+            
+            xInput.disabled = isRunning;
+        }
+
+        function resetSim() {
+            isRunning = false;
+            document.getElementById('play-btn').innerText = "Play";
+            document.getElementById('play-btn').className = "bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all";
+            xInput.disabled = false;
+            x = parseFloat(xInput.value);
+            v = 0;
+            updateLogic();
+        }
+
+        function draw(timestamp) {
+            const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.032);
+            lastTimestamp = timestamp;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            if (isRunning) {
+                const a = (-k * x) / m;
+                v += a * dt;
+                x += v * dt;
+                updateLogic();
+            }
+
+            const centerY = rect.height / 2;
+            const centerX = rect.width / 2;
+            const scale = 60; // Pixels per meter
+
+            // Draw Wall
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(centerX - 180, centerY - 60, 20, 120);
+
+            // Draw Equilibrium Line
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(centerX, 20);
+            ctx.lineTo(centerX, rect.height - 20);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw Spring
+            const startX = centerX - 160;
+            const endX = centerX + (x * scale);
+            const loops = 20;
+            const springWidth = 20;
+            
+            ctx.beginPath();
+            ctx.moveTo(startX, centerY);
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2;
+            for(let i=0; i<=loops; i++) {
+                const px = startX + (endX - startX) * (i / loops);
+                const py = centerY + (i % 2 === 0 ? -springWidth : springWidth) * (i === 0 || i === loops ? 0 : 1);
+                ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // Draw Mass
+            const massSize = 40 + (m * 2);
+            ctx.fillStyle = '#f1f5f9';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(99, 102, 241, 0.5)';
+            ctx.fillRect(endX, centerY - massSize/2, massSize, massSize);
+            ctx.shadowBlur = 0;
+
+            // Draw Vector Arrows
+            if (Math.abs(x) > 0.1) {
+                // Force Vector
+                const forceLen = -x * 30;
+                ctx.beginPath();
+                ctx.moveTo(endX + massSize/2, centerY - massSize/2 - 10);
+                ctx.lineTo(endX + massSize/2 + forceLen, centerY - massSize/2 - 10);
+                ctx.strokeStyle = '#f43f5e';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                // Arrow head
+                const dir = forceLen > 0 ? 1 : -1;
+                ctx.beginPath();
+                ctx.moveTo(endX + massSize/2 + forceLen, centerY - massSize/2 - 10);
+                ctx.lineTo(endX + massSize/2 + forceLen - 8*dir, centerY - massSize/2 - 15);
+                ctx.lineTo(endX + massSize/2 + forceLen - 8*dir, centerY - massSize/2 - 5);
+                ctx.fillStyle = '#f43f5e';
+                ctx.fill();
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        // Tab Switching
+        document.getElementById('tab-sim').onclick = () => {
+            document.getElementById('view-sim').classList.remove('hidden');
+            document.getElementById('view-theory').classList.add('hidden');
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-indigo-600 shadow-sm';
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        };
+        document.getElementById('tab-theory').onclick = () => {
+            document.getElementById('view-sim').classList.add('hidden');
+            document.getElementById('view-theory').classList.remove('hidden');
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-indigo-600 shadow-sm';
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        };
+
+        // Inputs
+        [kInput, mInput, xInput].forEach(inp => inp.oninput = updateLogic);
+
+        // Start
+        initChart();
+        updateLogic();
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>

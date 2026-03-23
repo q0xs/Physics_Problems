@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collision & Energy - Task 04</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .step-pill {
+            @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
+        }
+        input[type=range] { cursor: pointer; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Kinetic Lab</h1>
+                <p class="text-slate-500 mt-1">Task 04 – Energy Descent & Sticky Collision</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-calc" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-orange-600 shadow-sm">Simulation</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Controls and Analysis -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div id="view-calculators" class="space-y-6">
+                    <!-- Config Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2">
+                            <span class="w-2 h-6 bg-orange-500 rounded-full"></span>
+                            Lab Configuration
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Block 1 Mass (m₁)</label>
+                                    <div class="flex items-center gap-4">
+                                        <input type="range" id="input-m1" min="0.1" max="2.0" step="0.1" value="0.5" class="flex-1 accent-orange-500">
+                                        <span class="text-sm font-mono font-bold text-orange-600 w-12" id="val-m1">0.5kg</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Release Height (h)</label>
+                                    <div class="flex items-center gap-4">
+                                        <input type="range" id="input-h" min="1.0" max="10.0" step="0.5" value="3.0" class="flex-1 accent-orange-500">
+                                        <span class="text-sm font-mono font-bold text-orange-600 w-12" id="val-h">3.0m</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Block 2 Mass (m₂)</label>
+                                <div class="flex items-center gap-4">
+                                    <input type="range" id="input-m2" min="0.1" max="5.0" step="0.1" value="1.5" class="flex-1 accent-slate-400">
+                                    <span class="text-sm font-mono font-bold text-slate-600 w-12" id="val-m2">1.5kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Data Dashboard -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                            <span class="step-pill bg-blue-100 text-blue-700 mb-3 inline-block">Stage 1: Bottom Speed</span>
+                            <div class="flex items-baseline gap-2">
+                                <p class="text-3xl font-bold text-slate-800" id="res-v1">7.67</p>
+                                <span class="text-slate-400 font-medium italic text-sm">m/s</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1 font-mono">v₁ = √(2gh)</p>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                            <span class="step-pill bg-orange-100 text-orange-700 mb-3 inline-block">Stage 2: Final Speed</span>
+                            <div class="flex items-baseline gap-2">
+                                <p class="text-3xl font-bold text-orange-600" id="res-vf">1.92</p>
+                                <span class="text-slate-400 font-medium italic text-sm">m/s</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1 font-mono">v_f = (m₁v₁) / (m₁+m₂)</p>
+                        </div>
+                    </div>
+
+                    <!-- Energy Efficiency Gauge -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-widest">Kinetic Energy Analysis</h3>
+                            <span id="res-energy-loss" class="text-rose-400 text-xs font-mono">-75.0% Loss</span>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[10px] text-slate-500 uppercase">
+                                    <span>Before Collision</span>
+                                    <span id="val-ke1">14.7 J</span>
+                                </div>
+                                <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="bar-ke1" class="h-full bg-blue-500" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-[10px] text-slate-500 uppercase">
+                                    <span>After Collision</span>
+                                    <span id="val-kef">3.7 J</span>
+                                </div>
+                                <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="bar-kef" class="h-full bg-orange-500" style="width: 25%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-8 animate-in fade-in duration-300">
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b pb-3 mb-4">Physics of the Descent</h2>
+                        <p class="leading-relaxed">In a frictionless environment, the potential energy at height \(h\) is converted entirely into kinetic energy at the bottom (\(h=0\)).</p>
+                        <div class="math-card">\[m_1gh = \frac{1}{2}m_1v_1^2 \implies v_1 = \sqrt{2gh}\]</div>
+                    </section>
+                    
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b pb-3 mb-4">Momentum Conservation</h2>
+                        <p class="leading-relaxed">During the collision, no external horizontal forces act on the system. Therefore, the total momentum remains constant, even though kinetic energy is lost to heat and deformation (Inelastic Collision).</p>
+                        <div class="math-card">\[p_{initial} = p_{final}\]</div>
+                        <div class="math-card">\[m_1v_1 + m_2(0) = (m_1 + m_2)v_f\]</div>
+                        <div class="math-card">\[v_f = \frac{m_1v_1}{m_1 + m_2}\]</div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Simulation -->
+            <div class="lg:col-span-5 relative">
+                <div class="sticky top-8 bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
+                    <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 backdrop-blur-md">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                            <h3 class="text-white font-semibold">Live Simulation</h3>
+                        </div>
+                        <button id="launch-btn" onclick="startSim()" class="bg-orange-600 hover:bg-orange-500 text-white px-4 py-1.5 rounded-full text-xs font-bold transition-all transform active:scale-95 shadow-lg shadow-orange-600/20">
+                            Launch
+                        </button>
+                    </div>
+
+                    <canvas id="physicsCanvas" class="w-full h-[450px] bg-slate-950"></canvas>
+                    
+                    <div class="p-6 bg-slate-900 border-t border-slate-800 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-widest">Instantaneous Speed</span>
+                            <span id="sim-v-label" class="text-orange-400 font-mono text-xs">0.00 m/s</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                            <div id="sim-v-bar" class="h-full bg-orange-500 transition-all duration-75" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parameters
+        let m1 = 0.5, h = 3.0, m2 = 1.5;
+        const g = 9.81;
+
+        // Visual Constants
+        const trackStartX = 60;
+        const trackFlatY = 380;
+        const scaleH = 25; // pixels per "meter" height
+        const scaleX = 35; // pixels per "meter" horizontal
+
+        // Sim State
+        let state = 'idle'; // idle, moving, collided
+        let block1 = { x: 0, y: 0, v: 0 };
+        let block2 = { x: 280, y: trackFlatY, v: 0 };
+        let lastTime = 0;
+
+        const canvas = document.getElementById('physicsCanvas');
+        const ctx = canvas.getContext('2d');
+        const m1Input = document.getElementById('input-m1');
+        const hInput = document.getElementById('input-h');
+        const m2Input = document.getElementById('input-m2');
+
+        function switchTab(tab) {
+            document.getElementById('view-calculators').classList.toggle('hidden', tab !== 'calculators');
+            document.getElementById('view-theory').classList.toggle('hidden', tab !== 'theory');
+            document.getElementById('tab-calc').className = tab === 'calculators' ? 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-orange-600 shadow-sm' : 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+            document.getElementById('tab-theory').className = tab === 'theory' ? 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-orange-600 shadow-sm' : 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        }
+
+        document.getElementById('tab-calc').onclick = () => switchTab('calculators');
+        document.getElementById('tab-theory').onclick = () => switchTab('theory');
+
+        function updateMath() {
+            m1 = parseFloat(m1Input.value);
+            h = parseFloat(hInput.value);
+            m2 = parseFloat(m2Input.value);
+
+            document.getElementById('val-m1').innerText = m1.toFixed(1) + 'kg';
+            document.getElementById('val-h').innerText = h.toFixed(1) + 'm';
+            document.getElementById('val-m2').innerText = m2.toFixed(1) + 'kg';
+
+            const v1_final = Math.sqrt(2 * g * h);
+            const vf = (m1 * v1_final) / (m1 + m2);
+
+            document.getElementById('res-v1').innerText = v1_final.toFixed(2);
+            document.getElementById('res-vf').innerText = vf.toFixed(2);
+
+            const ke1 = 0.5 * m1 * v1_final * v1_final;
+            const kef = 0.5 * (m1 + m2) * vf * vf;
+            const loss = ((ke1 - kef) / ke1) * 100;
+
+            document.getElementById('val-ke1').innerText = ke1.toFixed(1) + ' J';
+            document.getElementById('val-kef').innerText = kef.toFixed(1) + ' J';
+            document.getElementById('res-energy-loss').innerText = `-${loss.toFixed(1)}% Loss`;
+            document.getElementById('bar-kef').style.width = (kef / ke1 * 100) + '%';
+            
+            if(state === 'idle') resetSimState();
+        }
+
+        function resetSimState() {
+            state = 'idle';
+            block1.x = trackStartX;
+            block1.y = trackFlatY - (h * scaleH);
+            block1.v = 0;
+            block2.x = 280;
+            block2.v = 0;
+            document.getElementById('launch-btn').innerText = "Launch";
+        }
+
+        function startSim() {
+            if (state !== 'idle') {
+                resetSimState();
+                return;
+            }
+            state = 'moving';
+            document.getElementById('launch-btn').innerText = "Reset";
+        }
+
+        [m1Input, hInput, m2Input].forEach(inp => inp.oninput = updateMath);
+
+        function draw(timestamp) {
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.032);
+            lastTime = timestamp;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            // Track Design
+            const trackCurveRadius = h * scaleH; 
+            const trackCurveEndX = trackStartX + trackCurveRadius;
+
+            // Draw Track
+            ctx.beginPath();
+            ctx.moveTo(trackStartX, trackFlatY - (h * scaleH));
+            // Curve part
+            ctx.arc(trackCurveEndX, trackFlatY - trackCurveRadius, trackCurveRadius, Math.PI, Math.PI / 2, true);
+            // Flat part
+            ctx.lineTo(rect.width, trackFlatY);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Simulation Physics
+            if (state === 'moving') {
+                // Determine block1 current height and velocity
+                const currentHeight = (trackFlatY - block1.y) / scaleH;
+                const v_at_bottom = Math.sqrt(2 * g * h);
+                
+                if (block1.x < trackCurveEndX) {
+                    // On the curve
+                    // We use simple energy conservation for speed: v = sqrt(2g(h_initial - h_current))
+                    // To move the block, we'll increment its x and calculate y
+                    block1.v = Math.sqrt(2 * g * Math.max(0, h - currentHeight));
+                    // Smooth visual transition
+                    block1.x += (block1.v + 1) * dt * scaleX; 
+                    
+                    // Clamp and calculate y on arc: (x-cx)^2 + (y-cy)^2 = r^2
+                    const relX = block1.x - trackCurveEndX;
+                    if (relX < 0) {
+                        block1.y = (trackFlatY - trackCurveRadius) + Math.sqrt(trackCurveRadius**2 - relX**2);
+                    } else {
+                        block1.x = trackCurveEndX;
+                        block1.y = trackFlatY;
+                    }
+                } else {
+                    // On the flat
+                    block1.v = v_at_bottom;
+                    block1.y = trackFlatY;
+                    block1.x += block1.v * dt * scaleX;
+
+                    // Collision check
+                    if (block1.x >= block2.x - 30) {
+                        state = 'collided';
+                        const vf = (m1 * v_at_bottom) / (m1 + m2);
+                        block1.v = vf;
+                        block2.v = vf;
+                        // Snap together
+                        block1.x = block2.x - 30; 
+                    }
+                }
+            } else if (state === 'collided') {
+                block1.x += block1.v * dt * scaleX;
+                block2.x = block1.x + 30;
+                if (block1.x > rect.width) resetSimState();
+            }
+
+            // Draw Block 2
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(block2.x, block2.y - 30, 30, 30);
+            ctx.strokeStyle = '#475569';
+            ctx.strokeRect(block2.x, block2.y - 30, 30, 30);
+            
+            // Draw Block 1
+            ctx.fillStyle = '#f97316';
+            ctx.shadowBlur = state !== 'idle' ? 15 : 0;
+            ctx.shadowColor = 'rgba(249, 115, 22, 0.4)';
+            ctx.fillRect(block1.x - 15, block1.y - 30, 30, 30);
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#ea580c';
+            ctx.strokeRect(block1.x - 15, block1.y - 30, 30, 30);
+
+            // Dynamic Labels
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 10px Inter';
+            ctx.fillText(`m₁: ${m1}kg`, block1.x - 15, block1.y - 38);
+            ctx.fillText(`m₂: ${m2}kg`, block2.x, block2.y - 38);
+
+            // Update Speed Meter
+            const displayV = (state === 'collided') ? block2.v : block1.v;
+            document.getElementById('sim-v-label').innerText = displayV.toFixed(2) + ' m/s';
+            document.getElementById('sim-v-bar').style.width = Math.min(100, (displayV / 15) * 100) + '%';
+
+            requestAnimationFrame(draw);
+        }
+
+        updateMath();
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulum Velocity - Task 03</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .math-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin: 1rem 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Pendulum Energy</h1>
+                <p class="text-slate-500 mt-1">Task 03 – Velocity at the Bottom of the Swing</p>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button id="tab-calc" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-emerald-600 shadow-sm">Analysis</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Inputs and Results -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div id="view-calculators" class="space-y-6">
+                    <!-- Setup Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
+                            Initial Conditions
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Length (L)</label>
+                                    <span class="text-xs font-mono text-emerald-600" id="val-l">1.0 m</span>
+                                </div>
+                                <input type="range" id="input-l" min="0.5" max="5" step="0.1" value="1" class="w-full accent-emerald-500">
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">Release Angle (θ)</label>
+                                    <span class="text-xs font-mono text-emerald-600" id="val-theta">15°</span>
+                                </div>
+                                <input type="range" id="input-theta" min="5" max="60" step="1" value="15" class="w-full accent-emerald-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Dashboard -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-1">Height Drop (h)</h3>
+                            <p class="text-2xl font-bold text-slate-800" id="res-h">0.034 m</p>
+                            <div class="mt-2 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                                <div id="bar-h" class="h-full bg-slate-400 transition-all" style="width: 30%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-1">Max Speed (v)</h3>
+                            <p class="text-2xl font-bold text-emerald-600" id="res-v">0.82 m/s</p>
+                            <div class="mt-2 h-1 w-full bg-emerald-100 rounded-full overflow-hidden">
+                                <div id="bar-v" class="h-full bg-emerald-500 transition-all" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                            <h3 class="text-[10px] font-bold text-slate-400 uppercase mb-1">Period (T)</h3>
+                            <p class="text-2xl font-bold text-blue-500" id="res-t">2.01 s</p>
+                            <div class="mt-2 h-1 w-full bg-blue-100 rounded-full overflow-hidden">
+                                <div id="bar-t" class="h-full bg-blue-500 transition-all" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Chart/Visual -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-inner">
+                        <h3 class="text-sm font-semibold mb-4 text-slate-400">Energy Conversion Profile</h3>
+                        <div class="flex items-end gap-3 h-32">
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div id="meter-pe" class="w-full bg-orange-400 rounded-t-lg transition-all duration-75" style="height: 100%"></div>
+                                <span class="text-[9px] uppercase tracking-tighter opacity-60">Potential (mgh)</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div id="meter-ke" class="w-full bg-emerald-400 rounded-t-lg transition-all duration-75" style="height: 0%"></div>
+                                <span class="text-[9px] uppercase tracking-tighter opacity-60">Kinetic (½mv²)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6 animate-in fade-in duration-300">
+                    <section>
+                        <h2 class="text-2xl font-bold text-slate-900 border-b pb-3 mb-4">Energy Conservation</h2>
+                        <p class="leading-relaxed">When the bob is released, it converts its initial Gravitational Potential Energy (\(U\)) into Kinetic Energy (\(K\)) as it descends.</p>
+                        <div class="math-card">\[mgh = \frac{1}{2}mv^2\]</div>
+                        <p>Solving for velocity \(v\):</p>
+                        <div class="math-card">\[v = \sqrt{2gh}\]</div>
+                    </section>
+                    <section>
+                        <h2 class="text-xl font-bold text-slate-900 mb-3">Geometry of the Drop</h2>
+                        <p>The vertical height \(h\) depends on the length \(L\) and the angle \(\theta\):</p>
+                        <div class="math-card">\[h = L - L\cos\theta = L(1 - \cos\theta)\]</div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right: Simulation View -->
+            <div class="lg:col-span-5 relative">
+                <div class="sticky top-8 bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
+                    <div class="p-5 border-b border-slate-800 flex justify-between items-center">
+                        <h3 class="text-white font-semibold flex items-center gap-2">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            Swing Visualizer
+                        </h3>
+                        <div class="flex gap-2">
+                             <button onclick="resetSim()" class="bg-slate-800 hover:bg-slate-700 p-2 rounded-lg text-slate-400 transition-colors">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                             </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-950 flex items-center justify-center p-4">
+                        <canvas id="pendulumCanvas" class="w-full h-[380px]"></canvas>
+                    </div>
+
+                    <div class="p-6 bg-slate-900 border-t border-slate-800">
+                         <div class="flex justify-between items-center mb-2">
+                            <span class="text-slate-400 text-xs font-medium">Simulation Speed</span>
+                            <span id="speed-label" class="text-emerald-400 font-mono text-xs">1.0x</span>
+                        </div>
+                        <input type="range" id="speed-slider" min="0.2" max="2" step="0.1" value="1" class="w-full accent-emerald-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parameters
+        let L = 1.0;
+        let thetaMax = 15 * (Math.PI / 180);
+        let g = 9.81;
+        
+        let simTime = 0;
+        let simSpeed = 1.0;
+        let lastTimestamp = 0;
+
+        // Elements
+        const canvas = document.getElementById('pendulumCanvas');
+        const ctx = canvas.getContext('2d');
+        const inputL = document.getElementById('input-l');
+        const inputTheta = document.getElementById('input-theta');
+        const resH = document.getElementById('res-h');
+        const resV = document.getElementById('res-v');
+        const resT = document.getElementById('res-t');
+        const meterPe = document.getElementById('meter-pe');
+        const meterKe = document.getElementById('meter-ke');
+
+        function switchTab(tab) {
+            document.getElementById('view-calculators').classList.toggle('hidden', tab !== 'calculators');
+            document.getElementById('view-theory').classList.toggle('hidden', tab !== 'theory');
+            document.getElementById('tab-calc').className = tab === 'calculators' ? 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-emerald-600 shadow-sm' : 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+            document.getElementById('tab-theory').className = tab === 'theory' ? 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-white text-emerald-600 shadow-sm' : 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:text-slate-900';
+        }
+
+        document.getElementById('tab-calc').onclick = () => switchTab('calculators');
+        document.getElementById('tab-theory').onclick = () => switchTab('theory');
+
+        function updatePhysics() {
+            L = parseFloat(inputL.value);
+            const deg = parseFloat(inputTheta.value);
+            thetaMax = deg * (Math.PI / 180);
+
+            const h = L * (1 - Math.cos(thetaMax));
+            const v = Math.sqrt(2 * g * h);
+            const T = 2 * Math.PI * Math.sqrt(L / g);
+
+            document.getElementById('val-l').innerText = L.toFixed(1) + ' m';
+            document.getElementById('val-theta').innerText = deg + '°';
+            
+            resH.innerText = h.toFixed(3) + ' m';
+            resV.innerText = v.toFixed(2) + ' m/s';
+            resT.innerText = T.toFixed(2) + ' s';
+
+            document.getElementById('bar-h').style.width = Math.min(100, (h / 0.5) * 100) + '%';
+            document.getElementById('bar-v').style.width = Math.min(100, (v / 3) * 100) + '%';
+            document.getElementById('bar-t').style.width = Math.min(100, (T / 5) * 100) + '%';
+        }
+
+        [inputL, inputTheta].forEach(el => el.oninput = updatePhysics);
+        document.getElementById('speed-slider').oninput = (e) => {
+            simSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-label').innerText = simSpeed.toFixed(1) + 'x';
+        };
+
+        function resetSim() { simTime = 0; }
+
+        function draw(timestamp) {
+            const dt = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+            simTime += dt * simSpeed;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (canvas.width !== rect.width * dpr) {
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            // Physics calculation
+            const omega = Math.sqrt(g / L);
+            const currentTheta = thetaMax * Math.cos(omega * simTime);
+            
+            // Energy Calculation for Meters
+            const h_init = L * (1 - Math.cos(thetaMax));
+            const h_curr = L * (1 - Math.cos(currentTheta));
+            const ratioPE = h_curr / h_init;
+            const ratioKE = 1 - ratioPE;
+
+            meterPe.style.height = (ratioPE * 100) + '%';
+            meterKe.style.height = (ratioKE * 100) + '%';
+
+            // Visual Center
+            const cx = rect.width / 2;
+            const cy = 40;
+            const visualL = 250; // Pixels for 1m base length
+
+            const x = cx + visualL * Math.sin(currentTheta);
+            const y = cy + visualL * Math.cos(currentTheta);
+
+            // Draw Arc/Background
+            ctx.beginPath();
+            ctx.arc(cx, cy, visualL, (Math.PI/2) - thetaMax, (Math.PI/2) + thetaMax);
+            ctx.strokeStyle = '#1e293b';
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw String
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Bob
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, Math.PI * 2);
+            ctx.fillStyle = '#10b981';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(16, 185, 129, 0.4)';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Pivot
+            ctx.beginPath();
+            ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fill();
+
+            requestAnimationFrame(draw);
+        }
+
+        updatePhysics();
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>

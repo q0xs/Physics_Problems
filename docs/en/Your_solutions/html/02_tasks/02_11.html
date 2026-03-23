@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time-Dependent Force Lab - Task 11</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        canvas { display: block; width: 100% !important; height: 100% !important; }
+        .math-expr { font-size: 0.9rem; color: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200">
+    <!-- UI Overlay -->
+    <div class="fixed inset-0 pointer-events-none z-10 p-4 md:p-8 flex flex-col justify-between">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start gap-4 pointer-events-auto">
+            <div class="glass-panel p-6 rounded-2xl shadow-2xl max-w-md">
+                <h1 class="text-2xl font-bold text-white leading-tight">Dynamics Lab: Task 11</h1>
+                <p class="text-slate-400 text-sm mt-1">Particle Motion under $\vec{F}(t) = (15t, 3t-12, -6t^2)$</p>
+                <div class="mt-4 flex gap-2">
+                    <button id="btn-theory" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-bold transition-all border border-slate-600">Toggle Theory</button>
+                    <button id="btn-reset" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-bold transition-all shadow-lg shadow-indigo-500/20">Reset Motion</button>
+                </div>
+            </div>
+
+            <!-- Live Stats -->
+            <div class="glass-panel p-6 rounded-2xl shadow-2xl min-w-[240px]">
+                <h2 class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-4">State Vectors</h2>
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Position $\vec{r}(t)$ [m]</p>
+                        <p id="stat-pos" class="font-mono text-sm text-white">---</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Velocity $\vec{v}(t)$ [m/s]</p>
+                        <p id="stat-vel" class="font-mono text-sm text-emerald-400">---</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Force $\vec{F}(t)$ [N]</p>
+                        <p id="stat-force" class="font-mono text-sm text-rose-400">---</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Bottom Controls -->
+        <footer class="flex flex-col md:flex-row items-end justify-between gap-6 pointer-events-auto">
+            <!-- Theory Panel -->
+            <div id="theory-panel" class="hidden glass-panel p-6 rounded-2xl max-w-xl animate-in slide-in-from-left duration-300">
+                <h3 class="text-white font-bold mb-3 border-b border-slate-700 pb-2">Analytical Solution</h3>
+                <div class="space-y-3 text-[13px] text-slate-300 leading-relaxed">
+                    <p><strong>Integrated Velocity:</strong><br>
+                    $\vec{v}(t) = \begin{pmatrix} 2 + 2.5t^2 \\ 0.5t^2 - 4t \\ 1 - \frac{2}{3}t^3 \end{pmatrix}$</p>
+                    <p><strong>Integrated Position:</strong><br>
+                    $\vec{r}(t) = \begin{pmatrix} 5 + 2t + \frac{5}{6}t^3 \\ 2 + \frac{1}{6}t^3 - 2t^2 \\ -3 + t - \frac{1}{6}t^4 \end{pmatrix}$</p>
+                </div>
+            </div>
+
+            <!-- Time Slider -->
+            <div class="glass-panel p-6 rounded-2xl w-full md:w-96 shadow-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-slate-400">TIMELINE</span>
+                    <span id="display-time" class="font-mono text-indigo-400 font-bold">t = 0.00s</span>
+                </div>
+                <input type="range" id="time-slider" min="0" max="3" step="0.01" value="0" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                <div class="flex justify-between mt-2 text-[10px] text-slate-500 font-mono">
+                    <span>START</span>
+                    <span>LIMIT: 3.0s</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Background 3D Canvas -->
+    <div id="canvas-container" class="fixed inset-0"></div>
+
+    <script>
+        // Parameters
+        const m = 3.0;
+        const r0 = { x: 5, y: 2, z: -3 };
+        const v0 = { x: 2, y: 0, z: 1 };
+        let time = 0;
+        let isTheoryOpen = false;
+
+        // Three.js Core
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Grid & Environment
+        const grid = new THREE.GridHelper(100, 50, 0x1e293b, 0x0f172a);
+        grid.rotation.x = Math.PI / 2;
+        scene.add(grid);
+
+        // Object
+        const particleGeo = new THREE.SphereGeometry(0.3, 32, 32);
+        const particleMat = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x4f46e5 });
+        const particle = new THREE.Mesh(particleGeo, particleMat);
+        scene.add(particle);
+
+        // Vectors
+        const vArrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 1, 0x10b981);
+        const fArrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 1, 0xf43f5e);
+        scene.add(vArrow);
+        scene.add(fArrow);
+
+        // Trail
+        const trailPoints = [];
+        const trailGeo = new THREE.BufferGeometry();
+        const trailMat = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.6 });
+        const trailLine = new THREE.Line(trailGeo, trailMat);
+        scene.add(trailLine);
+
+        // Lighting
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(20, 20, 20);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        camera.position.set(15, 10, 25);
+        camera.lookAt(0, 0, 0);
+
+        // Physics Functions
+        function getPosition(t) {
+            return {
+                x: 5 + 2*t + (5/6)*Math.pow(t, 3),
+                y: 2 + (1/6)*Math.pow(t, 3) - 2*t*t,
+                z: -3 + t - (1/6)*Math.pow(t, 4)
+            };
+        }
+
+        function getVelocity(t) {
+            return {
+                x: 2 + 2.5*t*t,
+                y: 0.5*t*t - 4*t,
+                z: 1 - (2/3)*Math.pow(t, 3)
+            };
+        }
+
+        function getForce(t) {
+            return {
+                x: 15*t,
+                y: 3*t - 12,
+                z: -6*t*t
+            };
+        }
+
+        function updateSimulation() {
+            const pos = getPosition(time);
+            const vel = getVelocity(time);
+            const frc = getForce(time);
+
+            particle.position.set(pos.x, pos.y, pos.z);
+
+            // Update Velocity Arrow
+            const vVec = new THREE.Vector3(vel.x, vel.y, vel.z);
+            vArrow.setDirection(vVec.clone().normalize());
+            vArrow.setLength(vVec.length() * 0.2);
+            vArrow.position.set(pos.x, pos.y, pos.z);
+
+            // Update Force Arrow
+            const fVec = new THREE.Vector3(frc.x, frc.y, frc.z);
+            fArrow.setDirection(fVec.clone().normalize());
+            fArrow.setLength(fVec.length() * 0.1); // Scale force for visibility
+            fArrow.position.set(pos.x, pos.y, pos.z);
+
+            // Trail Logic
+            if (time === 0) {
+                trailPoints.length = 0;
+            }
+            // Generate trail up to current time
+            const pts = [];
+            for(let i=0; i<=time; i+=0.02) {
+                const p = getPosition(i);
+                pts.push(new THREE.Vector3(p.x, p.y, p.z));
+            }
+            trailGeo.setFromPoints(pts);
+
+            // Update Stats
+            document.getElementById('display-time').innerText = `t = ${time.toFixed(2)}s`;
+            document.getElementById('stat-pos').innerText = `[${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)}]`;
+            document.getElementById('stat-vel').innerText = `[${vel.x.toFixed(1)}, ${vel.y.toFixed(1)}, ${vel.z.toFixed(1)}]`;
+            document.getElementById('stat-force').innerText = `[${frc.x.toFixed(1)}, ${frc.y.toFixed(1)}, ${frc.z.toFixed(1)}]`;
+
+            // Dynamic Camera behavior
+            camera.lookAt(pos.x, pos.y, pos.z);
+        }
+
+        // Interaction
+        document.getElementById('time-slider').addEventListener('input', (e) => {
+            time = parseFloat(e.target.value);
+            updateSimulation();
+        });
+
+        document.getElementById('btn-reset').onclick = () => {
+            time = 0;
+            document.getElementById('time-slider').value = 0;
+            updateSimulation();
+        };
+
+        document.getElementById('btn-theory').onclick = () => {
+            isTheoryOpen = !isTheoryOpen;
+            document.getElementById('theory-panel').classList.toggle('hidden', !isTheoryOpen);
+        };
+
+        // Render Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // Resize
+        window.onresize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+
+        // Start
+        updateSimulation();
+        animate();
+    </script>
+</body>
+</html>

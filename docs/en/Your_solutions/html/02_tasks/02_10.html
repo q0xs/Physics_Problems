@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Field Dynamics - Task 10</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .vector-label {
+            position: absolute;
+            pointer-events: none;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+        }
+        canvas { display: block; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 p-4 md:p-8">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="bg-slate-900 rounded-2xl p-6 shadow-2xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-white tracking-tight">Particle Dynamics Lab</h1>
+                <p class="text-slate-400 mt-1">Task 10 – Motion in a Force Field & Power Transfer</p>
+            </div>
+            <div class="flex bg-slate-800 p-1 rounded-xl">
+                <button id="tab-sim" class="px-5 py-2 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-lg">3D Simulation</button>
+                <button id="tab-theory" class="px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white">Theory</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Controls and Analytics -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <div id="view-sim" class="space-y-6">
+                    <!-- Control Card -->
+                    <div class="bg-slate-900 rounded-2xl shadow-sm border border-slate-800 p-6">
+                        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2 text-indigo-400">
+                            <span class="w-2 h-6 bg-indigo-500 rounded-full"></span>
+                            Time Control
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <label class="text-slate-400">Current Time (t)</label>
+                                    <span class="font-mono font-bold text-indigo-400" id="val-t">0.00 s</span>
+                                </div>
+                                <input type="range" id="input-t" min="0" max="2" step="0.01" value="0" class="w-full accent-indigo-500">
+                                <div class="flex justify-between text-[10px] text-slate-500">
+                                    <span>0s</span>
+                                    <span>2s</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button id="play-btn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all active:scale-95">Play Sequence</button>
+                                <button id="reset-btn" class="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Components -->
+                    <div class="bg-slate-900 rounded-2xl shadow-sm border border-slate-800 p-6 space-y-4">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Vector Components (t)</h3>
+                        
+                        <div class="grid grid-cols-1 gap-3">
+                            <div class="flex justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+                                <span class="text-emerald-400 text-sm font-medium">Velocity (v)</span>
+                                <span class="font-mono text-sm" id="vec-v">[0, 0, 0] m/s</span>
+                            </div>
+                            <div class="flex justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+                                <span class="text-rose-400 text-sm font-medium">Force (F)</span>
+                                <span class="font-mono text-sm" id="vec-f">[0, 0, 0] N</span>
+                            </div>
+                            <div class="flex justify-between p-3 rounded-lg bg-indigo-900/40 border border-indigo-500/30">
+                                <span class="text-indigo-300 text-sm font-bold">Power (P)</span>
+                                <span class="font-mono text-sm font-bold text-white" id="val-p">0.00 W</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="flex justify-around p-4 bg-slate-900 rounded-2xl border border-slate-800">
+                        <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                            <div class="w-3 h-1 bg-emerald-500"></div> Velocity
+                        </div>
+                        <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                            <div class="w-3 h-1 bg-rose-500"></div> Force
+                        </div>
+                        <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                            <div class="w-3 h-1 bg-white"></div> Path
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory View -->
+                <div id="view-theory" class="hidden bg-slate-900 rounded-2xl shadow-sm border border-slate-800 p-8 space-y-6 animate-in fade-in duration-300">
+                    <h2 class="text-xl font-bold text-white border-b border-slate-700 pb-2 mb-4">Derivations</h2>
+                    <div class="space-y-4 text-sm text-slate-300">
+                        <p>Given \( m=0.5 \) kg and \( \vec{r}(t) = (5t^2-t, 2t^3, -3t+2) \):</p>
+                        <div class="bg-slate-800 p-3 rounded-lg font-mono text-xs">
+                            Velocity: v = (10t-1, 6t², -3)<br>
+                            Accel: a = (10, 12t, 0)<br>
+                            Force: F = m·a = (5, 6t, 0)
+                        </div>
+                        <p><strong>Instantaneous Power:</strong></p>
+                        <div class="bg-slate-800 p-3 rounded-lg font-mono text-xs">
+                            P = F · v = Fx·vx + Fy·vy + Fz·vz<br>
+                            P = 5(10t-1) + 6t(6t²) + 0(-3)<br>
+                            P = 50t - 5 + 36t³
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: 3D Visualizer & Graph -->
+            <div class="lg:col-span-8 space-y-6">
+                <!-- 3D Canvas -->
+                <div class="bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden relative group">
+                    <div id="canvas-container" class="w-full h-[450px]"></div>
+                    <div class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur p-2 rounded-lg border border-slate-700 text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                        Interactive 3D View
+                    </div>
+                    <!-- Axis Helper Labels -->
+                    <div class="absolute bottom-4 left-4 flex gap-4 text-[10px] font-bold">
+                        <span class="text-red-500">X-Axis</span>
+                        <span class="text-green-500">Y-Axis</span>
+                        <span class="text-blue-500">Z-Axis</span>
+                    </div>
+                </div>
+
+                <!-- Power Graph -->
+                <div class="bg-slate-900 rounded-3xl shadow-sm border border-slate-800 p-6 h-[300px]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-white font-bold text-sm">Power Transfer P(t)</h3>
+                        <span class="text-[10px] text-slate-500">36t³ + 50t - 5</span>
+                    </div>
+                    <div class="h-[220px]">
+                        <canvas id="powerChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Physics and Logic
+        const m = 0.5;
+        let t = 0;
+        let isPlaying = false;
+        let chart;
+
+        // Three.js Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        // Lighting
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        // Grid and Axes
+        const grid = new THREE.GridHelper(20, 20, 0x334155, 0x1e293b);
+        grid.rotation.x = Math.PI / 2;
+        scene.add(grid);
+        const axesHelper = new THREE.AxesHelper(5);
+        scene.add(axesHelper);
+
+        // Particle and Vectors
+        const particleGeo = new THREE.SphereGeometry(0.2, 32, 32);
+        const particleMat = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x444444 });
+        const particle = new THREE.Mesh(particleGeo, particleMat);
+        scene.add(particle);
+
+        const vArrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 1, 0x10b981);
+        const fArrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 1, 0xf43f5e);
+        scene.add(vArrow);
+        scene.add(fArrow);
+
+        // Trail
+        const trailPoints = [];
+        const trailGeo = new THREE.BufferGeometry();
+        const trailMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+        const trailLine = new THREE.Line(trailGeo, trailMat);
+        scene.add(trailLine);
+
+        camera.position.set(15, 10, 15);
+        camera.lookAt(5, 5, 0);
+
+        function getPosition(time) {
+            return {
+                x: 5 * time * time - time,
+                y: 2 * Math.pow(time, 3),
+                z: -3 * time + 2
+            };
+        }
+
+        function getVelocity(time) {
+            return {
+                x: 10 * time - 1,
+                y: 6 * time * time,
+                z: -3
+            };
+        }
+
+        function getForce(time) {
+            return {
+                x: 5,
+                y: 6 * time,
+                z: 0
+            };
+        }
+
+        function getPower(time) {
+            return 36 * Math.pow(time, 3) + 50 * time - 5;
+        }
+
+        function updateScene() {
+            const pos = getPosition(t);
+            const vel = getVelocity(t);
+            const frc = getForce(t);
+            const pwr = getPower(t);
+
+            particle.position.set(pos.x, pos.y, pos.z);
+
+            // Update Arrows
+            const vVec = new THREE.Vector3(vel.x, vel.y, vel.z);
+            vArrow.setDirection(vVec.clone().normalize());
+            vArrow.setLength(vVec.length() * 0.3);
+            vArrow.position.set(pos.x, pos.y, pos.z);
+
+            const fVec = new THREE.Vector3(frc.x, frc.y, frc.z);
+            fArrow.setDirection(fVec.clone().normalize());
+            fArrow.setLength(fVec.length() * 0.3);
+            fArrow.position.set(pos.x, pos.y, pos.z);
+
+            // Update UI
+            document.getElementById('val-t').innerText = t.toFixed(2) + " s";
+            document.getElementById('vec-v').innerText = `[${vel.x.toFixed(1)}, ${vel.y.toFixed(1)}, ${vel.z.toFixed(1)}]`;
+            document.getElementById('vec-f').innerText = `[${frc.x.toFixed(1)}, ${frc.y.toFixed(1)}, ${frc.z.toFixed(1)}]`;
+            document.getElementById('val-p').innerText = pwr.toFixed(2) + " W";
+            document.getElementById('input-t').value = t;
+
+            // Chart Indicator
+            chart.options.plugins.annotation.annotations.line1.value = t;
+            chart.update('none');
+        }
+
+        function generateFullTrail() {
+            const pts = [];
+            for(let i=0; i<=2; i+=0.02) {
+                const p = getPosition(i);
+                pts.push(new THREE.Vector3(p.x, p.y, p.z));
+            }
+            trailGeo.setFromPoints(pts);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('powerChart').getContext('2d');
+            const data = [];
+            const labels = [];
+            for(let i=0; i<=2; i+=0.05) {
+                labels.push(i.toFixed(2));
+                data.push(getPower(i));
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Power P(t)',
+                        data: data,
+                        borderColor: '#6366f1',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { display: true, grid: { color: '#1e293b' }, title: { display: true, text: 'Time (s)', color: '#94a3b8' } },
+                        y: { display: true, grid: { color: '#1e293b' }, title: { display: true, text: 'Watts (W)', color: '#94a3b8' } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        annotation: {
+                            annotations: {
+                                line1: {
+                                    type: 'line',
+                                    xMin: 0,
+                                    xMax: 0,
+                                    borderColor: 'white',
+                                    borderWidth: 2,
+                                    label: { content: 't', display: true }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            if(isPlaying) {
+                t += 0.005;
+                if(t > 2) t = 0;
+                updateScene();
+            }
+            renderer.render(scene, camera);
+        }
+
+        // Interaction
+        document.getElementById('input-t').addEventListener('input', (e) => {
+            t = parseFloat(e.target.value);
+            isPlaying = false;
+            document.getElementById('play-btn').innerText = "Play Sequence";
+            updateScene();
+        });
+
+        document.getElementById('play-btn').addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            document.getElementById('play-btn').innerText = isPlaying ? "Pause" : "Play Sequence";
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            t = 0;
+            isPlaying = false;
+            document.getElementById('play-btn').innerText = "Play Sequence";
+            updateScene();
+        });
+
+        // Tab Switching
+        document.getElementById('tab-sim').onclick = () => {
+            document.getElementById('view-sim').classList.remove('hidden');
+            document.getElementById('view-theory').classList.add('hidden');
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-lg';
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white';
+        };
+        document.getElementById('tab-theory').onclick = () => {
+            document.getElementById('view-sim').classList.add('hidden');
+            document.getElementById('view-theory').classList.remove('hidden');
+            document.getElementById('tab-theory').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all bg-indigo-600 text-white shadow-lg';
+            document.getElementById('tab-sim').className = 'px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white';
+        };
+
+        // Window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // Init
+        const pluginScript = document.createElement('script');
+        pluginScript.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation';
+        pluginScript.onload = () => {
+            initChart();
+            generateFullTrail();
+            updateScene();
+            animate();
+        };
+        document.head.appendChild(pluginScript);
+    </script>
+</body>
+</html>
