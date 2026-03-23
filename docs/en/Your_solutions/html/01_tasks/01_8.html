@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 08: Earth Rotation & Centripetal Acceleration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --accent: #6366f1;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .neo-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .neo-button:active { transform: scale(0.95); }
+
+        #canvas-wrap {
+            height: 550px;
+            border-radius: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #334155;
+            border-radius: 2px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--accent);
+            border: 2px solid white;
+        }
+
+        .math-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+        }
+    </style>
+</head>
+<body class="p-4 lg:p-10">
+    <div class="max-w-7xl mx-auto">
+        <!-- Dashboard Header -->
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="p-2 bg-indigo-500 rounded-lg shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-globe-americas text-white text-xl"></i>
+                    </div>
+                    <h1 class="text-4xl font-extrabold tracking-tight">Equatorial Dynamics</h1>
+                </div>
+                <p class="text-slate-400 font-medium">Quantifying centripetal forces at $R = 6378\text{ km}$</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <div class="glass px-5 py-3 rounded-2xl border-t border-white/10">
+                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Period (T)</span>
+                    <span class="text-lg font-bold mono">86,400s</span>
+                </div>
+                <div class="glass px-5 py-3 rounded-2xl border-t border-white/10">
+                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Gravity (g)</span>
+                    <span class="text-lg font-bold mono text-emerald-400">9.81m/s²</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Control Side -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Physics Control Panel -->
+                <div class="glass p-8 rounded-[2rem] space-y-8">
+                    <div class="flex justify-between items-end">
+                        <h2 class="text-xs font-black text-indigo-400 uppercase tracking-[0.2em]">Simulation Speed</h2>
+                        <span id="speedIndicator" class="text-2xl font-black mono text-white">1x</span>
+                    </div>
+                    
+                    <input type="range" id="speedRange" min="0" max="10000" step="100" value="1000">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="playBtn" class="neo-button bg-white text-slate-900 font-black py-3 rounded-xl flex items-center justify-center gap-2">
+                            <i class="fas fa-play"></i> PLAY
+                        </button>
+                        <button id="resetCam" class="neo-button bg-slate-800 text-white font-black py-3 rounded-xl border border-slate-700">
+                            RESET VIEW
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Metrics -->
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="glass p-6 rounded-3xl math-box border-l-4 border-indigo-500">
+                        <h3 class="text-[10px] font-black text-indigo-400 uppercase mb-3">Angular Velocity ($\omega$)</h3>
+                        <div class="flex items-baseline gap-2 mb-1">
+                            <span class="text-3xl font-black mono">7.27</span>
+                            <span class="text-indigo-400 font-bold tracking-tighter">×10⁻⁵ rad/s</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500">Constant: $2\pi / 86400$</p>
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl math-box border-l-4 border-rose-500">
+                        <h3 class="text-[10px] font-black text-rose-400 uppercase mb-3">Centripetal Acceleration ($a_c$)</h3>
+                        <div class="flex items-baseline gap-2 mb-1">
+                            <span id="accNum" class="text-4xl font-black mono text-white">0.0337</span>
+                            <span class="text-slate-400 font-bold">m/s²</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500">Formula: $a_c = \omega^2 R$</p>
+                    </div>
+
+                    <!-- Gravity Comparison -->
+                    <div class="glass p-6 rounded-3xl bg-emerald-500/5 border-l-4 border-emerald-500">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-[10px] font-black text-emerald-400 uppercase">Effective G-Force</h3>
+                            <span class="text-xs font-black text-emerald-500">-0.34%</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-[10px] font-bold">
+                                <span>Centripetal</span>
+                                <span class="text-slate-400">0.0337</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-rose-500 h-full w-[1%]"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-bold">
+                                <span>Gravitational</span>
+                                <span class="text-slate-400">9.8100</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Side -->
+            <div class="lg:col-span-8 space-y-6">
+                <div id="canvas-wrap" class="shadow-inner">
+                    <!-- HUD -->
+                    <div class="absolute inset-0 pointer-events-none p-8 flex flex-col justify-between z-10">
+                        <div class="flex justify-between items-start">
+                            <div class="glass px-4 py-2 rounded-xl flex items-center gap-3 border-white/5">
+                                <div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
+                                <span class="text-[10px] font-black tracking-widest text-slate-300">ACCELERATION VECTOR: TOWARD AXIS</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-end">
+                            <div class="glass p-4 rounded-2xl border-white/5 space-y-1">
+                                <p class="text-[10px] font-bold text-slate-500">POINT OF INTEREST</p>
+                                <p class="text-sm font-black text-indigo-400">Equator (0° Latitude)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Three.js Canvas -->
+                </div>
+
+                <!-- Solution Card -->
+                <div class="glass p-8 rounded-[2.5rem] relative overflow-hidden">
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                    <h3 class="text-lg font-black mb-6 flex items-center gap-2">
+                        <i class="fas fa-microchip text-indigo-400"></i> Mathematical Derivation
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <span class="text-xs font-black text-slate-500 uppercase block mb-2">Step 1: $\omega$</span>
+                            <p class="text-sm leading-relaxed text-slate-400">
+                                Calculate angular speed from period $T$. $\omega = \frac{2\pi}{86400} \approx 7.272 \times 10^{-5} \text{ rad/s}$.
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-black text-slate-500 uppercase block mb-2">Step 2: $a_c$</span>
+                            <p class="text-sm leading-relaxed text-slate-400">
+                                Apply $a_c = \omega^2 r$ using $r = 6,378,000 \text{ m}$. Resulting in $0.0337 \text{ m/s}^2$.
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-black text-slate-500 uppercase block mb-2">Conclusion</span>
+                            <p class="text-sm leading-relaxed text-slate-400">
+                                The centrifugal effect reduces weight at the equator by roughly $0.34\%$, a small but measurable physical reality.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scene, camera, renderer, earth, stars, arrow;
+        const container = document.getElementById('canvas-wrap');
+        const speedRange = document.getElementById('speedRange');
+        const speedIndicator = document.getElementById('speedIndicator');
+        const playBtn = document.getElementById('playBtn');
+
+        let isPlaying = true;
+        const R_EARTH = 5; // Visual scale
+        const OMEGA_BASE = 7.272e-5;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(40, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            camera.position.set(12, 6, 12);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+            const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+            sun.position.set(20, 10, 20);
+            scene.add(sun);
+
+            // Stars
+            const starGeo = new THREE.BufferGeometry();
+            const starCoords = [];
+            for(let i=0; i<2000; i++) {
+                starCoords.push((Math.random()-0.5)*400, (Math.random()-0.5)*400, (Math.random()-0.5)*400);
+            }
+            starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+            stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 }));
+            scene.add(stars);
+
+            // Earth
+            const geo = new THREE.SphereGeometry(R_EARTH, 64, 64);
+            const mat = new THREE.MeshPhongMaterial({
+                color: 0x2233ff,
+                emissive: 0x050511,
+                specular: 0x333333,
+                shininess: 15,
+            });
+            earth = new THREE.Mesh(geo, mat);
+            scene.add(earth);
+
+            // Atmosphere Glow
+            const glowGeo = new THREE.SphereGeometry(R_EARTH * 1.05, 64, 64);
+            const glowMat = new THREE.MeshBasicMaterial({ 
+                color: 0x6366f1, 
+                transparent: true, 
+                opacity: 0.1, 
+                side: THREE.BackSide 
+            });
+            scene.add(new THREE.Mesh(glowGeo, glowMat));
+
+            // Equator Line
+            const torusGeo = new THREE.TorusGeometry(R_EARTH + 0.02, 0.015, 16, 100);
+            const torusMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.6 });
+            const equator = new THREE.Mesh(torusGeo, torusMat);
+            equator.rotation.x = Math.PI/2;
+            earth.add(equator);
+
+            // Acceleration Arrow
+            const dir = new THREE.Vector3(-1, 0, 0);
+            const origin = new THREE.Vector3(R_EARTH + 1, 0, 0);
+            arrow = new THREE.ArrowHelper(dir, origin, 2, 0xef4444, 0.6, 0.4);
+            earth.add(arrow);
+
+            // Rotation Logic
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isPlaying) {
+                const multiplier = parseFloat(speedRange.value);
+                speedIndicator.innerText = (multiplier/1000).toFixed(1) + 'k x';
+                
+                // Rotation per frame (approx 60fps)
+                const step = (OMEGA_BASE * multiplier) / 60;
+                earth.rotation.y += step;
+                stars.rotation.y += step * 0.1;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Controls
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i> PAUSE' : '<i class="fas fa-play"></i> PLAY';
+        });
+
+        document.getElementById('resetCam').addEventListener('click', () => {
+            camera.position.set(12, 6, 12);
+            camera.lookAt(0, 0, 0);
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.offsetWidth / container.offsetHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+        });
+
+        window.onload = init;
+    </script>
+</body>
+</html>

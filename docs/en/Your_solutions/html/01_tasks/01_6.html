@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variable Velocity: Kinematics Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f1f5f9; }
+        .math-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .metric-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+        .custom-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            border: 4px solid white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div class="space-y-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 uppercase tracking-widest">
+                    Physics Analysis: Task 06
+                </span>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight">Variable Velocity Dynamics</h1>
+                <p class="text-slate-500 text-lg">Visualizing the Calculus of Motion: $x(t) \leftrightarrow v(t) \leftrightarrow a(t)$</p>
+            </div>
+            
+            <div class="bg-indigo-600 p-6 rounded-3xl shadow-xl text-white">
+                <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-1 text-center">Velocity Input</p>
+                <p class="text-xl font-mono font-bold">$v(t) = t^2 + 2t - 5$</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left: Live Metrics & Controls -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Timeline Controls -->
+                <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-sm font-black text-slate-400 uppercase tracking-widest">Simulation State</h2>
+                        <span id="timeVal" class="text-3xl font-mono font-black text-indigo-600">0.00s</span>
+                    </div>
+                    
+                    <input type="range" id="tSlider" min="0" max="4" step="0.01" value="0" class="custom-range w-full h-3 bg-slate-100 rounded-full appearance-none cursor-pointer mb-8">
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <button id="playBtn" class="bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-slate-800 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-play"></i> PLAY
+                        </button>
+                        <button id="targetBtn" class="bg-amber-500 text-white font-black py-4 rounded-2xl hover:bg-amber-600 transition">
+                            T = 3.0s
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Derivatives Breakdown -->
+                <div class="space-y-4">
+                    <!-- Position -->
+                    <div class="metric-card bg-white p-6 rounded-3xl shadow-lg border-l-8 border-blue-500">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xs font-black text-blue-500 uppercase tracking-widest">Position $x(t)$</h3>
+                            <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded">Integral</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span id="xVal" class="text-3xl font-mono font-bold text-slate-800">4.00</span>
+                            <span class="text-slate-400 font-bold text-xs">units</span>
+                        </div>
+                        <p class="text-[10px] font-mono text-slate-400 mt-2">$\frac{1}{3}t^3 + t^2 - 5t + 4$</p>
+                    </div>
+
+                    <!-- Velocity -->
+                    <div class="metric-card bg-white p-6 rounded-3xl shadow-lg border-l-8 border-emerald-500">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xs font-black text-emerald-500 uppercase tracking-widest">Velocity $v(t)$</h3>
+                            <span class="text-[10px] font-bold bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded">Base Function</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span id="vVal" class="text-3xl font-mono font-bold text-slate-800">-5.00</span>
+                            <span class="text-slate-400 font-bold text-xs">units/s</span>
+                        </div>
+                        <p class="text-[10px] font-mono text-slate-400 mt-2">$t^2 + 2t - 5$</p>
+                    </div>
+
+                    <!-- Acceleration -->
+                    <div class="metric-card bg-white p-6 rounded-3xl shadow-lg border-l-8 border-rose-500">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xs font-black text-rose-500 uppercase tracking-widest">Acceleration $a(t)$</h3>
+                            <span class="text-[10px] font-bold bg-rose-50 text-rose-600 px-2 py-0.5 rounded">Derivative</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span id="aVal" class="text-3xl font-mono font-bold text-slate-800">2.00</span>
+                            <span class="text-slate-400 font-bold text-xs">units/s²</span>
+                        </div>
+                        <p class="text-[10px] font-mono text-slate-400 mt-2">$2t + 2$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Graphical Representation -->
+            <div class="lg:col-span-8 space-y-6">
+                <!-- Physical Animation Track -->
+                <div class="bg-white p-6 rounded-[2rem] shadow-xl border border-slate-100 overflow-hidden relative">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-8">Real-time Position Track</h3>
+                    
+                    <div class="relative h-24 bg-slate-50 rounded-2xl flex items-center px-12 border border-slate-100">
+                        <!-- Scale Markers -->
+                        <div class="absolute inset-x-12 bottom-2 flex justify-between text-[9px] font-bold text-slate-300">
+                            <span>-10</span><span>-5</span><span>0</span><span>5</span><span>10</span><span>15</span>
+                        </div>
+                        
+                        <!-- Track Line -->
+                        <div class="w-full h-1 bg-slate-200 rounded-full"></div>
+                        
+                        <!-- Initial Position Marker -->
+                        <div class="absolute left-[calc(14.28%*14)] w-0.5 h-4 bg-slate-300"></div>
+
+                        <!-- Moving Object -->
+                        <div id="object" class="absolute w-10 h-10 bg-indigo-600 rounded-2xl shadow-xl shadow-indigo-200 flex items-center justify-center text-white text-xs transform -translate-x-1/2 transition-transform duration-75">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unified Graph -->
+                <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest">Motion Graphs</h3>
+                        <div class="flex gap-4">
+                            <span class="flex items-center text-[10px] font-bold text-blue-500"><span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span> $x(t)$</span>
+                            <span class="flex items-center text-[10px] font-bold text-emerald-500"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> $v(t)$</span>
+                            <span class="flex items-center text-[10px] font-bold text-rose-500"><span class="w-2 h-2 rounded-full bg-rose-500 mr-2"></span> $a(t)$</span>
+                        </div>
+                    </div>
+                    
+                    <div class="h-80 w-full">
+                        <canvas id="motionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Physics logic functions
+        const getX = (t) => (Math.pow(t, 3) / 3) + Math.pow(t, 2) - 5 * t + 4;
+        const getV = (t) => Math.pow(t, 2) + 2 * t - 5;
+        const getA = (t) => 2 * t + 2;
+
+        const tSlider = document.getElementById('tSlider');
+        const timeVal = document.getElementById('timeVal');
+        const xVal = document.getElementById('xVal');
+        const vVal = document.getElementById('vVal');
+        const aVal = document.getElementById('aVal');
+        const object = document.getElementById('object');
+        const playBtn = document.getElementById('playBtn');
+        const targetBtn = document.getElementById('targetBtn');
+
+        let isPlaying = false;
+        let animationId = null;
+        let motionChart = null;
+
+        function initChart() {
+            const ctx = document.getElementById('motionChart').getContext('2d');
+            const timeLabels = Array.from({length: 41}, (_, i) => i / 10);
+            
+            motionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [
+                        {
+                            label: 'Position x(t)',
+                            data: timeLabels.map(t => getX(t)),
+                            borderColor: '#3b82f6',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Velocity v(t)',
+                            data: timeLabels.map(t => getV(t)),
+                            borderColor: '#10b981',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Acceleration a(t)',
+                            data: timeLabels.map(t => getA(t)),
+                            borderColor: '#f43f5e',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Marker',
+                            data: [], // Updated dynamically
+                            borderColor: '#475569',
+                            backgroundColor: '#475569',
+                            pointRadius: 6,
+                            showLine: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { size: 10, weight: 'bold' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function update() {
+            const t = parseFloat(tSlider.value);
+            const x = getX(t);
+            const v = getV(t);
+            const a = getA(t);
+
+            // Update Text
+            timeVal.innerText = t.toFixed(2) + 's';
+            xVal.innerText = x.toFixed(2);
+            vVal.innerText = v.toFixed(2);
+            aVal.innerText = a.toFixed(2);
+
+            // Update Object Position
+            // Range is approx -10 to 15 (25 units total)
+            const trackWidth = 100; // %
+            const percent = ((x + 10) / 30) * 100;
+            object.style.left = `${percent}%`;
+
+            // Update Graph Marker
+            const pointIdx = Math.round(t * 10);
+            motionChart.data.datasets[3].data = Array(41).fill(null);
+            motionChart.data.datasets[3].data[pointIdx] = x; // Highlight position by default
+            motionChart.update('none');
+
+            // Visual feedback for target t=3
+            if (Math.abs(t - 3) < 0.05) {
+                targetBtn.classList.replace('bg-amber-500', 'bg-emerald-500');
+            } else {
+                targetBtn.classList.replace('bg-emerald-500', 'bg-amber-500');
+            }
+        }
+
+        function animate() {
+            if (!isPlaying) return;
+            let t = parseFloat(tSlider.value);
+            t += 0.01;
+            if (t > 4) {
+                t = 4;
+                isPlaying = false;
+                playBtn.innerHTML = '<i class="fas fa-play"></i> PLAY';
+            }
+            tSlider.value = t;
+            update();
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Listeners
+        tSlider.addEventListener('input', update);
+
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i> PAUSE' : '<i class="fas fa-play"></i> PLAY';
+            if (isPlaying) {
+                if (tSlider.value >= 4) tSlider.value = 0;
+                animate();
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        targetBtn.addEventListener('click', () => {
+            tSlider.value = 3;
+            update();
+        });
+
+        // Init
+        initChart();
+        update();
+    </script>
+</body>
+</html>

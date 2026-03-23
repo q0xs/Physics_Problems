@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relative Velocity: Boat Crossing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f8fafc; }
+        .river-bg {
+            background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .water-texture {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='20' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 Q 25 0 50 10 T 100 10' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'/%3E%3C/svg%3E");
+            animation: flow 4s linear infinite;
+        }
+        @keyframes flow {
+            from { transform: translateX(-50%); }
+            to { transform: translateX(0%); }
+        }
+        .compass-ring {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div class="space-y-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-700 uppercase tracking-widest">
+                    Physics Analysis: Task 05
+                </span>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight">Relative Velocity & Vectors</h1>
+                <p class="text-slate-500 text-lg">Calculating the optimal heading to counteract river current.</p>
+            </div>
+            
+            <div class="flex gap-3">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">River Current</p>
+                    <p class="text-lg font-mono text-sky-600 font-bold">2.0 m/s East</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Boat Speed (Water)</p>
+                    <p class="text-lg font-mono text-indigo-600 font-bold">5.0 m/s</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left: Controls & Vector Math -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Angle Control -->
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-sm font-black text-slate-800 uppercase tracking-widest">Heading Control</h2>
+                        <span id="angleDisplay" class="bg-indigo-600 text-white px-3 py-1 rounded-lg font-mono font-bold">0.0°</span>
+                    </div>
+
+                    <div class="relative h-48 flex justify-center items-center mb-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <svg width="120" height="120" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" stroke-width="2" />
+                            <text x="50" y="15" text-anchor="middle" font-size="8" fill="#94a3b8" font-weight="bold">NORTH</text>
+                            <g id="compassNeedle" class="compass-ring">
+                                <line x1="50" y1="50" x2="50" y2="10" stroke="#4f46e5" stroke-width="3" marker-end="url(#arrowhead)" />
+                                <circle cx="50" cy="50" r="3" fill="#4f46e5" />
+                            </g>
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#4f46e5" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <input type="range" id="angleSlider" min="-90" max="90" step="0.1" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                    <div class="flex justify-between mt-2 text-[10px] font-bold text-slate-400">
+                        <span>WEST (90°)</span>
+                        <span>NORTH (0°)</span>
+                        <span>EAST (-90°)</span>
+                    </div>
+                    
+                    <button id="solveBtn" class="w-full mt-6 bg-amber-500 text-white font-black py-3 rounded-xl hover:bg-amber-600 transition shadow-lg shadow-amber-200">
+                        AUTO-SOLVE (23.58°)
+                    </button>
+                </div>
+
+                <!-- Math Breakdown -->
+                <div class="bg-slate-900 p-6 rounded-3xl shadow-xl text-white">
+                    <h3 class="text-xs font-black text-slate-400 uppercase mb-4 tracking-widest">Velocity Components</h3>
+                    <div class="space-y-4 font-mono text-sm">
+                        <div class="flex justify-between border-b border-slate-800 pb-2">
+                            <span class="text-slate-500">v_water</span>
+                            <span class="text-sky-400">(2.00, 0.00)</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800 pb-2">
+                            <span class="text-slate-500">v_boat/water</span>
+                            <span id="vBoatWater" class="text-indigo-400">(-0.00, 5.00)</span>
+                        </div>
+                        <div class="flex justify-between pt-2">
+                            <span class="text-white font-bold">v_ground</span>
+                            <span id="vGround" class="text-emerald-400 font-bold">(2.00, 5.00)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: River Simulation -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white p-2 rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+                    <!-- River Viewport -->
+                    <div class="river-bg h-96 rounded-2xl relative">
+                        <div class="water-texture"></div>
+                        
+                        <!-- River Banks -->
+                        <div class="absolute top-0 w-full h-4 bg-emerald-800/20 backdrop-blur-sm border-b border-white/10 z-10 flex items-center justify-center">
+                            <span class="text-[8px] text-white font-bold tracking-widest">NORTH BANK (Goal)</span>
+                        </div>
+                        <div class="absolute bottom-0 w-full h-4 bg-emerald-800/20 backdrop-blur-sm border-t border-white/10 z-10 flex items-center justify-center">
+                            <span class="text-[8px] text-white font-bold tracking-widest">SOUTH BANK (Start)</span>
+                        </div>
+
+                        <!-- Grid -->
+                        <svg id="simCanvas" class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <defs>
+                                <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                                    <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100" height="100" fill="url(#grid)" />
+                            
+                            <!-- Ideal Path Guide -->
+                            <line x1="50" y1="0" x2="50" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="0.5" stroke-dasharray="2" />
+                            
+                            <!-- Boat Trajectory Path -->
+                            <path id="trajectory" d="" fill="none" stroke="rgba(252, 211, 77, 0.5)" stroke-width="0.8" />
+
+                            <!-- Boat -->
+                            <g id="boat">
+                                <path d="M-2,1 L0,-3 L2,1 Z" fill="white" stroke="#1e293b" stroke-width="0.5" />
+                                <circle cx="0" cy="0" r="0.5" fill="red" />
+                            </g>
+                        </svg>
+                        
+                        <!-- HUD -->
+                        <div class="absolute top-8 left-8 bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-white">
+                            <p class="text-[10px] font-bold text-sky-300 uppercase mb-1">Crossing Time</p>
+                            <p id="timer" class="text-3xl font-black font-mono">00:00.00</p>
+                        </div>
+
+                        <div id="successOverlay" class="absolute inset-0 bg-emerald-500/80 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500 z-50">
+                            <div class="text-center text-white">
+                                <i class="fas fa-check-circle text-6xl mb-4"></i>
+                                <h2 class="text-3xl font-black">SUCCESSFUL CROSS</h2>
+                                <p id="finalStats" class="mt-2 font-mono">Time: 43.64s | Drift: 0.00m</p>
+                                <button onclick="resetSim()" class="mt-6 bg-white text-emerald-600 font-black px-6 py-2 rounded-full hover:bg-slate-100 transition">TRY AGAIN</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Controls -->
+                <div class="flex gap-4">
+                    <button id="startBtn" class="flex-1 bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-ship"></i> LAUNCH BOAT
+                    </button>
+                    <button id="resetSimBtn" class="px-6 bg-slate-200 text-slate-700 font-black rounded-2xl hover:bg-slate-300 transition">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const angleSlider = document.getElementById('angleSlider');
+        const angleDisplay = document.getElementById('angleDisplay');
+        const compassNeedle = document.getElementById('compassNeedle');
+        const vBoatWater = document.getElementById('vBoatWater');
+        const vGround = document.getElementById('vGround');
+        const boat = document.getElementById('boat');
+        const timer = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const solveBtn = document.getElementById('solveBtn');
+        const successOverlay = document.getElementById('successOverlay');
+        const finalStats = document.getElementById('finalStats');
+        const trajectory = document.getElementById('trajectory');
+
+        let isRunning = false;
+        let time = 0;
+        let boatX = 50;
+        let boatY = 95;
+        let animationId;
+        let pathData = "";
+
+        const RIVER_WIDTH = 200; // meters
+        const SCALE = 90 / RIVER_WIDTH; // pixels per meter (approx)
+        const RIVER_VEL_X = 2.0;
+        const BOAT_SPEED = 5.0;
+
+        function updateUI() {
+            const angleDeg = parseFloat(angleSlider.value);
+            angleDisplay.innerText = `${Math.abs(angleDeg).toFixed(1)}° ${angleDeg >= 0 ? 'W' : 'E'}`;
+            compassNeedle.style.transform = `rotate(${-angleDeg}deg)`;
+
+            const angleRad = (angleDeg * Math.PI) / 180;
+            const vBW_x = -BOAT_SPEED * Math.sin(angleRad);
+            const vBW_y = BOAT_SPEED * Math.cos(angleRad);
+            
+            const vG_x = vBW_x + RIVER_VEL_X;
+            const vG_y = vBW_y;
+
+            vBoatWater.innerText = `(${vBW_x.toFixed(2)}, ${vBW_y.toFixed(2)})`;
+            vGround.innerText = `(${vG_x.toFixed(2)}, ${vG_y.toFixed(2)})`;
+
+            // Rotate boat visual based on heading
+            if (!isRunning) {
+                boat.setAttribute('transform', `translate(${boatX}, ${boatY}) rotate(${-angleDeg})`);
+            }
+        }
+
+        function solve() {
+            // sin(theta) = 2/5
+            const idealAngle = Math.asin(2/5) * (180 / Math.PI);
+            angleSlider.value = idealAngle.toFixed(2);
+            updateUI();
+        }
+
+        function step() {
+            if (!isRunning) return;
+
+            const angleDeg = parseFloat(angleSlider.value);
+            const angleRad = (angleDeg * Math.PI) / 180;
+            
+            const vG_x = -BOAT_SPEED * Math.sin(angleRad) + RIVER_VEL_X;
+            const vG_y = BOAT_SPEED * Math.cos(angleRad);
+
+            // dt in seconds (approx 60fps)
+            const dt = 1/60;
+            time += dt;
+
+            // Update physical coordinates
+            // Map 200m width to 90 SVG units (from 95 to 5)
+            const mPerTick_x = vG_x * dt;
+            const mPerTick_y = vG_y * dt;
+
+            // We move north (+y in physics, -y in SVG)
+            boatX += mPerTick_x * (90/200);
+            boatY -= mPerTick_y * (90/200);
+
+            boat.setAttribute('transform', `translate(${boatX}, ${boatY}) rotate(${-angleDeg})`);
+            
+            pathData += ` ${boatX},${boatY}`;
+            trajectory.setAttribute('d', "M" + pathData);
+
+            timer.innerText = formatTime(time);
+
+            if (boatY <= 5) {
+                isRunning = false;
+                showSuccess(time, (boatX - 50) * (200/90));
+            } else {
+                animationId = requestAnimationFrame(step);
+            }
+        }
+
+        function formatTime(s) {
+            const mins = Math.floor(s / 60);
+            const secs = Math.floor(s % 60);
+            const ms = Math.floor((s % 1) * 100);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        }
+
+        function showSuccess(t, drift) {
+            successOverlay.style.opacity = "1";
+            successOverlay.style.pointerEvents = "auto";
+            finalStats.innerText = `Time: ${t.toFixed(2)}s | Drift: ${Math.abs(drift).toFixed(2)}m ${drift > 0.1 ? 'East' : drift < -0.1 ? 'West' : '(Perfect!)'}`;
+        }
+
+        function resetSim() {
+            isRunning = false;
+            cancelAnimationFrame(animationId);
+            time = 0;
+            boatX = 50;
+            boatY = 95;
+            pathData = "50,95";
+            trajectory.setAttribute('d', "");
+            timer.innerText = "00:00.00";
+            successOverlay.style.opacity = "0";
+            successOverlay.style.pointerEvents = "none";
+            startBtn.disabled = false;
+            startBtn.classList.remove('opacity-50');
+            updateUI();
+        }
+
+        angleSlider.addEventListener('input', updateUI);
+        solveBtn.addEventListener('click', solve);
+        resetSimBtn.addEventListener('click', resetSim);
+
+        startBtn.addEventListener('click', () => {
+            if (isRunning) return;
+            isRunning = true;
+            startBtn.disabled = true;
+            startBtn.classList.add('opacity-50');
+            pathData = `${boatX},${boatY}`;
+            step();
+        });
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>

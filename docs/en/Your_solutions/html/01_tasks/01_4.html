@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Calculus: Motion Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f0f2f5; }
+        .grid-bg {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-color: #ffffff;
+        }
+        .vector-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div class="space-y-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 uppercase tracking-widest">
+                    Physics Analysis: Task 04
+                </span>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight">Vector Calculus & Motion</h1>
+                <p class="text-slate-500 text-lg max-w-2xl">Deriving Velocity $\vec{v}(t)$ and Acceleration $\vec{a}(t)$ from Position $\vec{r}(t)$.</p>
+            </div>
+            
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Base Equation</p>
+                <p class="text-xl font-mono text-slate-800 font-bold">$\vec{r}(t) = 3t^2 \hat{i} + (5t - 8t^2) \hat{j}$</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left: Calculus & Math -->
+            <div class="lg:col-span-4 space-y-4">
+                <!-- Position Card -->
+                <div class="vector-card bg-white p-6 rounded-3xl shadow-xl border-l-8 border-slate-400">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Position $\vec{r}(t)$</h3>
+                    <div class="text-lg font-mono font-bold text-slate-800" id="posFormula">
+                        $(3.00) \hat{i} + (5.00) \hat{j}$
+                    </div>
+                </div>
+
+                <!-- Velocity Card -->
+                <div class="vector-card bg-white p-6 rounded-3xl shadow-xl border-l-8 border-emerald-500">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="text-xs font-black text-emerald-500 uppercase tracking-widest">Velocity $\vec{v}(t) = \vec{r}\,'(t)$</h3>
+                        <span id="vMag" class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">|v| = 0.0</span>
+                    </div>
+                    <div class="text-lg font-mono font-bold text-slate-800" id="velFormula">
+                        $(6.00t) \hat{i} + (5-16t) \hat{j}$
+                    </div>
+                </div>
+
+                <!-- Acceleration Card -->
+                <div class="vector-card bg-white p-6 rounded-3xl shadow-xl border-l-8 border-rose-500">
+                    <h3 class="text-xs font-black text-rose-500 uppercase tracking-widest mb-1">Acceleration $\vec{a}(t) = \vec{v}\,'(t)$</h3>
+                    <div class="text-lg font-mono font-bold text-slate-800">
+                        $6 \hat{i} - 16 \hat{j}$
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 italic font-medium">Constant acceleration detected.</p>
+                </div>
+
+                <!-- Controls -->
+                <div class="bg-indigo-900 p-8 rounded-3xl shadow-2xl text-white mt-8">
+                    <div class="flex justify-between mb-4 items-center">
+                        <span class="text-xs font-bold uppercase tracking-widest text-indigo-300">Timeline</span>
+                        <span id="timeDisplay" class="font-mono text-2xl font-black">0.00s</span>
+                    </div>
+                    <input type="range" id="tSlider" min="0" max="1.5" step="0.001" value="0" class="w-full h-2 bg-indigo-800 rounded-lg appearance-none cursor-pointer">
+                    
+                    <div class="flex gap-4 mt-8">
+                        <button id="playBtn" class="flex-1 bg-white text-indigo-900 font-black py-3 rounded-xl hover:bg-indigo-50 transition shadow-lg">
+                            <i class="fas fa-play mr-2"></i> PLAY
+                        </button>
+                        <button id="resetBtn" class="w-12 h-12 flex items-center justify-center rounded-xl border-2 border-indigo-700 hover:bg-indigo-800 transition">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Graph -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100 grid-bg relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                            <i class="fas fa-chart-line mr-3 text-indigo-500"></i> Vector Field View
+                        </h2>
+                        <div class="flex gap-4">
+                            <span class="flex items-center text-[10px] font-bold text-emerald-600">
+                                <span class="w-3 h-0.5 bg-emerald-500 mr-1.5"></span> Velocity
+                            </span>
+                            <span class="flex items-center text-[10px] font-bold text-rose-600">
+                                <span class="w-3 h-0.5 bg-rose-500 mr-1.5"></span> Acceleration
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="relative w-full aspect-square md:aspect-video border border-slate-200 rounded-2xl overflow-hidden bg-white/50 shadow-inner">
+                        <svg id="canvas" class="w-full h-full" viewBox="0 -10 10 12">
+                            <!-- Coordinate System -->
+                            <line x1="-100" y1="0" x2="100" y2="0" stroke="#e2e8f0" stroke-width="0.05" />
+                            <line x1="0" y1="-100" x2="0" y2="100" stroke="#e2e8f0" stroke-width="0.05" />
+                            
+                            <!-- Trace Path -->
+                            <path id="trace" d="" fill="none" stroke="#6366f1" stroke-width="0.06" stroke-dasharray="0.1" opacity="0.4" />
+                            
+                            <!-- Vector Arrows (Velocity) -->
+                            <line id="vVector" x1="0" y1="0" x2="0" y2="0" stroke="#10b981" stroke-width="0.1" marker-end="url(#arrowV)" />
+                            
+                            <!-- Vector Arrows (Acceleration) -->
+                            <line id="aVector" x1="0" y1="0" x2="0" y2="0" stroke="#f43f5e" stroke-width="0.1" marker-end="url(#arrowA)" />
+                            
+                            <!-- Object Marker -->
+                            <circle id="object" cx="0" cy="0" r="0.15" fill="#1e293b" />
+
+                            <!-- Marker Definitions -->
+                            <defs>
+                                <marker id="arrowV" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+                                </marker>
+                                <marker id="arrowA" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Dynamics Chart -->
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Component Magnitude Tracking</h3>
+                    <div class="h-48">
+                        <canvas id="compChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tSlider = document.getElementById('tSlider');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const posFormula = document.getElementById('posFormula');
+        const velFormula = document.getElementById('velFormula');
+        const vMagDisplay = document.getElementById('vMag');
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const trace = document.getElementById('trace');
+        const objectMarker = document.getElementById('object');
+        const vVector = document.getElementById('vVector');
+        const aVector = document.getElementById('aVector');
+
+        let isPlaying = false;
+        let animationFrame;
+        let compChart;
+
+        // Physics Functions
+        const pos = (t) => ({ x: 3 * t**2, y: 5*t - 8 * t**2 });
+        const vel = (t) => ({ x: 6 * t, y: 5 - 16 * t });
+        const acc = () => ({ x: 6, y: -16 });
+
+        function init() {
+            // Setup Y-Up coordinate system transform in SVG
+            const canvas = document.getElementById('canvas');
+            canvas.setAttribute('transform', 'scale(1, -1)');
+
+            // Pre-calculate trace
+            let pathD = "M";
+            for(let t=0; t<=1.5; t+=0.05) {
+                const p = pos(t);
+                pathD += `${p.x} ${p.y} L`;
+            }
+            trace.setAttribute('d', pathD.slice(0, -2));
+
+            // Setup Chart
+            const ctx = document.getElementById('compChart').getContext('2d');
+            const tLabels = Array.from({length: 151}, (_, i) => (i/100).toFixed(2));
+            compChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: tLabels,
+                    datasets: [
+                        { label: 'vx(t)', data: tLabels.map(t => vel(t).x), borderColor: '#10b981', borderWidth: 1.5, pointRadius: 0 },
+                        { label: 'vy(t)', data: tLabels.map(t => vel(t).y), borderColor: '#34d399', borderWidth: 1.5, borderDash: [5,5], pointRadius: 0 },
+                        { label: 'Current vx', data: [], pointRadius: 5, pointBackgroundColor: '#064e3b', showLine: false }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } },
+                    scales: { y: { min: -20, max: 20 }, x: { ticks: { maxTicksLimit: 10 } } }
+                }
+            });
+
+            update();
+        }
+
+        function update() {
+            const t = parseFloat(tSlider.value);
+            timeDisplay.innerText = t.toFixed(2) + 's';
+
+            const p = pos(t);
+            const v = vel(t);
+            const a = acc();
+
+            // Math Displays
+            posFormula.innerHTML = `(${p.x.toFixed(2)})\\hat{i} + (${p.y.toFixed(2)})\\hat{j}`;
+            velFormula.innerHTML = `(${v.x.toFixed(2)})\\hat{i} + (${v.y.toFixed(2)})\\hat{j}`;
+            const vMag = Math.sqrt(v.x**2 + v.y**2);
+            vMagDisplay.innerText = `|v| = ${vMag.toFixed(2)}`;
+
+            // SVG Updates
+            objectMarker.setAttribute('cx', p.x);
+            objectMarker.setAttribute('cy', p.y);
+
+            // Velocity Vector (scaled down for visualization)
+            vVector.setAttribute('x1', p.x);
+            vVector.setAttribute('y1', p.y);
+            vVector.setAttribute('x2', p.x + v.x * 0.2);
+            vVector.setAttribute('y2', p.y + v.y * 0.2);
+
+            // Acceleration Vector (constant, scaled)
+            aVector.setAttribute('x1', p.x);
+            aVector.setAttribute('y1', p.y);
+            aVector.setAttribute('x2', p.x + a.x * 0.2);
+            aVector.setAttribute('y2', p.y + a.y * 0.2);
+
+            // Chart update
+            const idx = Math.round(t * 100);
+            compChart.data.datasets[2].data = Array(151).fill(null);
+            compChart.data.datasets[2].data[idx] = v.x;
+            compChart.update('none');
+        }
+
+        tSlider.addEventListener('input', update);
+
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause mr-2"></i> PAUSE' : '<i class="fas fa-play mr-2"></i> PLAY';
+            if (isPlaying) {
+                if (parseFloat(tSlider.value) >= 1.5) tSlider.value = 0;
+                animate();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            tSlider.value = 0;
+            isPlaying = false;
+            playBtn.innerHTML = '<i class="fas fa-play mr-2"></i> PLAY';
+            cancelAnimationFrame(animationFrame);
+            update();
+        });
+
+        function animate() {
+            if (!isPlaying) return;
+            let val = parseFloat(tSlider.value);
+            val += 0.005;
+            if (val > 1.5) {
+                val = 1.5;
+                isPlaying = false;
+                playBtn.innerHTML = '<i class="fas fa-play mr-2"></i> PLAY';
+            }
+            tSlider.value = val;
+            update();
+            animationFrame = requestAnimationFrame(animate);
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Range Optimization - Projectile Motion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f0f4f8; }
+        .canvas-container {
+            background: linear-gradient(to bottom, #1e293b, #334155);
+            border-bottom: 4px solid #94a3b8;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+        }
+        .marker-45 {
+            position: absolute;
+            bottom: 0;
+            border-left: 2px dashed #fbbf24;
+            height: 100%;
+            pointer-events: none;
+        }
+        .stats-card {
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900">Task 02: Range Optimization</h1>
+                <p class="text-slate-600">Proving $\theta = 45^\circ$ maximizes horizontal distance.</p>
+            </div>
+            <div class="flex gap-2">
+                <div class="bg-amber-100 text-amber-800 px-4 py-2 rounded-lg border border-amber-200 text-sm font-medium">
+                    $R(\theta) = \frac{v_0^2}{g}\sin(2\theta)$
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left Panel: Controls & Comparison -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <i class="fas fa-rocket mr-2 text-indigo-500"></i> Launch Settings
+                    </h2>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-sm font-semibold text-slate-600">Velocity ($v_0$)</label>
+                                <span class="text-indigo-600 font-bold"><span id="v0Val">50</span> m/s</span>
+                            </div>
+                            <input type="range" id="v0Input" min="10" max="100" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <label class="text-sm font-semibold text-slate-600">Current Angle ($\theta$)</label>
+                                <span class="text-indigo-600 font-bold"><span id="thetaVal">45</span>°</span>
+                            </div>
+                            <input type="range" id="thetaInput" min="0" max="90" value="45" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                        </div>
+
+                        <div class="pt-4 grid grid-cols-2 gap-3">
+                            <button id="snap45" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-lg transition shadow-sm">
+                                Snap to 45° (Max)
+                            </button>
+                            <button id="compareBtn" class="text-xs bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded-lg transition shadow-sm">
+                                Show Complement
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Real-time Metrics -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 stats-card">
+                        <p class="text-xs text-slate-500 uppercase font-bold tracking-wider">Current Range</p>
+                        <p id="currRange" class="text-2xl font-black text-slate-800">0.00m</p>
+                    </div>
+                    <div class="bg-indigo-600 p-4 rounded-2xl shadow-sm text-white stats-card">
+                        <p class="text-xs text-indigo-100 uppercase font-bold tracking-wider">Max Possible</p>
+                        <p id="maxRange" class="text-2xl font-black">0.00m</p>
+                    </div>
+                </div>
+
+                <!-- Derivative Info -->
+                <div class="bg-slate-800 p-5 rounded-2xl text-slate-300 text-sm">
+                    <h3 class="font-bold text-white mb-2 flex items-center">
+                        <i class="fas fa-calculator mr-2 text-emerald-400"></i> Calculus Check
+                    </h3>
+                    <div class="space-y-3 font-mono">
+                        <div class="flex justify-between items-center">
+                            <span>$\frac{dR}{d\theta}$:</span>
+                            <span id="derivativeVal" class="text-emerald-400">0.00</span>
+                        </div>
+                        <div class="bg-slate-700 h-1 w-full rounded-full overflow-hidden">
+                            <div id="derivativeBar" class="h-full bg-emerald-400 transition-all duration-300" style="width: 50%"></div>
+                        </div>
+                        <p class="text-[10px] italic text-slate-400">Optimization: Range is max when derivative = 0.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Visualization -->
+            <div class="lg:col-span-8 space-y-6">
+                <!-- Trajectory Multi-View -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase mb-3">Live Trajectory View</h3>
+                    <div id="simContainer" class="canvas-container w-full h-64 md:h-96">
+                        <!-- Trajectories are drawn via SVG for persistence -->
+                        <svg id="trajectorySvg" class="w-full h-full" viewBox="0 0 1000 400" preserveAspectRatio="none">
+                            <path id="pathMain" d="" fill="none" stroke="#6366f1" stroke-width="4" stroke-linecap="round" />
+                            <path id="pathComp" d="" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8,4" opacity="0.6" />
+                            <circle id="ball" r="8" fill="#ef4444" />
+                        </svg>
+                        <div class="absolute bottom-4 left-4 text-white text-[10px] bg-black/30 px-2 py-1 rounded">
+                            Scale: Auto-adjusting to max range
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optimization Curve -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase mb-3">Angular Sensitivity ($R$ vs $\theta$)</h3>
+                    <div class="h-48">
+                        <canvas id="rangeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const v0Input = document.getElementById('v0Input');
+        const thetaInput = document.getElementById('thetaInput');
+        const v0Val = document.getElementById('v0Val');
+        const thetaVal = document.getElementById('thetaVal');
+        const currRangeDisplay = document.getElementById('currRange');
+        const maxRangeDisplay = document.getElementById('maxRange');
+        const derivativeVal = document.getElementById('derivativeVal');
+        const derivativeBar = document.getElementById('derivativeBar');
+        const pathMain = document.getElementById('pathMain');
+        const pathComp = document.getElementById('pathComp');
+        const ball = document.getElementById('ball');
+        const snap45 = document.getElementById('snap45');
+        const compareBtn = document.getElementById('compareBtn');
+
+        let rangeChart = null;
+        let showComplement = false;
+        const g = 9.81;
+
+        function initChart() {
+            const ctx = document.getElementById('rangeChart').getContext('2d');
+            rangeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 91}, (_, i) => i),
+                    datasets: [{
+                        label: 'Range (m)',
+                        data: [],
+                        borderColor: '#6366f1',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Current Position',
+                        data: [],
+                        pointRadius: 6,
+                        pointBackgroundColor: '#fbbf24',
+                        showLine: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: true, title: { display: true, text: 'Launch Angle (degrees)', font: { size: 10 } } },
+                        y: { display: true, title: { display: true, text: 'Range (m)', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function update() {
+            const v0 = parseFloat(v0Input.value);
+            const thetaDeg = parseFloat(thetaInput.value);
+            const thetaRad = thetaDeg * (Math.PI / 180);
+
+            v0Val.innerText = v0;
+            thetaVal.innerText = thetaDeg;
+
+            // Calculations
+            const rMax = (v0 * v0) / g;
+            const rCurrent = (v0 * v0 * Math.sin(2 * thetaRad)) / g;
+            const deriv = (2 * v0 * v0 * Math.cos(2 * thetaRad)) / g;
+
+            currRangeDisplay.innerText = rCurrent.toFixed(2) + 'm';
+            maxRangeDisplay.innerText = rMax.toFixed(2) + 'm';
+            derivativeVal.innerText = (deriv/10).toFixed(2); // Normalized for display
+
+            // Derivative bar UI (centered at 50% for 0)
+            const derivPercent = 50 + (Math.max(-50, Math.min(50, deriv/10)));
+            derivativeBar.style.width = derivPercent + '%';
+            derivativeBar.style.backgroundColor = Math.abs(deriv) < 5 ? '#34d399' : '#f87171';
+
+            // Update SVG Paths
+            drawPath(pathMain, v0, thetaRad, rMax);
+            
+            if (showComplement) {
+                const compThetaRad = (90 - thetaDeg) * (Math.PI / 180);
+                drawPath(pathComp, v0, compThetaRad, rMax);
+                pathComp.style.display = 'block';
+            } else {
+                pathComp.style.display = 'none';
+            }
+
+            // Update Chart
+            const rangeData = [];
+            for (let i = 0; i <= 90; i++) {
+                rangeData.push((v0 * v0 * Math.sin(2 * i * Math.PI / 180)) / g);
+            }
+            rangeChart.data.datasets[0].data = rangeData;
+            rangeChart.data.datasets[1].data = Array(91).fill(null);
+            rangeChart.data.datasets[1].data[thetaDeg] = rCurrent;
+            rangeChart.update('none');
+        }
+
+        function drawPath(pathElement, v0, theta, rMax) {
+            const steps = 50;
+            const v0x = v0 * Math.cos(theta);
+            const v0y = v0 * Math.sin(theta);
+            const tof = (2 * v0y) / g;
+            
+            // Fixed SVG viewport 1000x400. 
+            // Scale horizontal to fit R_max at 900px width.
+            const scaleX = 900 / rMax;
+            // Scale vertical to fit H_max of a 90deg launch at 350px height.
+            const hMaxAbs = (v0 * v0) / (2 * g);
+            const scaleY = 350 / hMaxAbs;
+
+            let d = "M 50 380";
+            for (let i = 0; i <= steps; i++) {
+                const t = (tof * i) / steps;
+                const x = v0x * t;
+                const y = v0y * t - 0.5 * g * t * t;
+                
+                const sx = 50 + x * scaleX;
+                const sy = 380 - y * scaleY;
+                d += ` L ${sx} ${sy}`;
+
+                if (i === steps && pathElement === pathMain) {
+                    ball.setAttribute('cx', sx);
+                    ball.setAttribute('cy', sy);
+                }
+            }
+            pathElement.setAttribute('d', d);
+        }
+
+        v0Input.addEventListener('input', update);
+        thetaInput.addEventListener('input', update);
+        
+        snap45.addEventListener('click', () => {
+            thetaInput.value = 45;
+            update();
+        });
+
+        compareBtn.addEventListener('click', () => {
+            showComplement = !showComplement;
+            compareBtn.classList.toggle('bg-slate-700');
+            compareBtn.classList.toggle('bg-indigo-500');
+            compareBtn.innerText = showComplement ? "Hide Complement" : "Show Complement";
+            update();
+        });
+
+        window.addEventListener('load', () => {
+            initChart();
+            update();
+        });
+    </script>
+</body>
+</html>
