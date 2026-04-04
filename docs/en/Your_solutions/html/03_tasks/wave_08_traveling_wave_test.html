@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traveling Wave Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .math-container { font-size: 1.05rem; line-height: 1.7; }
+    .katex-display { margin: 0.75em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    canvas { touch-action: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+    .glass { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 pt-6">
+    <a href="/Physics_Problems/" class="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 hover:border-slate-300 transition">
+      <span>←</span><span>Back to Home</span>
+    </a>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">Waves — Section 3</div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">Task 08 — Which Functions Can Describe a Traveling Wave?</h1>
+      <p class="text-slate-600 max-w-3xl mx-auto">Classify candidate functions by checking their structure against the wave equation.</p>
+    </header>
+    
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+  <div class="lg:col-span-4">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-8 space-y-4">
+      <h2 class="text-xl font-bold">Wave-Equation Test</h2>
+      <p class="text-slate-600">A function describes a traveling wave when it can be written as $f(x-vt)$ or $f(x+vt)$ and satisfies</p>
+      <p class="font-semibold">$\frac{\partial^2 y}{\partial x^2} = \frac{1}{v^2}\frac{\partial^2 y}{\partial t^2}$</p>
+      <div class="space-y-3">
+        <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+          <div class="font-bold text-rose-700">a) $A\cos(kx^2-\omega t)$</div>
+          <div class="text-slate-700 mt-2">Fails because the argument contains $x^2$, not $x\pm vt$.</div>
+        </div>
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+          <div class="font-bold text-emerald-700">b) $A(x-vt)^2$</div>
+          <div class="text-slate-700 mt-2">Valid because it is exactly of the form $f(x-vt)$.</div>
+        </div>
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+          <div class="font-bold text-emerald-700">c) $A\log(x+vt)$</div>
+          <div class="text-slate-700 mt-2">Valid because it is exactly of the form $f(x+vt)$.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="lg:col-span-8 space-y-8">
+    <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 math-container space-y-6">
+      <h2 class="text-3xl font-black">Reasoning</h2>
+      <p>Any sufficiently smooth function of $x-vt$ or $x+vt$ satisfies the one-dimensional wave equation.</p>
+      <p>For $y(x,t)=f(\xi)$ with $\xi = x-vt$, differentiation gives</p>
+      <p>$\frac{\partial y}{\partial x}=f'(\xi)$ and $\frac{\partial y}{\partial t}=-vf'(\xi)$.</p>
+      <p>Differentiating again yields</p>
+      <p>$\frac{\partial^2 y}{\partial x^2}=f''(\xi)$ and $\frac{\partial^2 y}{\partial t^2}=v^2 f''(\xi)$.</p>
+      <p>Hence $\frac{\partial^2 y}{\partial x^2}=\frac{1}{v^2}\frac{\partial^2 y}{\partial t^2}$.</p>
+    </div>
+    <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200">
+      <h2 class="text-2xl font-black mb-5">Classification Summary</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="p-5 rounded-2xl bg-rose-50 border border-rose-200"><div class="font-black text-rose-700 text-xl">a)</div><div class="mt-2 text-slate-700">Not a traveling wave</div></div>
+        <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200"><div class="font-black text-emerald-700 text-xl">b)</div><div class="mt-2 text-slate-700">Traveling wave</div></div>
+        <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200"><div class="font-black text-emerald-700 text-xl">c)</div><div class="mt-2 text-slate-700">Traveling wave</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+  
+</body>
+</html>

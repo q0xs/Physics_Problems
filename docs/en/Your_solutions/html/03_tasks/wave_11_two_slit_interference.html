@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Two-Slit Interference</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .math-container { font-size: 1.05rem; line-height: 1.7; }
+    .katex-display { margin: 0.75em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    canvas { touch-action: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+    .glass { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 pt-6">
+    <a href="/Physics_Problems/" class="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 hover:border-slate-300 transition">
+      <span>←</span><span>Back to Home</span>
+    </a>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">Waves — Section 3</div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">Task 11 — Young's Two-Slit Interference</h1>
+      <p class="text-slate-600 max-w-3xl mx-auto">Observe real-time interference from two coherent point sources while changing slit spacing and wavelength.</p>
+    </header>
+    
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+  <div class="lg:col-span-4 space-y-6">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-8">
+      <h2 class="text-xl font-bold mb-6">Interference Controls</h2>
+      <div class="space-y-4">
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Slit spacing $d$</span><input id="d" type="range" min="20" max="220" value="80" step="1" class="mt-2 w-full"><div id="dVal" class="text-sm text-slate-500 mt-1">80</div></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Wavelength $\lambda$</span><input id="lambda" type="range" min="10" max="120" value="40" step="1" class="mt-2 w-full"><div id="lVal" class="text-sm text-slate-500 mt-1">40</div></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Amplitude $A$</span><input id="A" type="number" value="60" step="5" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Frequency $f$</span><input id="f" type="number" value="1.2" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <button onclick="togglePause()" id="pauseBtn" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Pause</button>
+      </div>
+      <div class="mt-5 grid gap-3">
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200"><div class="text-sm text-slate-500">Constructive condition</div><div class="font-bold mt-1">$\Delta R = m\lambda$</div></div>
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200"><div class="text-sm text-slate-500">Destructive condition</div><div class="font-bold mt-1">$\Delta R = \left(m+\frac12\right)\lambda$</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="lg:col-span-8 space-y-8">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+      <h2 class="text-2xl font-black mb-4">Real-Time Interference Pattern</h2>
+      <canvas id="field" width="920" height="520" class="w-full rounded-2xl bg-black border border-slate-200"></canvas>
+    </div>
+    <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 math-container space-y-6">
+      <h2 class="text-3xl font-black">Physics of the Pattern</h2>
+      <p>The two coherent sources produce partial waves</p>
+      <p>$u(\vec r,t)=\frac{A}{R_1}\sin(kR_1-\omega t)+\frac{A}{R_2}\sin(kR_2-\omega t)$.</p>
+      <p>Changing the slit spacing modifies the path-difference gradient across the screen. Changing the wavelength changes fringe spacing and temporal behavior.</p>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+  
+<script>
+const canvas11 = document.getElementById('field');
+const ctx11 = canvas11.getContext('2d');
+let paused11 = false, time11 = 0;
+function togglePause(){ paused11 = !paused11; document.getElementById('pauseBtn').textContent = paused11 ? 'Resume' : 'Pause'; }
+function draw11(){
+  if (!paused11) time11 += 0.04;
+  const d = parseFloat(document.getElementById('d').value)||80;
+  const lambda = parseFloat(document.getElementById('lambda').value)||40;
+  const A = parseFloat(document.getElementById('A').value)||60;
+  const f = parseFloat(document.getElementById('f').value)||1.2;
+  document.getElementById('dVal').textContent = d.toFixed(0);
+  document.getElementById('lVal').textContent = lambda.toFixed(0);
+  const k = 2*Math.PI/lambda;
+  const omega = 2*Math.PI*f;
+  const r1 = {x:120, y:canvas11.height/2 - d/2};
+  const r2 = {x:120, y:canvas11.height/2 + d/2};
+  const img = ctx11.createImageData(canvas11.width, canvas11.height);
+  const data = img.data;
+  for (let y=0; y<canvas11.height; y+=3){
+    for (let x=0; x<canvas11.width; x+=3){
+      let R1 = Math.hypot(x-r1.x, y-r1.y); if (R1 < 4) R1 = 4;
+      let R2 = Math.hypot(x-r2.x, y-r2.y); if (R2 < 4) R2 = 4;
+      const u = (A/R1)*Math.sin(k*R1-omega*time11) + (A/R2)*Math.sin(k*R2-omega*time11);
+      const val = Math.max(-1, Math.min(1, u));
+      const pos = val > 0 ? Math.floor(val*255) : 0;
+      const neg = val < 0 ? Math.floor(-val*255) : 0;
+      for (let oy=0; oy<3; oy++) for (let ox=0; ox<3; ox++){
+        const px = x+ox, py = y+oy; if(px>=canvas11.width || py>=canvas11.height) continue;
+        const idx = (py*canvas11.width + px)*4;
+        data[idx] = pos; data[idx+1] = 80; data[idx+2] = neg; data[idx+3] = 255;
+      }
+    }
+  }
+  ctx11.putImageData(img,0,0);
+  ctx11.strokeStyle = '#ffffff'; ctx11.lineWidth = 2;
+  ctx11.beginPath(); ctx11.moveTo(120,0); ctx11.lineTo(120,canvas11.height); ctx11.stroke();
+  [r1,r2].forEach(r => { ctx11.fillStyle='#fff'; ctx11.beginPath(); ctx11.arc(r.x,r.y,5,0,Math.PI*2); ctx11.fill(); });
+  requestAnimationFrame(draw11);
+}
+draw11();
+</script>
+
+</body>
+</html>

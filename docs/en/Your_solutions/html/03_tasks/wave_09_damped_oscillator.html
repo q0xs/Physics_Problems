@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Damped Oscillator RK4</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .math-container { font-size: 1.05rem; line-height: 1.7; }
+    .katex-display { margin: 0.75em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    canvas { touch-action: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+    .glass { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 pt-6">
+    <a href="/Physics_Problems/" class="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 hover:border-slate-300 transition">
+      <span>←</span><span>Back to Home</span>
+    </a>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">Waves — Section 3</div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">Task 09 — Damped Harmonic Oscillator</h1>
+      <p class="text-slate-600 max-w-3xl mx-auto">Interactive RK4 simulation with regime classification, displacement graph, and phase portrait.</p>
+    </header>
+    
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+  <div class="lg:col-span-4 space-y-6">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-8">
+      <h2 class="text-xl font-bold mb-6">Oscillator Controls</h2>
+      <div class="space-y-4">
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Mass $m$</span><input id="m" type="number" value="1" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Spring constant $k$</span><input id="k" type="number" value="9" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Damping $b$</span><input id="b" type="range" min="0" max="12" value="1" step="0.01" class="mt-2 w-full"><div id="bValue" class="text-sm text-slate-500 mt-1">1.00</div></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Initial position $x(0)$</span><input id="x0" type="number" value="1" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Initial velocity $v(0)$</span><input id="v0" type="number" value="0" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <button onclick="simulate()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Run RK4 Simulation</button>
+      </div>
+      <div class="mt-5 grid gap-3">
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200"><div class="text-sm text-slate-500">Critical damping $b_c$</div><div id="bc" class="text-2xl font-black mt-1"></div></div>
+        <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200"><div class="text-sm text-indigo-700">Regime</div><div id="regime" class="text-2xl font-black mt-1"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="lg:col-span-8 space-y-8">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+      <h2 class="text-2xl font-black mb-4">$x(t)$ and Moving Mass</h2>
+      <canvas id="xtCanvas" width="920" height="340" class="w-full rounded-2xl bg-white border border-slate-200"></canvas>
+      <canvas id="massCanvas" width="920" height="120" class="w-full rounded-2xl bg-slate-950 mt-4"></canvas>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+      <h2 class="text-2xl font-black mb-4">Phase Portrait</h2>
+      <canvas id="phaseCanvas" width="920" height="340" class="w-full rounded-2xl bg-white border border-slate-200"></canvas>
+    </div>
+    <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 math-container space-y-6">
+      <h2 class="text-3xl font-black">Theory</h2>
+      <p>The damped oscillator is governed by $m\ddot x + b\dot x + kx = 0$.</p>
+      <p>The critical damping value is $b_c = 2\sqrt{mk}$.</p>
+      <p>For $b &lt; b_c$ the motion is underdamped, for $b = b_c$ critically damped, and for $b &gt; b_c$ overdamped.</p>
+      <p>The numerical solver uses the first-order system $\dot x = v$ and $\dot v = -\frac{b}{m}v - \frac{k}{m}x$ integrated with RK4.</p>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+  
+<script>
+const xtCanvas = document.getElementById('xtCanvas');
+const phaseCanvas = document.getElementById('phaseCanvas');
+const massCanvas = document.getElementById('massCanvas');
+let simData = [];
+let animIndex = 0;
+function deriv(x,v,m,b,k){ return [v, -(b/m)*v - (k/m)*x]; }
+function rk4Step(x,v,dt,m,b,k){
+  const [k1x,k1v]=deriv(x,v,m,b,k);
+  const [k2x,k2v]=deriv(x+0.5*dt*k1x,v+0.5*dt*k1v,m,b,k);
+  const [k3x,k3v]=deriv(x+0.5*dt*k2x,v+0.5*dt*k2v,m,b,k);
+  const [k4x,k4v]=deriv(x+dt*k3x,v+dt*k3v,m,b,k);
+  x += dt*(k1x+2*k2x+2*k3x+k4x)/6;
+  v += dt*(k1v+2*k2v+2*k3v+k4v)/6;
+  return [x,v];
+}
+function axes(ctx, canvas, xmin, xmax, ymin, ymax){
+  const p=40;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle='#cbd5e1'; ctx.lineWidth=1;
+  ctx.strokeRect(p,p,canvas.width-2*p,canvas.height-2*p);
+  const X = x => p + (x-xmin)/(xmax-xmin||1)*(canvas.width-2*p);
+  const Y = y => canvas.height-p - (y-ymin)/(ymax-ymin||1)*(canvas.height-2*p);
+  if (xmin<0 && xmax>0){ ctx.strokeStyle='#e2e8f0'; ctx.beginPath(); ctx.moveTo(X(0),p); ctx.lineTo(X(0),canvas.height-p); ctx.stroke(); }
+  if (ymin<0 && ymax>0){ ctx.strokeStyle='#e2e8f0'; ctx.beginPath(); ctx.moveTo(p,Y(0)); ctx.lineTo(canvas.width-p,Y(0)); ctx.stroke(); }
+  return {X,Y,p};
+}
+function drawMass() {
+  const ctx = massCanvas.getContext('2d');
+  const w = massCanvas.width, h = massCanvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#020617'; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#64748b'; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(40,h/2); ctx.lineTo(w-60,h/2); ctx.stroke();
+  const cur = simData[Math.min(animIndex, simData.length-1)] || {x:0};
+  const eq = w/2;
+  const scale = 120;
+  const mx = eq + cur.x * scale;
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=3;
+  ctx.beginPath();
+  let sx = 50; const end = mx - 30; const loops = 10;
+  const dx = (end - sx) / (loops*2);
+  ctx.moveTo(40,h/2);
+  ctx.lineTo(sx,h/2);
+  for(let i=0;i<loops*2;i++){
+    ctx.lineTo(sx + dx*(i+1), h/2 + (i%2===0 ? -16 : 16));
+  }
+  ctx.lineTo(end,h/2);
+  ctx.stroke();
+  ctx.fillStyle='#60a5fa';
+  ctx.fillRect(mx-30,h/2-22,60,44);
+  ctx.fillStyle='#e2e8f0';
+  ctx.font='16px sans-serif';
+  ctx.fillText('mass', mx-18, h/2+5);
+}
+function drawPlots(){
+  if (!simData.length) return;
+  let xt = xtCanvas.getContext('2d');
+  let ph = phaseCanvas.getContext('2d');
+  const tmax = simData[simData.length-1].t;
+  const xs = simData.map(d=>d.x), vs = simData.map(d=>d.v);
+  const xtA = axes(xt, xtCanvas, 0, tmax, Math.min(...xs), Math.max(...xs));
+  xt.strokeStyle='#2563eb'; xt.lineWidth=2.5; xt.beginPath();
+  simData.forEach((d,i)=>{ const X=xtA.X(d.t), Y=xtA.Y(d.x); if(i===0) xt.moveTo(X,Y); else xt.lineTo(X,Y);}); xt.stroke();
+  if (animIndex < simData.length){
+    const d = simData[animIndex];
+    xt.fillStyle='#ef4444'; xt.beginPath(); xt.arc(xtA.X(d.t), xtA.Y(d.x), 5, 0, Math.PI*2); xt.fill();
+  }
+  const phA = axes(ph, phaseCanvas, Math.min(...xs), Math.max(...xs), Math.min(...vs), Math.max(...vs));
+  ph.strokeStyle='#7c3aed'; ph.lineWidth=2.5; ph.beginPath();
+  simData.forEach((d,i)=>{ const X=phA.X(d.x), Y=phA.Y(d.v); if(i===0) ph.moveTo(X,Y); else ph.lineTo(X,Y);}); ph.stroke();
+  if (animIndex < simData.length){
+    const d = simData[animIndex];
+    ph.fillStyle='#ef4444'; ph.beginPath(); ph.arc(phA.X(d.x), phA.Y(d.v), 5, 0, Math.PI*2); ph.fill();
+  }
+}
+function animatePlayback(){
+  if (!simData.length) return;
+  drawPlots(); drawMass();
+  animIndex = (animIndex + 1) % simData.length;
+  requestAnimationFrame(animatePlayback);
+}
+function simulate(){
+  const m = parseFloat(document.getElementById('m').value)||1;
+  const k = parseFloat(document.getElementById('k').value)||1;
+  const b = parseFloat(document.getElementById('b').value)||0;
+  const x0 = parseFloat(document.getElementById('x0').value)||0;
+  const v0 = parseFloat(document.getElementById('v0').value)||0;
+  document.getElementById('bValue').textContent = b.toFixed(2);
+  const bc = 2*Math.sqrt(m*k);
+  document.getElementById('bc').textContent = bc.toFixed(4);
+  let regime = 'Overdamped';
+  if (b < bc - 1e-6) regime = 'Underdamped';
+  else if (Math.abs(b-bc)<=1e-6) regime = 'Critically damped';
+  document.getElementById('regime').textContent = regime;
+  simData = [];
+  let x = x0, v = v0, t = 0, dt = 0.01, tmax = 14;
+  while (t <= tmax){
+    simData.push({t,x,v});
+    [x,v] = rk4Step(x,v,dt,m,b,k);
+    t += dt;
+  }
+  animIndex = 0;
+}
+document.getElementById('b').addEventListener('input', simulate);
+simulate();
+animatePlayback();
+</script>
+
+</body>
+</html>

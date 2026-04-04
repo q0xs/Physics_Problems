@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Echo Ranging Interactive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .math-container { font-size: 1.05rem; line-height: 1.7; }
+    .katex-display { margin: 0.75em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    canvas { touch-action: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+    .glass { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 pt-6">
+    <a href="/Physics_Problems/" class="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 hover:border-slate-300 transition">
+      <span>←</span><span>Back to Home</span>
+    </a>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">Waves — Section 3</div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">Task 05 — Echo Ranging</h1>
+      <p class="text-slate-600 max-w-3xl mx-auto">Use the round-trip travel time of sound to determine the distance to a reflecting object.</p>
+    </header>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-4 space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-8">
+          <h2 class="text-xl font-bold mb-6 text-slate-800">Interactive Controls</h2>
+          <div class="space-y-4">
+    <label class="block">
+      <span class="text-sm font-semibold text-slate-700">Echo time $t$ (s)</span>
+      <input id="t" type="number" value="1" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl">
+    </label>
+    <label class="block">
+      <span class="text-sm font-semibold text-slate-700">Speed of sound $v$ (m/s)</span>
+      <input id="v" type="number" value="343" step="1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl">
+    </label>
+    <button onclick="calculate()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Recalculate</button>
+    </div>
+        </div>
+      </div>
+      <div class="lg:col-span-8 space-y-8">
+        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+          <h2 class="text-2xl font-black mb-5">Computed Results</h2>
+          <div class="grid md:grid-cols-2 gap-4" id="result-cards">
+    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200"><div class="text-sm text-slate-500">Round-trip distance</div><div id="roundTrip" class="text-2xl font-black mt-1">343.0000 m</div></div>
+    <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200"><div class="text-sm text-emerald-700">Distance to cliff</div><div id="distance" class="text-3xl font-black mt-1">171.5000 m</div></div>
+    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 md:col-span-2"><div class="text-sm text-slate-500">Reason for division by 2</div><div class="text-slate-700 mt-2">The measured time includes the journey to the cliff and the return journey to the listener.</div></div>
+    </div>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200">
+          <h2 class="text-3xl font-black mb-6">Step-by-Step Physics</h2>
+          <div class="math-container space-y-6">
+    <section><h3 class="text-xl font-bold mb-2">Travel geometry</h3><p>The echo time measures the total round trip of the sound pulse.</p></section>
+    <section><h3 class="text-xl font-bold mb-2">Distance formula</h3><p>The one-way distance is $d = \frac{vt}{2}$.</p></section>
+    <section><h3 class="text-xl font-bold mb-2">Interpretation</h3><p>Echo ranging is one of the simplest examples of time-of-flight measurement and is the same basic principle used in sonar and other ranging systems.</p></section>
+    </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+  <script>
+    function calculate() {
+      const t = parseFloat(document.getElementById('t').value) || 0;
+      const v = parseFloat(document.getElementById('v').value) || 0;
+      document.getElementById('roundTrip').textContent = (v*t).toFixed(4) + ' m';
+      document.getElementById('distance').textContent = (v*t/2).toFixed(4) + ' m';
+    }
+    calculate();
+    </script>
+</body>
+</html>

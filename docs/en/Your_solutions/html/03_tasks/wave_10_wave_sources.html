@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wave Sources Superposition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .math-container { font-size: 1.05rem; line-height: 1.7; }
+    .katex-display { margin: 0.75em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    canvas { touch-action: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+    .glass { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 pt-6">
+    <a href="/Physics_Problems/" class="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 hover:border-slate-300 transition">
+      <span>←</span><span>Back to Home</span>
+    </a>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">Waves — Section 3</div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">Task 10 — Multiple Wave Sources</h1>
+      <p class="text-slate-600 max-w-3xl mx-auto">Place point sources interactively and observe the real-time superposition pattern with adjustable attenuation.</p>
+    </header>
+    
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+  <div class="lg:col-span-4 space-y-6">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-8">
+      <h2 class="text-xl font-bold mb-6">Wave Source Controls</h2>
+      <div class="space-y-4">
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Amplitude $A$</span><input id="A" type="number" value="1" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Wavelength $\lambda$</span><input id="lambda" type="number" value="42" step="1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Frequency $f$</span><input id="f" type="number" value="1.4" step="0.1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl"></label>
+        <label class="block"><span class="text-sm font-semibold text-slate-700">Attenuation exponent $\alpha$</span><input id="alpha" type="range" min="0" max="2" step="0.01" value="1" class="mt-2 w-full"><div id="alphaValue" class="text-sm text-slate-500 mt-1">1.00</div></label>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="clearSources()" class="bg-white border border-slate-200 py-3 rounded-xl font-bold hover:bg-slate-100 transition">Clear</button>
+          <button onclick="togglePause()" id="pauseBtn" class="bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Pause</button>
+        </div>
+      </div>
+      <div class="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-200">
+        <div class="text-sm text-slate-500">Number of sources</div>
+        <div id="count" class="text-3xl font-black mt-1">2</div>
+      </div>
+      <div class="mt-4 text-sm text-slate-600">Click inside the field to add new point sources.</div>
+    </div>
+  </div>
+  <div class="lg:col-span-8 space-y-8">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+      <h2 class="text-2xl font-black mb-4">Superposition Field</h2>
+      <canvas id="field" width="920" height="520" class="w-full rounded-2xl bg-black border border-slate-200"></canvas>
+    </div>
+    <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 math-container space-y-6">
+      <h2 class="text-3xl font-black">Model</h2>
+      <p>Each source at position $\vec r_0$ contributes</p>
+      <p>$u(\vec r,t)=\frac{A}{|\vec r-\vec r_0|^\alpha}\sin\big(k|\vec r-\vec r_0|-\omega t\big)$.</p>
+      <p>The total field is the sum over all sources. Increasing $\alpha$ strengthens radial attenuation. Setting $\alpha=0$ removes distance decay.</p>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+  
+<script>
+const field = document.getElementById('field');
+const fctx = field.getContext('2d');
+let sources = [{x:180,y:180},{x:360,y:300}];
+let paused = false;
+let time10 = 0;
+field.addEventListener('click', e => {
+  const r = field.getBoundingClientRect();
+  sources.push({x:e.clientX-r.left, y:e.clientY-r.top});
+  updateInfo();
+});
+function clearSources(){ sources = []; updateInfo(); }
+function togglePause(){ paused = !paused; document.getElementById('pauseBtn').textContent = paused ? 'Resume' : 'Pause'; }
+function updateInfo(){
+  document.getElementById('count').textContent = sources.length;
+  document.getElementById('alphaValue').textContent = (parseFloat(document.getElementById('alpha').value)||0).toFixed(2);
+}
+function drawField(){
+  if (!paused) time10 += 0.04;
+  updateInfo();
+  const A = parseFloat(document.getElementById('A').value)||1;
+  const lambda = parseFloat(document.getElementById('lambda').value)||40;
+  const f = parseFloat(document.getElementById('f').value)||1;
+  const alpha = parseFloat(document.getElementById('alpha').value)||0;
+  const k = 2*Math.PI/lambda;
+  const omega = 2*Math.PI*f;
+  const img = fctx.createImageData(field.width, field.height);
+  const data = img.data;
+  for (let y=0; y<field.height; y+=3){
+    for (let x=0; x<field.width; x+=3){
+      let u = 0;
+      for (const s of sources){
+        let R = Math.hypot(x-s.x, y-s.y);
+        if (R < 4) R = 4;
+        u += (A/Math.pow(R, alpha))*Math.sin(k*R - omega*time10);
+      }
+      const val = Math.max(-1, Math.min(1, u));
+      const pos = val > 0 ? Math.floor(val*255) : 0;
+      const neg = val < 0 ? Math.floor(-val*255) : 0;
+      for (let oy=0; oy<3; oy++) for (let ox=0; ox<3; ox++){
+        const px = x+ox, py = y+oy; if (px>=field.width || py>=field.height) continue;
+        const idx = (py*field.width + px)*4;
+        data[idx] = pos; data[idx+1] = 70; data[idx+2] = neg; data[idx+3] = 255;
+      }
+    }
+  }
+  fctx.putImageData(img, 0, 0);
+  for (const s of sources){
+    fctx.fillStyle = '#ffffff';
+    fctx.beginPath();
+    fctx.arc(s.x, s.y, 5, 0, Math.PI*2);
+    fctx.fill();
+    fctx.strokeStyle = '#0f172a';
+    fctx.stroke();
+  }
+  requestAnimationFrame(drawField);
+}
+updateInfo();
+drawField();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wave Equation Parameters Interactive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .math-container { font-size: 1.05rem; line-height: 1.7; }
+    .katex-display { margin: 0.75em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    canvas { touch-action: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+    .glass { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 pt-6">
+    <a href="/Physics_Problems/" class="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 hover:border-slate-300 transition">
+      <span>←</span><span>Back to Home</span>
+    </a>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">Waves — Section 3</div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">Task 06 — Read Parameters from a Wave Equation</h1>
+      <p class="text-slate-600 max-w-3xl mx-auto">Extract amplitude, wavelength, frequency, and speed from a sinusoidal traveling-wave expression.</p>
+    </header>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div class="lg:col-span-4 space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-8">
+          <h2 class="text-xl font-bold mb-6 text-slate-800">Interactive Controls</h2>
+          <div class="space-y-4">
+    <label class="block">
+      <span class="text-sm font-semibold text-slate-700">Amplitude $A$ (m)</span>
+      <input id="A" type="number" value="0.05" step="0.01" class="mt-2 w-full p-3 border border-slate-200 rounded-xl">
+    </label>
+    <label class="block">
+      <span class="text-sm font-semibold text-slate-700">$k$ coefficient in $k = c_k\pi$</span>
+      <input id="ck" type="number" value="2" step="1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl">
+    </label>
+    <label class="block">
+      <span class="text-sm font-semibold text-slate-700">$\omega$ coefficient in $\omega = c_\omega\pi$</span>
+      <input id="co" type="number" value="50" step="1" class="mt-2 w-full p-3 border border-slate-200 rounded-xl">
+    </label>
+    <button onclick="calculate()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">Recalculate</button>
+    </div>
+        </div>
+      </div>
+      <div class="lg:col-span-8 space-y-8">
+        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+          <h2 class="text-2xl font-black mb-5">Computed Results</h2>
+          <div class="grid md:grid-cols-2 gap-4" id="result-cards">
+    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200"><div class="text-sm text-slate-500">Amplitude</div><div id="amp" class="text-2xl font-black mt-1">0.0500 m</div></div>
+    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200"><div class="text-sm text-slate-500">Wavelength</div><div id="lambda" class="text-2xl font-black mt-1">1.0000 m</div></div>
+    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200"><div class="text-sm text-slate-500">Frequency</div><div id="freq" class="text-2xl font-black mt-1">25.0000 Hz</div></div>
+    <div class="p-5 rounded-2xl bg-blue-50 border border-blue-200"><div class="text-sm text-blue-700">Wave speed</div><div id="speed" class="text-3xl font-black mt-1">25.0000 m/s</div></div>
+    </div>
+        </div>
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200">
+          <h2 class="text-3xl font-black mb-6">Step-by-Step Physics</h2>
+          <div class="math-container space-y-6">
+    <section><h3 class="text-xl font-bold mb-2">General form</h3><p>A traveling wave can be written as $y(x,t)=A\sin(kx-\omega t)$.</p></section>
+    <section><h3 class="text-xl font-bold mb-2">Parameter relations</h3><p>$k = \frac{2\pi}{\lambda}$, $\omega = 2\pi f$, and $v = \frac{\omega}{k}$.</p></section>
+    <section><h3 class="text-xl font-bold mb-2">Interpretation</h3><p>The coefficient of $x$ controls spatial repetition, while the coefficient of $t$ controls temporal repetition.</p></section>
+    </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+  <script>
+    function calculate() {
+      const A = parseFloat(document.getElementById('A').value) || 0;
+      const ck = parseFloat(document.getElementById('ck').value) || 1;
+      const co = parseFloat(document.getElementById('co').value) || 1;
+      const k = ck * Math.PI;
+      const omega = co * Math.PI;
+      const lambda = 2 * Math.PI / k;
+      const f = omega / (2 * Math.PI);
+      const v = omega / k;
+      document.getElementById('amp').textContent = A.toFixed(4) + ' m';
+      document.getElementById('lambda').textContent = lambda.toFixed(4) + ' m';
+      document.getElementById('freq').textContent = f.toFixed(4) + ' Hz';
+      document.getElementById('speed').textContent = v.toFixed(4) + ' m/s';
+    }
+    calculate();
+    </script>
+</body>
+</html>

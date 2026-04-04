@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Standing Wave Interactive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    .math-container { font-size: 1.05rem; line-height: 1.7; }
+    .katex-display { margin: 0.75em 0 !important; overflow-x: auto; overflow-y: hidden; }
+    canvas { touch-action: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+    .glass { background: rgba(255,255,255,0.82); backdrop-filter: blur(10px); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 pt-6">
+    <a href="/Physics_Problems/" class="inline-flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl shadow-sm hover:bg-slate-100 hover:border-slate-300 transition">
+      <span>←</span><span>Back to Home</span>
+    </a>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">Waves — Section 3</div>
+      <h1 class="text-4xl font-black text-slate-900 mb-3">Task 03 — Superposition Principle</h1>
+      <p class="text-slate-600 max-w-3xl mx-auto">Visualize how two opposite traveling waves combine into a standing wave and identify node positions.</p>
+    </header>
+    
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+  <div class="lg:col-span-4 space-y-6">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 sticky top-8 space-y-4">
+      <h2 class="text-xl font-bold">Standing-Wave Controls</h2>
+      <label class="block">
+        <span class="text-sm font-semibold text-slate-700">Amplitude $A$</span>
+        <input id="A" type="range" min="20" max="120" value="70" class="mt-2 w-full">
+      </label>
+      <label class="block">
+        <span class="text-sm font-semibold text-slate-700">Wavelength $\lambda$ (arbitrary units)</span>
+        <input id="lambda" type="range" min="80" max="280" value="160" class="mt-2 w-full">
+      </label>
+      <label class="block">
+        <span class="text-sm font-semibold text-slate-700">Angular frequency $\omega$</span>
+        <input id="omega" type="range" min="1" max="12" value="5" class="mt-2 w-full">
+      </label>
+      <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+        <div class="text-sm text-slate-500">Standing wave</div>
+        <div class="font-bold mt-1">$y(x,t) = 2A \sin(kx) \cos(\omega t)$</div>
+      </div>
+      <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+        <div class="text-sm text-slate-500">Node positions</div>
+        <div class="font-bold mt-1">$x_n = n\frac{\lambda}{2}$</div>
+      </div>
+    </div>
+  </div>
+  <div class="lg:col-span-8 space-y-8">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+      <h2 class="text-2xl font-black mb-4">Animated Standing Wave</h2>
+      <canvas id="canvas" width="900" height="360" class="w-full rounded-2xl bg-slate-950"></canvas>
+      <div class="mt-4 grid md:grid-cols-3 gap-3">
+        <div class="p-4 rounded-xl bg-blue-50 border border-blue-100"><div class="text-sm text-blue-700">Nodes are fixed</div><div class="text-slate-700 mt-1">They remain at zero displacement for all time.</div></div>
+        <div class="p-4 rounded-xl bg-amber-50 border border-amber-100"><div class="text-sm text-amber-700">Antinodes oscillate maximally</div><div class="text-slate-700 mt-1">They are halfway between adjacent nodes.</div></div>
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100"><div class="text-sm text-emerald-700">Origin of standing wave</div><div class="text-slate-700 mt-1">Two equal waves moving in opposite directions superpose.</div></div>
+      </div>
+    </div>
+    <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 math-container space-y-6">
+      <h2 class="text-3xl font-black mb-2">Derivation</h2>
+      <p>Start with $y_1(x,t) = A\sin(kx-\omega t)$ and $y_2(x,t) = A\sin(kx+\omega t)$.</p>
+      <p>Using $\sin u + \sin v = 2\sin\left(\frac{u+v}{2}\right)\cos\left(\frac{u-v}{2}\right)$ gives</p>
+      <p>$y(x,t) = 2A\sin(kx)\cos(\omega t)$.</p>
+      <p>The nodes satisfy $\sin(kx)=0$, hence $kx=n\pi$ and $x=n\frac{\lambda}{2}$.</p>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script>
+  
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let time = 0;
+function draw() {
+  const A = parseFloat(document.getElementById('A').value);
+  const lambda = parseFloat(document.getElementById('lambda').value);
+  const omega = parseFloat(document.getElementById('omega').value);
+  const k = 2 * Math.PI / lambda;
+  time += 0.025;
+  const w = canvas.width, h = canvas.height, mid = h / 2;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(0,0,w,h);
+
+  for (let x = 0; x <= w; x += lambda/2) {
+    ctx.strokeStyle = 'rgba(248,250,252,0.18)';
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+    ctx.fillStyle = '#cbd5e1';
+    ctx.beginPath();
+    ctx.arc(x, mid, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.beginPath();
+  for (let x = 0; x < w; x++) {
+    const y = 2 * A * Math.sin(k * x) * Math.cos(omega * time);
+    if (x === 0) ctx.moveTo(x, mid - y);
+    else ctx.lineTo(x, mid - y);
+  }
+  ctx.strokeStyle = '#60a5fa';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  ctx.strokeStyle = '#334155';
+  ctx.beginPath();
+  ctx.moveTo(0, mid);
+  ctx.lineTo(w, mid);
+  ctx.stroke();
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>
