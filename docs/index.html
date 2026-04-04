@@ -1,277 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Physics Problems</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
-  <div class="max-w-7xl mx-auto px-6 py-12">
-    <header class="mb-10">
-      <h1 class="text-4xl md:text-5xl font-black mb-3">Physics Problems</h1>
-      <p class="text-slate-600 text-lg">
-        Interactive HTML solutions grouped by sections.
-      </p>
-    </header>
-
-    <!-- SECTION 00 -->
-    <details class="group bg-white border border-slate-200 rounded-2xl shadow-sm mb-6 overflow-hidden" open>
-      <summary class="list-none cursor-pointer select-none p-6 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 font-black text-xl">
-            00
-          </span>
-          <div>
-            <h2 class="text-2xl font-bold">Section 00 – Mathematical Foundations</h2>
-            <p class="text-slate-600">Click to expand or collapse this section.</p>
-          </div>
-        </div>
-        <span class="text-2xl font-bold text-slate-500 transition-transform duration-200 group-open:rotate-180">
-          ⌄
-        </span>
-      </summary>
-
-      <div class="px-6 pb-6 border-t border-slate-200">
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 pt-6">
-          <a href="./en/Your_solutions/html/00_tasks/00_1.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.1</div>
-            <h3 class="text-xl font-bold mb-2">Vector Algebra</h3>
-            <p class="text-slate-600">Magnitude, dot product, cross product and angle between vectors.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_2.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.2</div>
-            <h3 class="text-xl font-bold mb-2">Systems of Equations</h3>
-            <p class="text-slate-600">Solve a linear system with two variables.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_3.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.3</div>
-            <h3 class="text-xl font-bold mb-2">Proportionality</h3>
-            <p class="text-slate-600">Gravitational force dependence on mass and distance.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_4.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.4</div>
-            <h3 class="text-xl font-bold mb-2">Rearranging Formulas</h3>
-            <p class="text-slate-600">Rearrange the pendulum period formula to solve for gravity.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_5.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.5</div>
-            <h3 class="text-xl font-bold mb-2">Trigonometry</h3>
-            <p class="text-slate-600">Resolve a vector into horizontal and vertical components.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_6.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.6</div>
-            <h3 class="text-xl font-bold mb-2">Function Analysis</h3>
-            <p class="text-slate-600">Identify the local minimum of a quadratic function.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_7.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.7</div>
-            <h3 class="text-xl font-bold mb-2">Logic & Series</h3>
-            <p class="text-slate-600">The classic bicycle and fly infinite motion problem.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_8.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.8</div>
-            <h3 class="text-xl font-bold mb-2">Definite Integrals</h3>
-            <p class="text-slate-600">Area under the sine curve from 0 to π.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_9.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.9</div>
-            <h3 class="text-xl font-bold mb-2">Optimization Problem</h3>
-            <p class="text-slate-600">Maximum area rectangle under a parabola.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/00_tasks/00_10.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-            <div class="text-sm font-semibold text-indigo-600 mb-2">00.10</div>
-            <h3 class="text-xl font-bold mb-2">Infinite Series</h3>
-            <p class="text-slate-600">Final position of the ant using convergent series.</p>
-          </a>
-        </div>
-      </div>
-    </details>
-
-    <!-- SECTION 01 -->
-    <details class="group bg-white border border-slate-200 rounded-2xl shadow-sm mb-6 overflow-hidden">
-      <summary class="list-none cursor-pointer select-none p-6 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 font-black text-xl">
-            01
-          </span>
-          <div>
-            <h2 class="text-2xl font-bold">Section 01 – Mechanics 1</h2>
-            <p class="text-slate-600">Click to expand or collapse this section.</p>
-          </div>
-        </div>
-        <span class="text-2xl font-bold text-slate-500 transition-transform duration-200 group-open:rotate-180">
-          ⌄
-        </span>
-      </summary>
-
-      <div class="px-6 pb-6 border-t border-slate-200">
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 pt-6">
-          <a href="./en/Your_solutions/html/01_tasks/01_1.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.1</div>
-            <h3 class="text-xl font-bold mb-2">Task 1</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_2.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.2</div>
-            <h3 class="text-xl font-bold mb-2">Task 2</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_3.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.3</div>
-            <h3 class="text-xl font-bold mb-2">Task 3</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_4.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.4</div>
-            <h3 class="text-xl font-bold mb-2">Task 4</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_5.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.5</div>
-            <h3 class="text-xl font-bold mb-2">Task 5</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_6.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.6</div>
-            <h3 class="text-xl font-bold mb-2">Task 6</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_7.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.7</div>
-            <h3 class="text-xl font-bold mb-2">Task 7</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_8.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.8</div>
-            <h3 class="text-xl font-bold mb-2">Task 8</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_9.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.9</div>
-            <h3 class="text-xl font-bold mb-2">Task 9</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/01_tasks/01_10.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-300 transition">
-            <div class="text-sm font-semibold text-emerald-600 mb-2">01.10</div>
-            <h3 class="text-xl font-bold mb-2">Task 10</h3>
-            <p class="text-slate-600">Mechanics 1 problem solution.</p>
-          </a>
-        </div>
-      </div>
-    </details>
-
-    <!-- SECTION 02 -->
-    <details class="group bg-white border border-slate-200 rounded-2xl shadow-sm mb-6 overflow-hidden">
-      <summary class="list-none cursor-pointer select-none p-6 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-amber-100 text-amber-700 font-black text-xl">
-            02
-          </span>
-          <div>
-            <h2 class="text-2xl font-bold">Section 02 – Mechanics 2</h2>
-            <p class="text-slate-600">Click to expand or collapse this section.</p>
-          </div>
-        </div>
-        <span class="text-2xl font-bold text-slate-500 transition-transform duration-200 group-open:rotate-180">
-          ⌄
-        </span>
-      </summary>
-
-      <div class="px-6 pb-6 border-t border-slate-200">
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 pt-6">
-          <a href="./en/Your_solutions/html/02_tasks/02_1.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.1</div>
-            <h3 class="text-xl font-bold mb-2">Task 1</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_2.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.2</div>
-            <h3 class="text-xl font-bold mb-2">Task 2</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_3.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.3</div>
-            <h3 class="text-xl font-bold mb-2">Task 3</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_4.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.4</div>
-            <h3 class="text-xl font-bold mb-2">Task 4</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_5.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.5</div>
-            <h3 class="text-xl font-bold mb-2">Task 5</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_6.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.6</div>
-            <h3 class="text-xl font-bold mb-2">Task 6</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_7.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.7</div>
-            <h3 class="text-xl font-bold mb-2">Task 7</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_8.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.8</div>
-            <h3 class="text-xl font-bold mb-2">Task 8</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_9.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.9</div>
-            <h3 class="text-xl font-bold mb-2">Task 9</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_10.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.10</div>
-            <h3 class="text-xl font-bold mb-2">Task 10</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_11.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.11</div>
-            <h3 class="text-xl font-bold mb-2">Task 11</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-
-          <a href="./en/Your_solutions/html/02_tasks/02_12.html" class="block bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 transition">
-            <div class="text-sm font-semibold text-amber-600 mb-2">02.12</div>
-            <h3 class="text-xl font-bold mb-2">Task 12</h3>
-            <p class="text-slate-600">Mechanics 2 problem solution.</p>
-          </a>
-        </div>
-      </div>
-    </details>
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <div class="mb-8 text-center">
+    <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">
+      Waves — Section 3
+    </div>
+    <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-3">
+      Interactive HTML Solutions
+    </h2>
+    <p class="text-slate-600 max-w-3xl mx-auto">
+      Separate interactive pages for all 11 wave problems, including simulations, calculators, and visualizations.
+    </p>
   </div>
-</body>
-</html>
+
+  <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <a href="./wave_01_properties.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 01</div>
+      <div class="font-black text-xl text-slate-900">Wave Properties</div>
+      <div class="text-slate-600 mt-2">Compute wavelength in air and water from speed and frequency.</div>
+    </a>
+
+    <a href="./wave_02_string_harmonics.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 02</div>
+      <div class="font-black text-xl text-slate-900">String Harmonics</div>
+      <div class="text-slate-600 mt-2">Find the wave speed on a vibrating guitar string.</div>
+    </a>
+
+    <a href="./wave_03_standing_wave.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 03</div>
+      <div class="font-black text-xl text-slate-900">Superposition Principle</div>
+      <div class="text-slate-600 mt-2">Standing-wave animation with node positions and superposition.</div>
+    </a>
+
+    <a href="./wave_04_phase_difference.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 04</div>
+      <div class="font-black text-xl text-slate-900">Phase Difference</div>
+      <div class="text-slate-600 mt-2">Interactive phase shift calculator for point separation on a wave.</div>
+    </a>
+
+    <a href="./wave_05_echo_ranging.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 05</div>
+      <div class="font-black text-xl text-slate-900">Echo Ranging</div>
+      <div class="text-slate-600 mt-2">Determine the cliff distance from echo travel time.</div>
+    </a>
+
+    <a href="./wave_06_wave_equation_parameters.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 06</div>
+      <div class="font-black text-xl text-slate-900">Wave Equation</div>
+      <div class="text-slate-600 mt-2">Extract amplitude, wavelength, frequency, and speed.</div>
+    </a>
+
+    <a href="./wave_07_standing_wave_modes.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 07</div>
+      <div class="font-black text-xl text-slate-900">Standing Wave Modes</div>
+      <div class="text-slate-600 mt-2">Relate antinodes and string length to wavelength.</div>
+    </a>
+
+    <a href="./wave_08_traveling_wave_test.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 08</div>
+      <div class="font-black text-xl text-slate-900">Traveling-Wave Test</div>
+      <div class="text-slate-600 mt-2">Check which candidate functions satisfy the wave equation.</div>
+    </a>
+
+    <a href="./wave_09_damped_oscillator.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 09</div>
+      <div class="font-black text-xl text-slate-900">Damped Oscillator</div>
+      <div class="text-slate-600 mt-2">Detailed RK4 simulation with x(t), phase portrait, and damping regimes.</div>
+    </a>
+
+    <a href="./wave_10_wave_sources.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 10</div>
+      <div class="font-black text-xl text-slate-900">Wave Sources</div>
+      <div class="text-slate-600 mt-2">Place multiple sources and observe real-time wave superposition.</div>
+    </a>
+
+    <a href="./wave_11_two_slit_interference.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
+      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 11</div>
+      <div class="font-black text-xl text-slate-900">Two-Slit Interference</div>
+      <div class="text-slate-600 mt-2">Real-time Young experiment simulation with adjustable slit spacing and wavelength.</div>
+    </a>
+  </div>
+</section>
