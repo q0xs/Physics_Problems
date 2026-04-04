@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +8,7 @@
   <script>
     tailwind.config = {
       darkMode: 'class'
-    }
+    };
   </script>
 </head>
 <body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-300">
@@ -23,7 +23,7 @@
             Physics Solutions Hub
           </h1>
           <p class="mt-3 text-slate-600 dark:text-slate-300 max-w-3xl">
-            Interactive and organized access to all HTML solution pages, grouped by section.
+            All solution pages grouped by section, with collapsible panels and dark mode.
           </p>
         </div>
 
@@ -36,111 +36,173 @@
       </div>
     </header>
 
-    <section class="mb-14">
-      <div class="flex items-center gap-3 mb-5">
-        <div class="h-10 w-10 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center font-black">
-          00
-        </div>
-        <div>
-          <h2 class="text-2xl md:text-3xl font-black">Section 00</h2>
-          <p class="text-slate-600 dark:text-slate-400">Basic tasks</p>
-        </div>
-      </div>
+    <div class="space-y-6">
 
-      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-        <a href="./00_tasks/00_1.html" class="card"><span class="tag">00.1</span><h3>Task 1</h3><p>Open Section 00 task 1.</p></a>
-        <a href="./00_tasks/00_2.html" class="card"><span class="tag">00.2</span><h3>Task 2</h3><p>Open Section 00 task 2.</p></a>
-        <a href="./00_tasks/00_3.html" class="card"><span class="tag">00.3</span><h3>Task 3</h3><p>Open Section 00 task 3.</p></a>
-        <a href="./00_tasks/00_4.html" class="card"><span class="tag">00.4</span><h3>Task 4</h3><p>Open Section 00 task 4.</p></a>
-        <a href="./00_tasks/00_5.html" class="card"><span class="tag">00.5</span><h3>Task 5</h3><p>Open Section 00 task 5.</p></a>
-        <a href="./00_tasks/00_6.html" class="card"><span class="tag">00.6</span><h3>Task 6</h3><p>Open Section 00 task 6.</p></a>
-        <a href="./00_tasks/00_7.html" class="card"><span class="tag">00.7</span><h3>Task 7</h3><p>Open Section 00 task 7.</p></a>
-        <a href="./00_tasks/00_8.html" class="card"><span class="tag">00.8</span><h3>Task 8</h3><p>Open Section 00 task 8.</p></a>
-        <a href="./00_tasks/00_9.html" class="card"><span class="tag">00.9</span><h3>Task 9</h3><p>Open Section 00 task 9.</p></a>
-        <a href="./00_tasks/00_10.html" class="card"><span class="tag">00.10</span><h3>Task 10</h3><p>Open Section 00 task 10.</p></a>
-      </div>
-    </section>
+      <!-- SECTION 00 -->
+      <details open class="section-box">
+        <summary class="section-summary">
+          <div class="flex items-center gap-4">
+            <div class="section-badge bg-slate-900 text-white dark:bg-white dark:text-slate-900">00</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-black">Section 00</h2>
+              <p class="text-slate-600 dark:text-slate-400">Basic tasks</p>
+            </div>
+          </div>
+          <span class="summary-icon">⌄</span>
+        </summary>
 
-    <section class="mb-14">
-      <div class="flex items-center gap-3 mb-5">
-        <div class="h-10 w-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black">
-          01
+        <div class="pt-6 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <a href="./00_tasks/00_1.html" class="card"><span class="tag">00.1</span><h3>Task 1</h3><p>Open Section 00 task 1.</p></a>
+          <a href="./00_tasks/00_2.html" class="card"><span class="tag">00.2</span><h3>Task 2</h3><p>Open Section 00 task 2.</p></a>
+          <a href="./00_tasks/00_3.html" class="card"><span class="tag">00.3</span><h3>Task 3</h3><p>Open Section 00 task 3.</p></a>
+          <a href="./00_tasks/00_4.html" class="card"><span class="tag">00.4</span><h3>Task 4</h3><p>Open Section 00 task 4.</p></a>
+          <a href="./00_tasks/00_5.html" class="card"><span class="tag">00.5</span><h3>Task 5</h3><p>Open Section 00 task 5.</p></a>
+          <a href="./00_tasks/00_6.html" class="card"><span class="tag">00.6</span><h3>Task 6</h3><p>Open Section 00 task 6.</p></a>
+          <a href="./00_tasks/00_7.html" class="card"><span class="tag">00.7</span><h3>Task 7</h3><p>Open Section 00 task 7.</p></a>
+          <a href="./00_tasks/00_8.html" class="card"><span class="tag">00.8</span><h3>Task 8</h3><p>Open Section 00 task 8.</p></a>
+          <a href="./00_tasks/00_9.html" class="card"><span class="tag">00.9</span><h3>Task 9</h3><p>Open Section 00 task 9.</p></a>
+          <a href="./00_tasks/00_10.html" class="card"><span class="tag">00.10</span><h3>Task 10</h3><p>Open Section 00 task 10.</p></a>
         </div>
-        <div>
-          <h2 class="text-2xl md:text-3xl font-black">Section 01</h2>
-          <p class="text-slate-600 dark:text-slate-400">Problem set 01</p>
-        </div>
-      </div>
+      </details>
 
-      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-        <a href="./01_tasks/01_1.html" class="card"><span class="tag">01.1</span><h3>Task 1</h3><p>Open Section 01 task 1.</p></a>
-        <a href="./01_tasks/01_2.html" class="card"><span class="tag">01.2</span><h3>Task 2</h3><p>Open Section 01 task 2.</p></a>
-        <a href="./01_tasks/01_3.html" class="card"><span class="tag">01.3</span><h3>Task 3</h3><p>Open Section 01 task 3.</p></a>
-        <a href="./01_tasks/01_4.html" class="card"><span class="tag">01.4</span><h3>Task 4</h3><p>Open Section 01 task 4.</p></a>
-        <a href="./01_tasks/01_5.html" class="card"><span class="tag">01.5</span><h3>Task 5</h3><p>Open Section 01 task 5.</p></a>
-        <a href="./01_tasks/01_6.html" class="card"><span class="tag">01.6</span><h3>Task 6</h3><p>Open Section 01 task 6.</p></a>
-        <a href="./01_tasks/01_7.html" class="card"><span class="tag">01.7</span><h3>Task 7</h3><p>Open Section 01 task 7.</p></a>
-        <a href="./01_tasks/01_8.html" class="card"><span class="tag">01.8</span><h3>Task 8</h3><p>Open Section 01 task 8.</p></a>
-        <a href="./01_tasks/01_9.html" class="card"><span class="tag">01.9</span><h3>Task 9</h3><p>Open Section 01 task 9.</p></a>
-        <a href="./01_tasks/01_10.html" class="card"><span class="tag">01.10</span><h3>Task 10</h3><p>Open Section 01 task 10.</p></a>
-      </div>
-    </section>
+      <!-- SECTION 01 -->
+      <details class="section-box">
+        <summary class="section-summary">
+          <div class="flex items-center gap-4">
+            <div class="section-badge bg-blue-600 text-white">01</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-black">Section 01</h2>
+              <p class="text-slate-600 dark:text-slate-400">Problem set 01</p>
+            </div>
+          </div>
+          <span class="summary-icon">⌄</span>
+        </summary>
 
-    <section class="mb-14">
-      <div class="flex items-center gap-3 mb-5">
-        <div class="h-10 w-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black">
-          02
+        <div class="pt-6 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <a href="./01_tasks/01_1.html" class="card"><span class="tag">01.1</span><h3>Task 1</h3><p>Open Section 01 task 1.</p></a>
+          <a href="./01_tasks/01_2.html" class="card"><span class="tag">01.2</span><h3>Task 2</h3><p>Open Section 01 task 2.</p></a>
+          <a href="./01_tasks/01_3.html" class="card"><span class="tag">01.3</span><h3>Task 3</h3><p>Open Section 01 task 3.</p></a>
+          <a href="./01_tasks/01_4.html" class="card"><span class="tag">01.4</span><h3>Task 4</h3><p>Open Section 01 task 4.</p></a>
+          <a href="./01_tasks/01_5.html" class="card"><span class="tag">01.5</span><h3>Task 5</h3><p>Open Section 01 task 5.</p></a>
+          <a href="./01_tasks/01_6.html" class="card"><span class="tag">01.6</span><h3>Task 6</h3><p>Open Section 01 task 6.</p></a>
+          <a href="./01_tasks/01_7.html" class="card"><span class="tag">01.7</span><h3>Task 7</h3><p>Open Section 01 task 7.</p></a>
+          <a href="./01_tasks/01_8.html" class="card"><span class="tag">01.8</span><h3>Task 8</h3><p>Open Section 01 task 8.</p></a>
+          <a href="./01_tasks/01_9.html" class="card"><span class="tag">01.9</span><h3>Task 9</h3><p>Open Section 01 task 9.</p></a>
+          <a href="./01_tasks/01_10.html" class="card"><span class="tag">01.10</span><h3>Task 10</h3><p>Open Section 01 task 10.</p></a>
         </div>
-        <div>
-          <h2 class="text-2xl md:text-3xl font-black">Section 02</h2>
-          <p class="text-slate-600 dark:text-slate-400">Problem set 02</p>
-        </div>
-      </div>
+      </details>
 
-      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-        <a href="./02_tasks/02_1.html" class="card"><span class="tag">02.1</span><h3>Task 1</h3><p>Open Section 02 task 1.</p></a>
-        <a href="./02_tasks/02_2.html" class="card"><span class="tag">02.2</span><h3>Task 2</h3><p>Open Section 02 task 2.</p></a>
-        <a href="./02_tasks/02_3.html" class="card"><span class="tag">02.3</span><h3>Task 3</h3><p>Open Section 02 task 3.</p></a>
-        <a href="./02_tasks/02_4.html" class="card"><span class="tag">02.4</span><h3>Task 4</h3><p>Open Section 02 task 4.</p></a>
-        <a href="./02_tasks/02_5.html" class="card"><span class="tag">02.5</span><h3>Task 5</h3><p>Open Section 02 task 5.</p></a>
-        <a href="./02_tasks/02_6.html" class="card"><span class="tag">02.6</span><h3>Task 6</h3><p>Open Section 02 task 6.</p></a>
-        <a href="./02_tasks/02_7.html" class="card"><span class="tag">02.7</span><h3>Task 7</h3><p>Open Section 02 task 7.</p></a>
-        <a href="./02_tasks/02_8.html" class="card"><span class="tag">02.8</span><h3>Task 8</h3><p>Open Section 02 task 8.</p></a>
-        <a href="./02_tasks/02_9.html" class="card"><span class="tag">02.9</span><h3>Task 9</h3><p>Open Section 02 task 9.</p></a>
-        <a href="./02_tasks/02_10.html" class="card"><span class="tag">02.10</span><h3>Task 10</h3><p>Open Section 02 task 10.</p></a>
-        <a href="./02_tasks/02_11.html" class="card"><span class="tag">02.11</span><h3>Task 11</h3><p>Open Section 02 task 11.</p></a>
-        <a href="./02_tasks/02_12.html" class="card"><span class="tag">02.12</span><h3>Task 12</h3><p>Open Section 02 task 12.</p></a>
-      </div>
-    </section>
+      <!-- SECTION 02 -->
+      <details class="section-box">
+        <summary class="section-summary">
+          <div class="flex items-center gap-4">
+            <div class="section-badge bg-emerald-600 text-white">02</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-black">Section 02</h2>
+              <p class="text-slate-600 dark:text-slate-400">Problem set 02</p>
+            </div>
+          </div>
+          <span class="summary-icon">⌄</span>
+        </summary>
 
-    <section class="mb-6">
-      <div class="flex items-center gap-3 mb-5">
-        <div class="h-10 w-10 rounded-2xl bg-violet-600 text-white flex items-center justify-center font-black">
-          W
+        <div class="pt-6 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <a href="./02_tasks/02_1.html" class="card"><span class="tag">02.1</span><h3>Task 1</h3><p>Open Section 02 task 1.</p></a>
+          <a href="./02_tasks/02_2.html" class="card"><span class="tag">02.2</span><h3>Task 2</h3><p>Open Section 02 task 2.</p></a>
+          <a href="./02_tasks/02_3.html" class="card"><span class="tag">02.3</span><h3>Task 3</h3><p>Open Section 02 task 3.</p></a>
+          <a href="./02_tasks/02_4.html" class="card"><span class="tag">02.4</span><h3>Task 4</h3><p>Open Section 02 task 4.</p></a>
+          <a href="./02_tasks/02_5.html" class="card"><span class="tag">02.5</span><h3>Task 5</h3><p>Open Section 02 task 5.</p></a>
+          <a href="./02_tasks/02_6.html" class="card"><span class="tag">02.6</span><h3>Task 6</h3><p>Open Section 02 task 6.</p></a>
+          <a href="./02_tasks/02_7.html" class="card"><span class="tag">02.7</span><h3>Task 7</h3><p>Open Section 02 task 7.</p></a>
+          <a href="./02_tasks/02_8.html" class="card"><span class="tag">02.8</span><h3>Task 8</h3><p>Open Section 02 task 8.</p></a>
+          <a href="./02_tasks/02_9.html" class="card"><span class="tag">02.9</span><h3>Task 9</h3><p>Open Section 02 task 9.</p></a>
+          <a href="./02_tasks/02_10.html" class="card"><span class="tag">02.10</span><h3>Task 10</h3><p>Open Section 02 task 10.</p></a>
+          <a href="./02_tasks/02_11.html" class="card"><span class="tag">02.11</span><h3>Task 11</h3><p>Open Section 02 task 11.</p></a>
+          <a href="./02_tasks/02_12.html" class="card"><span class="tag">02.12</span><h3>Task 12</h3><p>Open Section 02 task 12.</p></a>
         </div>
-        <div>
-          <h2 class="text-2xl md:text-3xl font-black">Waves — Section 03</h2>
-          <p class="text-slate-600 dark:text-slate-400">Interactive wave simulations and calculators</p>
-        </div>
-      </div>
+      </details>
 
-      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-        <a href="./wave_01_properties.html" class="card"><span class="tag">W1</span><h3>Wave Properties</h3><p>Wavelength in different media.</p></a>
-        <a href="./wave_02_string_harmonics.html" class="card"><span class="tag">W2</span><h3>String Harmonics</h3><p>Fundamental mode and wave speed.</p></a>
-        <a href="./wave_03_standing_wave.html" class="card"><span class="tag">W3</span><h3>Superposition Principle</h3><p>Standing-wave animation and nodes.</p></a>
-        <a href="./wave_04_phase_difference.html" class="card"><span class="tag">W4</span><h3>Phase Difference</h3><p>Interactive phase-shift calculator.</p></a>
-        <a href="./wave_05_echo_ranging.html" class="card"><span class="tag">W5</span><h3>Echo Ranging</h3><p>Distance from echo travel time.</p></a>
-        <a href="./wave_06_wave_equation_parameters.html" class="card"><span class="tag">W6</span><h3>Wave Equation</h3><p>Extract amplitude, wavelength, frequency, and speed.</p></a>
-        <a href="./wave_07_standing_wave_modes.html" class="card"><span class="tag">W7</span><h3>Standing Wave Modes</h3><p>Antinodes and wavelength.</p></a>
-        <a href="./wave_08_traveling_wave_test.html" class="card"><span class="tag">W8</span><h3>Traveling-Wave Test</h3><p>Classify valid wave functions.</p></a>
-        <a href="./wave_09_damped_oscillator.html" class="card"><span class="tag">W9</span><h3>Damped Oscillator</h3><p>RK4 simulation, phase portrait, and damping regimes.</p></a>
-        <a href="./wave_10_wave_sources.html" class="card"><span class="tag">W10</span><h3>Wave Sources</h3><p>Add sources and observe superposition.</p></a>
-        <a href="./wave_11_two_slit_interference.html" class="card"><span class="tag">W11</span><h3>Two-Slit Interference</h3><p>Real-time Young experiment simulation.</p></a>
-      </div>
-    </section>
+      <!-- WAVES -->
+      <details class="section-box">
+        <summary class="section-summary">
+          <div class="flex items-center gap-4">
+            <div class="section-badge bg-violet-600 text-white">W</div>
+            <div>
+              <h2 class="text-2xl md:text-3xl font-black">Waves — Section 03</h2>
+              <p class="text-slate-600 dark:text-slate-400">Interactive wave simulations and calculators</p>
+            </div>
+          </div>
+          <span class="summary-icon">⌄</span>
+        </summary>
+
+        <div class="pt-6 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <a href="./wave_01_properties.html" class="card"><span class="tag">W1</span><h3>Wave Properties</h3><p>Wavelength in different media.</p></a>
+          <a href="./wave_02_string_harmonics.html" class="card"><span class="tag">W2</span><h3>String Harmonics</h3><p>Fundamental mode and wave speed.</p></a>
+          <a href="./wave_03_standing_wave.html" class="card"><span class="tag">W3</span><h3>Superposition Principle</h3><p>Standing-wave animation and nodes.</p></a>
+          <a href="./wave_04_phase_difference.html" class="card"><span class="tag">W4</span><h3>Phase Difference</h3><p>Interactive phase-shift calculator.</p></a>
+          <a href="./wave_05_echo_ranging.html" class="card"><span class="tag">W5</span><h3>Echo Ranging</h3><p>Distance from echo travel time.</p></a>
+          <a href="./wave_06_wave_equation_parameters.html" class="card"><span class="tag">W6</span><h3>Wave Equation</h3><p>Extract amplitude, wavelength, frequency, and speed.</p></a>
+          <a href="./wave_07_standing_wave_modes.html" class="card"><span class="tag">W7</span><h3>Standing Wave Modes</h3><p>Antinodes and wavelength.</p></a>
+          <a href="./wave_08_traveling_wave_test.html" class="card"><span class="tag">W8</span><h3>Traveling-Wave Test</h3><p>Classify valid wave functions.</p></a>
+          <a href="./wave_09_damped_oscillator.html" class="card"><span class="tag">W9</span><h3>Damped Oscillator</h3><p>RK4 simulation, phase portrait, and damping regimes.</p></a>
+          <a href="./wave_10_wave_sources.html" class="card"><span class="tag">W10</span><h3>Wave Sources</h3><p>Add sources and observe superposition.</p></a>
+          <a href="./wave_11_two_slit_interference.html" class="card"><span class="tag">W11</span><h3>Two-Slit Interference</h3><p>Real-time Young experiment simulation.</p></a>
+        </div>
+      </details>
+
+    </div>
   </div>
 
   <style>
+    .section-box {
+      background: white;
+      border: 1px solid rgb(226 232 240);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .dark .section-box {
+      background: rgb(15 23 42);
+      border-color: rgb(51 65 85);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+    }
+
+    .section-summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .section-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .summary-icon {
+      font-size: 1.5rem;
+      font-weight: 800;
+      transition: transform 0.2s ease;
+      color: rgb(100 116 139);
+    }
+
+    details[open] .summary-icon {
+      transform: rotate(180deg);
+    }
+
+    .section-badge {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
     .card {
       display: block;
       padding: 1.25rem;
@@ -201,7 +263,9 @@
     const htmlEl = document.documentElement;
     const savedTheme = localStorage.getItem('theme');
 
-    if (savedTheme === 'light') {
+    if (savedTheme === 'dark') {
+      htmlEl.classList.add('dark');
+    } else if (savedTheme === 'light') {
       htmlEl.classList.remove('dark');
     } else {
       htmlEl.classList.add('dark');
