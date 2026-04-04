@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Task 04 - Electric vs Gravitational Force</title>
+  <style>
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f8fc}
+    .container{max-width:1150px;margin:0 auto;padding:20px;display:grid;grid-template-columns:360px 1fr;gap:20px}
+    .card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    label{display:block;margin-top:10px;font-weight:700}
+    input{width:100%;padding:10px;border:1px solid #d6dfeb;border-radius:10px;box-sizing:border-box;margin-top:6px}
+    button{width:100%;margin-top:16px;padding:12px;border:0;border-radius:10px;background:#1f6feb;color:#fff;font-weight:700;cursor:pointer}
+    .out{margin-top:14px;background:#f7f9fc;padding:12px;border-radius:10px;line-height:1.7}
+    canvas{width:100%;height:auto;border:1px solid #dde6f0;border-radius:12px;background:#fff}
+    @media (max-width:900px){.container{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <h1>Task 04</h1>
+    <p>Interactive comparison of electric and gravitational attraction in a hydrogen atom.</p>
+
+    <label>Distance r (m)</label>
+    <input id="r" type="number" step="1e-12" value="5.3e-11">
+
+    <label>Electron mass mₑ (kg)</label>
+    <input id="me" type="number" step="1e-33" value="9.11e-31">
+
+    <label>Proton mass mₚ (kg)</label>
+    <input id="mp" type="number" step="1e-30" value="1.67e-27">
+
+    <label>Elementary charge e (C)</label>
+    <input id="e" type="number" step="1e-20" value="1.6e-19">
+
+    <button id="btn">Compute</button>
+    <div class="out" id="out"></div>
+  </div>
+
+  <div class="card">
+    <h2>Force Scale Visualization</h2>
+    <canvas id="canvas" width="740" height="480"></canvas>
+  </div>
+</div>
+
+<script>
+const ctx = document.getElementById('canvas').getContext('2d');
+const out = document.getElementById('out');
+
+function compute(){
+  const r = parseFloat(document.getElementById('r').value);
+  const me = parseFloat(document.getElementById('me').value);
+  const mp = parseFloat(document.getElementById('mp').value);
+  const e = parseFloat(document.getElementById('e').value);
+
+  const k = 8.99e9;
+  const G = 6.67e-11;
+
+  const Fe = k * e * e / (r*r);
+  const Fg = G * me * mp / (r*r);
+  const ratio = Fe / Fg;
+
+  out.innerHTML = `
+    <strong>Electric force:</strong> ${Fe.toExponential(6)} N<br>
+    <strong>Gravitational force:</strong> ${Fg.toExponential(6)} N<br>
+    <strong>Ratio F<sub>e</sub>/F<sub>g</sub>:</strong> ${ratio.toExponential(6)}
+  `;
+
+  draw(Fe,Fg,ratio);
+}
+
+function draw(Fe,Fg,ratio){
+  ctx.clearRect(0,0,740,480);
+
+  ctx.fillStyle = "#111";
+  ctx.font = "18px Arial";
+  ctx.fillText("Logarithmic force bars", 20, 30);
+
+  const logFe = Math.log10(Fe);
+  const logFg = Math.log10(Fg);
+  const minLog = Math.floor(logFg);
+  const maxLog = Math.ceil(logFe);
+  const width = 620;
+  const startX = 80;
+
+  ctx.strokeStyle = "#555";
+  ctx.beginPath();
+  ctx.moveTo(startX, 400);
+  ctx.lineTo(startX + width, 400);
+  ctx.stroke();
+
+  for(let i=minLog;i<=maxLog;i+=5){
+    const x = startX + (i-minLog)/(maxLog-minLog)*width;
+    ctx.beginPath();
+    ctx.moveTo(x,395);
+    ctx.lineTo(x,405);
+    ctx.stroke();
+    ctx.fillText(`10^${i}`, x-18, 428);
+  }
+
+  function bar(logValue, y, color, label, actual){
+    const x2 = startX + (logValue-minLog)/(maxLog-minLog)*width;
+    ctx.fillStyle = color;
+    ctx.fillRect(startX, y, Math.max(2, x2-startX), 34);
+    ctx.fillStyle = "#111";
+    ctx.fillText(`${label}: ${actual.toExponential(3)} N`, startX, y-10);
+  }
+
+  bar(logFe, 120, "#e74c3c", "Electric force", Fe);
+  bar(logFg, 230, "#3498db", "Gravitational force", Fg);
+
+  ctx.fillStyle = "#111";
+  ctx.font = "20px Arial";
+  ctx.fillText(`Ratio ≈ ${ratio.toExponential(3)}`, 20, 70);
+
+  // simple atom sketch
+  ctx.strokeStyle = "#7f8c8d";
+  ctx.beginPath();
+  ctx.arc(620,170,60,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(620,170,12,0,Math.PI*2);
+  ctx.fillStyle = "#e67e22";
+  ctx.fill();
+  ctx.fillText("p⁺", 610, 175);
+
+  ctx.beginPath();
+  ctx.arc(680,170,10,0,Math.PI*2);
+  ctx.fillStyle = "#2ecc71";
+  ctx.fill();
+  ctx.fillText("e⁻", 672, 197);
+}
+
+document.getElementById('btn').addEventListener('click', compute);
+compute();
+</script>
+</body>
+</html>

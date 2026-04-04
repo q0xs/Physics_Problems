@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task 02 - Electric Potential at Center</title>
+  <style>
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#1a1a1a}
+    .container{max-width:1100px;margin:0 auto;padding:20px;display:grid;grid-template-columns:340px 1fr;gap:20px}
+    .card{background:#fff;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:18px}
+    h1{font-size:24px;margin-top:0} h2{font-size:18px}
+    label{display:block;margin-top:10px;font-weight:700}
+    input{width:100%;padding:10px;margin-top:6px;border:1px solid #d5deea;border-radius:10px;box-sizing:border-box}
+    button{width:100%;margin-top:16px;padding:12px;border:0;border-radius:10px;background:#1f6feb;color:#fff;font-weight:700;cursor:pointer}
+    .out{margin-top:14px;background:#f7f9fc;padding:12px;border-radius:10px;line-height:1.6}
+    canvas{width:100%;height:auto;border:1px solid #dde5f0;border-radius:12px;background:#fff}
+    @media (max-width:900px){.container{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Task 02</h1>
+      <h2>Potential Calculator</h2>
+
+      <label>Charge q₁ (C)</label>
+      <input id="q1" type="number" step="0.1" value="1">
+
+      <label>Charge q₂ (C)</label>
+      <input id="q2" type="number" step="0.1" value="-2">
+
+      <label>Charge q₃ (C)</label>
+      <input id="q3" type="number" step="0.1" value="3">
+
+      <label>Charge q₄ (C)</label>
+      <input id="q4" type="number" step="0.1" value="-4">
+
+      <label>Square side a (m)</label>
+      <input id="side" type="number" step="0.1" value="1">
+
+      <button id="btn">Compute</button>
+      <div class="out" id="out"></div>
+    </div>
+
+    <div class="card">
+      <h2>Square Geometry and Potential Weighting</h2>
+      <canvas id="canvas" width="700" height="700"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('canvas').getContext('2d');
+    const out = document.getElementById('out');
+
+    function drawSquare(values){
+      const {q1,q2,q3,q4,a,V,r} = values;
+      ctx.clearRect(0,0,700,700);
+      const cx = 350, cy = 350, s = 200;
+      const pts = [
+        {x:cx-s,y:cy-s,q:q1},
+        {x:cx+s,y:cy-s,q:q2},
+        {x:cx+s,y:cy+s,q:q3},
+        {x:cx-s,y:cy+s,q:q4},
+      ];
+
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#222";
+      ctx.strokeRect(cx-s,cy-s,2*s,2*s);
+
+      pts.forEach((p,i)=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,18,0,Math.PI*2);
+        ctx.fillStyle = p.q>=0 ? "#e74c3c" : "#3498db";
+        ctx.fill();
+
+        ctx.fillStyle = "#111";
+        ctx.font = "16px Arial";
+        ctx.fillText(`q${i+1}=${p.q} C`, p.x-28, p.y-28);
+
+        ctx.strokeStyle = "#7f8c8d";
+        ctx.setLineDash([6,6]);
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(cx,cy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+
+      ctx.beginPath();
+      ctx.arc(cx,cy,12,0,Math.PI*2);
+      ctx.fillStyle = "#27ae60";
+      ctx.fill();
+      ctx.fillStyle = "#111";
+      ctx.font = "18px Arial";
+      ctx.fillText("Center", cx+18, cy+5);
+
+      ctx.fillText(`r = ${r.toFixed(4)} m`, 40, 640);
+      ctx.fillText(`V = ${V.toExponential(4)} V`, 230, 640);
+    }
+
+    function compute(){
+      const q1 = parseFloat(document.getElementById('q1').value);
+      const q2 = parseFloat(document.getElementById('q2').value);
+      const q3 = parseFloat(document.getElementById('q3').value);
+      const q4 = parseFloat(document.getElementById('q4').value);
+      const a = parseFloat(document.getElementById('side').value);
+
+      const k = 8.99e9;
+      const r = a*Math.sqrt(2)/2;
+      const V = k*(q1+q2+q3+q4)/r;
+
+      out.innerHTML = `
+        <strong>Distance to each corner:</strong> ${r.toFixed(4)} m<br>
+        <strong>Charge sum:</strong> ${(q1+q2+q3+q4).toFixed(4)} C<br>
+        <strong>Potential at center:</strong> ${V.toExponential(6)} V
+      `;
+      drawSquare({q1,q2,q3,q4,a,V,r});
+    }
+
+    document.getElementById('btn').addEventListener('click', compute);
+    compute();
+  </script>
+</body>
+</html>
