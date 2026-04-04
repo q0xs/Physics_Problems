@@ -1,143 +1,497 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Task 05 - Proton Levitation Field</title>
-  <style>
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f8fc}
-    .container{max-width:1120px;margin:0 auto;padding:20px;display:grid;grid-template-columns:330px 1fr;gap:20px}
-    .card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-    label{display:block;margin-top:10px;font-weight:700}
-    input{width:100%;padding:10px;border:1px solid #d4ddea;border-radius:10px;box-sizing:border-box;margin-top:6px}
-    button{width:100%;margin-top:16px;padding:12px;border:0;border-radius:10px;background:#1f6feb;color:white;font-weight:700;cursor:pointer}
-    .out{margin-top:14px;background:#f7f9fc;padding:12px;border-radius:10px;line-height:1.7}
-    canvas{width:100%;height:auto;border:1px solid #dce5ef;border-radius:12px;background:linear-gradient(#fefefe,#f6fbff)}
-    @media (max-width:900px){.container{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-<div class="container">
-  <div class="card">
-    <h1>Task 05</h1>
-    <p>Interactive calculator for the field required to levitate a proton.</p>
+# Task 06 – Electric Field of Two Positive Charges
 
-    <label>Proton mass mₚ (kg)</label>
-    <input id="mp" type="number" step="1e-28" value="1.67e-27">
+## Problem Statement
 
-    <label>Charge e (C)</label>
-    <input id="e" type="number" step="1e-20" value="1.6e-19">
+Two point charges are located at
 
-    <label>Gravitational acceleration g (m/s²)</label>
-    <input id="g" type="number" step="0.1" value="9.8">
+- $+q$ at $(-a,0)$
+- $+2q$ at $(a,0)$
 
-    <button id="btn">Compute</button>
-    <div class="out" id="out"></div>
-  </div>
+Required:
 
-  <div class="card">
-    <h2>Levitation Visualization</h2>
-    <canvas id="canvas" width="720" height="480"></canvas>
-  </div>
-</div>
+1. Determine the field vector $\vec E(0,y)$, $\vec E(x,0)$, and the general field $\vec E(x,y)$.
+2. Determine the conditions for which $E_x = 0$, $E_y = 0$, and $\vec E = 0$.
+3. Calculate the field for
 
-<script>
-const out = document.getElementById('out');
-const ctx = document.getElementById('canvas').getContext('2d');
-let phase = 0;
+$$
+a = 0.2\,\mathrm{m}
+$$
 
-function compute(){
-  const mp = parseFloat(document.getElementById('mp').value);
-  const e = parseFloat(document.getElementById('e').value);
-  const g = parseFloat(document.getElementById('g').value);
+$$
+y = 0.3\,\mathrm{m}
+$$
 
-  const Fg = mp*g;
-  const E = Fg/e;
+$$
+q = 2\,\mu\mathrm{C}
+$$
 
-  out.innerHTML = `
-    <strong>Weight of proton:</strong> ${Fg.toExponential(6)} N<br>
-    <strong>Required electric field:</strong> ${E.toExponential(6)} N/C<br>
-    <strong>Required field direction:</strong> upward
-  `;
+4. Investigate the limit $y \gg a$.
 
-  animate(E,Fg);
-}
+## Theory
 
-function drawScene(E,Fg){
-  ctx.clearRect(0,0,720,480);
+The electric field of a point charge $Q$ located at position $\vec r_0$ is
 
-  // field lines
-  ctx.strokeStyle = "#a6c8ff";
-  ctx.lineWidth = 2;
-  for(let x=80;x<=640;x+=70){
-    ctx.beginPath();
-    ctx.moveTo(x,380);
-    ctx.lineTo(x,80);
-    ctx.stroke();
+$$
+\vec E(\vec r) = kQ \frac{\vec r - \vec r_0}{|\vec r - \vec r_0|^3}
+$$
 
-    ctx.beginPath();
-    ctx.moveTo(x,80);
-    ctx.lineTo(x-8,94);
-    ctx.lineTo(x+8,94);
-    ctx.closePath();
-    ctx.fillStyle = "#a6c8ff";
-    ctx.fill();
-  }
+For a system of charges, the total field is the vector sum of the individual fields.
 
-  // ground reference
-  ctx.fillStyle = "#dde6f3";
-  ctx.fillRect(0,420,720,60);
+Let the field point be
 
-  const y = 240 + Math.sin(phase)*8;
-  ctx.beginPath();
-  ctx.arc(360,y,18,0,Math.PI*2);
-  ctx.fillStyle = "#e74c3c";
-  ctx.fill();
-  ctx.fillStyle = "#fff";
-  ctx.font = "20px Arial";
-  ctx.fillText("+",354,y+7);
+$$
+\vec r = (x,y)
+$$
 
-  drawArrow(360,y+25,360,y+105,"#8e44ad");
-  drawArrow(360,y-25,360,y-105,"#27ae60");
+and let the source charges be at
 
-  ctx.fillStyle = "#111";
-  ctx.font = "18px Arial";
-  ctx.fillText(`Electric force = qE`, 390, y-70);
-  ctx.fillText(`Weight = mg`, 390, y+85);
-  ctx.fillText(`E = ${E.toExponential(3)} N/C`, 30, 40);
-  ctx.fillText(`mg = ${Fg.toExponential(3)} N`, 30, 70);
-}
+$$
+\vec r_1 = (-a,0)
+$$
 
-function drawArrow(x1,y1,x2,y2,color){
-  const head = 12;
-  const angle = Math.atan2(y2-y1,x2-x1);
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.moveTo(x1,y1);
-  ctx.lineTo(x2,y2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x2,y2);
-  ctx.lineTo(x2-head*Math.cos(angle-Math.PI/6), y2-head*Math.sin(angle-Math.PI/6));
-  ctx.lineTo(x2-head*Math.cos(angle+Math.PI/6), y2-head*Math.sin(angle+Math.PI/6));
-  ctx.closePath();
-  ctx.fill();
-}
+and
 
-function animate(E,Fg){
-  cancelAnimationFrame(window.anim);
-  function loop(){
-    phase += 0.05;
-    drawScene(E,Fg);
-    window.anim = requestAnimationFrame(loop);
-  }
-  loop();
-}
+$$
+\vec r_2 = (a,0)
+$$
 
-document.getElementById('btn').addEventListener('click', compute);
-compute();
-</script>
-</body>
-</html>
+with charges
+
+$$
+q_1 = q
+$$
+
+and
+
+$$
+q_2 = 2q
+$$
+
+## Step-by-Step Solution
+
+### General field $\vec E(x,y)$
+
+The displacement vectors from the charges to the field point are
+
+$$
+\vec R_1 = (x+a)\hat i + y\hat j
+$$
+
+$$
+\vec R_2 = (x-a)\hat i + y\hat j
+$$
+
+Their magnitudes are
+
+$$
+R_1 = \sqrt{(x+a)^2 + y^2}
+$$
+
+$$
+R_2 = \sqrt{(x-a)^2 + y^2}
+$$
+
+Therefore, the fields due to the two charges are
+
+$$
+\vec E_1 = kq \frac{(x+a)\hat i + y\hat j}{\left((x+a)^2 + y^2\right)^{3/2}}
+$$
+
+$$
+\vec E_2 = 2kq \frac{(x-a)\hat i + y\hat j}{\left((x-a)^2 + y^2\right)^{3/2}}
+$$
+
+Hence,
+
+$$
+\vec E(x,y) =
+kq \frac{(x+a)\hat i + y\hat j}{\left((x+a)^2 + y^2\right)^{3/2}}
++
+2kq \frac{(x-a)\hat i + y\hat j}{\left((x-a)^2 + y^2\right)^{3/2}}
+$$
+
+Thus the Cartesian components are
+
+$$
+E_x =
+kq \frac{x+a}{\left((x+a)^2 + y^2\right)^{3/2}}
++
+2kq \frac{x-a}{\left((x-a)^2 + y^2\right)^{3/2}}
+$$
+
+$$
+E_y =
+kq \frac{y}{\left((x+a)^2 + y^2\right)^{3/2}}
++
+2kq \frac{y}{\left((x-a)^2 + y^2\right)^{3/2}}
+$$
+
+### Field on the $y$-axis
+
+Set
+
+$$
+x = 0
+$$
+
+Then
+
+$$
+\vec E(0,y) =
+kq \frac{a\hat i + y\hat j}{(a^2 + y^2)^{3/2}}
++
+2kq \frac{-a\hat i + y\hat j}{(a^2 + y^2)^{3/2}}
+$$
+
+Combine the terms:
+
+$$
+\vec E(0,y) =
+\frac{kq}{(a^2 + y^2)^{3/2}}
+\left(
+-a\hat i + 3y\hat j
+\right)
+$$
+
+Therefore,
+
+$$
+E_x(0,y) = -\frac{kqa}{(a^2+y^2)^{3/2}}
+$$
+
+$$
+E_y(0,y) = \frac{3kqy}{(a^2+y^2)^{3/2}}
+$$
+
+### Field on the $x$-axis
+
+Set
+
+$$
+y = 0
+$$
+
+Then
+
+$$
+E_y(x,0) = 0
+$$
+
+and
+
+$$
+E_x(x,0) =
+kq \frac{x+a}{|x+a|^3}
++
+2kq \frac{x-a}{|x-a|^3}
+$$
+
+So the field on the $x$-axis is
+
+$$
+\vec E(x,0) =
+\left[
+kq \frac{x+a}{|x+a|^3}
++
+2kq \frac{x-a}{|x-a|^3}
+\right]\hat i
+$$
+
+### Condition for $E_y = 0$
+
+From the general expression,
+
+$$
+E_y =
+kq\,y
+\left[
+\frac{1}{\left((x+a)^2+y^2\right)^{3/2}}
++
+\frac{2}{\left((x-a)^2+y^2\right)^{3/2}}
+\right]
+$$
+
+The bracket is always positive. Hence,
+
+$$
+E_y = 0 \iff y = 0
+$$
+
+### Condition for $E_x = 0$
+
+The condition is
+
+$$
+\frac{x+a}{\left((x+a)^2+y^2\right)^{3/2}}
++
+2\frac{x-a}{\left((x-a)^2+y^2\right)^{3/2}} = 0
+$$
+
+A special physically important case is the zero-field point on the $x$-axis. Then
+
+$$
+y = 0
+$$
+
+and the condition becomes
+
+$$
+\frac{1}{(x+a)^2} = \frac{2}{(a-x)^2}
+$$
+
+for a point between the charges.
+
+Taking square roots gives
+
+$$
+a - x = \sqrt{2}(x+a)
+$$
+
+Solving:
+
+$$
+a - x = \sqrt{2}x + \sqrt{2}a
+$$
+
+$$
+a(1-\sqrt{2}) = x(1+\sqrt{2})
+$$
+
+$$
+x = -a \frac{\sqrt{2}-1}{\sqrt{2}+1}
+$$
+
+Rationalizing yields
+
+$$
+x = -a(\sqrt{2}-1)^2
+$$
+
+Since
+
+$$
+(\sqrt{2}-1)^2 = 3 - 2\sqrt{2}
+$$
+
+the zero-field point is
+
+$$
+x_0 = -a(3 - 2\sqrt{2})
+$$
+
+### Condition for $\vec E = 0$
+
+For the field to vanish completely, both components must vanish:
+
+$$
+E_x = 0
+$$
+
+and
+
+$$
+E_y = 0
+$$
+
+Since $E_y = 0$ only when $y=0$, the zero-field point must lie on the $x$-axis. Hence,
+
+$$
+\vec E = 0
+\iff
+\left(x,y\right) =
+\left(-a(3 - 2\sqrt{2}),0\right)
+$$
+
+### Numerical calculation for $a=0.2\,\mathrm{m}$, $y=0.3\,\mathrm{m}$, $q=2\,\mu\mathrm{C}$
+
+The requested point is $(0,y)$.
+
+Given:
+
+$$
+a = 0.2\,\mathrm{m}
+$$
+
+$$
+y = 0.3\,\mathrm{m}
+$$
+
+$$
+q = 2 \times 10^{-6}\,\mathrm{C}
+$$
+
+Compute
+
+$$
+a^2 + y^2 = 0.04 + 0.09 = 0.13
+$$
+
+$$
+(a^2+y^2)^{3/2} = 0.13^{3/2} \approx 0.04687
+$$
+
+Also,
+
+$$
+kq = (8.99 \times 10^9)(2 \times 10^{-6}) = 1.798 \times 10^4
+$$
+
+Now compute the components:
+
+$$
+E_x(0,y) = -\frac{(1.798 \times 10^4)(0.2)}{0.04687}
+$$
+
+$$
+E_x(0,y) \approx -7.67 \times 10^4\,\mathrm{N/C}
+$$
+
+$$
+E_y(0,y) = \frac{3(1.798 \times 10^4)(0.3)}{0.04687}
+$$
+
+$$
+E_y(0,y) \approx 3.45 \times 10^5\,\mathrm{N/C}
+$$
+
+Thus,
+
+$$
+\vec E(0,0.3) \approx
+\left(
+-7.67 \times 10^4\,\hat i
++
+3.45 \times 10^5\,\hat j
+\right)\,\mathrm{N/C}
+$$
+
+Its magnitude is
+
+$$
+|\vec E| = \sqrt{E_x^2 + E_y^2}
+$$
+
+$$
+|\vec E| \approx 3.54 \times 10^5\,\mathrm{N/C}
+$$
+
+### Far-field limit $y \gg a$
+
+When
+
+$$
+y \gg a
+$$
+
+the denominator satisfies
+
+$$
+(a^2+y^2)^{3/2} \approx y^3
+$$
+
+Therefore,
+
+$$
+\vec E(0,y) \approx
+-\frac{kqa}{y^3}\hat i
++
+\frac{3kq}{y^2}\hat j
+$$
+
+The dominant term is the vertical term:
+
+$$
+\vec E(0,y) \approx \frac{3kq}{y^2}\hat j
+$$
+
+This corresponds to the field of an effective total charge
+
+$$
+q_{\text{tot}} = 3q
+$$
+
+observed from far away.
+
+## Final Result
+
+The general field is
+
+$$
+\vec E(x,y) =
+kq \frac{(x+a)\hat i + y\hat j}{\left((x+a)^2 + y^2\right)^{3/2}}
++
+2kq \frac{(x-a)\hat i + y\hat j}{\left((x-a)^2 + y^2\right)^{3/2}}
+$$
+
+On the $y$-axis:
+
+$$
+\vec E(0,y) =
+\frac{kq}{(a^2+y^2)^{3/2}}
+\left(
+-a\hat i + 3y\hat j
+\right)
+$$
+
+On the $x$-axis:
+
+$$
+\vec E(x,0) =
+\left[
+kq \frac{x+a}{|x+a|^3}
++
+2kq \frac{x-a}{|x-a|^3}
+\right]\hat i
+$$
+
+The component conditions are
+
+$$
+E_y = 0 \iff y = 0
+$$
+
+and
+
+$$
+E_x = 0
+\iff
+\frac{x+a}{\left((x+a)^2+y^2\right)^{3/2}}
++
+2\frac{x-a}{\left((x-a)^2+y^2\right)^{3/2}} = 0
+$$
+
+The zero field point is
+
+$$
+\left(x,y\right) =
+\left(-a(3 - 2\sqrt{2}),0\right)
+$$
+
+For the numerical data,
+
+$$
+\vec E \approx
+\left(
+-7.67 \times 10^4\,\hat i
++
+3.45 \times 10^5\,\hat j
+\right)\,\mathrm{N/C}
+$$
+
+with magnitude
+
+$$
+|\vec E| \approx 3.54 \times 10^5\,\mathrm{N/C}
+$$
+
+In the far-field limit,
+
+$$
+\vec E(0,y) \approx \frac{3kq}{y^2}\hat j
+$$
+
+to leading order.
+
+## Interpretation
+
+The stronger charge $+2q$ shifts the zero-field point away from the midpoint and closer to the weaker charge $+q$. In the far-field region, the system behaves like a single net charge $3q$, which is the expected monopole approximation.

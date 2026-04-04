@@ -1,165 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Task 06 - Field of Two Charges</title>
-  <style>
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#1a1a1a}
-    .container{max-width:1200px;margin:0 auto;padding:20px;display:grid;grid-template-columns:340px 1fr;gap:20px}
-    .card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-    label{display:block;margin-top:10px;font-weight:700}
-    input{width:100%;padding:10px;border:1px solid #d4deeb;border-radius:10px;box-sizing:border-box;margin-top:6px}
-    button{width:100%;margin-top:16px;padding:12px;border:0;border-radius:10px;background:#1f6feb;color:#fff;font-weight:700;cursor:pointer}
-    .out{margin-top:14px;background:#f7f9fc;padding:12px;border-radius:10px;line-height:1.7}
-    canvas{width:100%;height:auto;border:1px solid #dce4ef;border-radius:12px;background:#fff}
-    @media (max-width:900px){.container{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-<div class="container">
-  <div class="card">
-    <h1>Task 06</h1>
-    <p>Field calculator and vector visualization for charges $+q$ and $+2q$.</p>
+# Task 07 – Cyclotron Motion After Acceleration Through a Potential Difference
 
-    <label>q (C)</label>
-    <input id="q" type="number" step="0.000001" value="0.000002">
+## Problem Statement
 
-    <label>a (m)</label>
-    <input id="a" type="number" step="0.01" value="0.2">
+An electron is accelerated from rest through a potential difference of $5000\,\mathrm{V}$. It then enters a region of uniform magnetic field
 
-    <label>Field point x (m)</label>
-    <input id="x" type="number" step="0.01" value="0">
+$$
+B = 0.1\,\mathrm{T}
+$$
 
-    <label>Field point y (m)</label>
-    <input id="y" type="number" step="0.01" value="0.3">
+perpendicular to its velocity. Determine the radius of the circular path.
 
-    <button id="btn">Compute Field</button>
-    <div class="out" id="out"></div>
-  </div>
+## Theory
 
-  <div class="card">
-    <h2>Vector Field Snapshot</h2>
-    <canvas id="canvas" width="760" height="760"></canvas>
-  </div>
-</div>
+When a charged particle is accelerated through a potential difference $V$, the gain in kinetic energy is
 
-<script>
-const ctx = document.getElementById('canvas').getContext('2d');
-const out = document.getElementById('out');
+$$
+qV = \frac{1}{2}mv^2
+$$
 
-function fieldAt(x,y,q,a){
-  const k = 8.99e9;
-  const dx1 = x + a, dy1 = y;
-  const dx2 = x - a, dy2 = y;
-  const r1 = Math.hypot(dx1,dy1);
-  const r2 = Math.hypot(dx2,dy2);
-  const Ex = k*q*dx1/Math.pow(r1,3) + 2*k*q*dx2/Math.pow(r2,3);
-  const Ey = k*q*dy1/Math.pow(r1,3) + 2*k*q*dy2/Math.pow(r2,3);
-  return {Ex,Ey,Emag:Math.hypot(Ex,Ey)};
-}
+For an electron, using magnitudes,
 
-function drawArrow(x1,y1,x2,y2,color){
-  const head = 8;
-  const angle = Math.atan2(y2-y1,x2-x1);
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(x1,y1);
-  ctx.lineTo(x2,y2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x2,y2);
-  ctx.lineTo(x2-head*Math.cos(angle-Math.PI/6), y2-head*Math.sin(angle-Math.PI/6));
-  ctx.lineTo(x2-head*Math.cos(angle+Math.PI/6), y2-head*Math.sin(angle+Math.PI/6));
-  ctx.closePath();
-  ctx.fill();
-}
+$$
+eV = \frac{1}{2}m_e v^2
+$$
 
-function worldToCanvas(x,y,scale){
-  return {X:380 + x*scale, Y:380 - y*scale};
-}
+Once the electron enters the magnetic field, the magnetic force acts as the centripetal force:
 
-function computeZeroPoint(a){
-  return -a*(3 - 2*Math.sqrt(2));
-}
+$$
+qvB = \frac{mv^2}{r}
+$$
 
-function redraw(){
-  const q = parseFloat(document.getElementById('q').value);
-  const a = parseFloat(document.getElementById('a').value);
-  const x = parseFloat(document.getElementById('x').value);
-  const y = parseFloat(document.getElementById('y').value);
+Thus the radius is
 
-  const f = fieldAt(x,y,q,a);
-  const x0 = computeZeroPoint(a);
+$$
+r = \frac{mv}{qB}
+$$
 
-  out.innerHTML = `
-    <strong>E<sub>x</sub>:</strong> ${f.Ex.toExponential(6)} N/C<br>
-    <strong>E<sub>y</sub>:</strong> ${f.Ey.toExponential(6)} N/C<br>
-    <strong>|E|:</strong> ${f.Emag.toExponential(6)} N/C<br>
-    <strong>Zero-field point on x-axis:</strong> (${x0.toFixed(6)}, 0) m
-  `;
+Constants used:
 
-  ctx.clearRect(0,0,760,760);
-  const scale = 500;
+$$
+e = 1.60 \times 10^{-19}\,\mathrm{C}
+$$
 
-  // grid
-  ctx.strokeStyle = "#eef2f7";
-  for(let i=0;i<=760;i+=38){
-    ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,760); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(760,i); ctx.stroke();
-  }
+$$
+m_e = 9.11 \times 10^{-31}\,\mathrm{kg}
+$$
 
-  // axes
-  ctx.strokeStyle = "#444";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(0,380); ctx.lineTo(760,380); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(380,0); ctx.lineTo(380,760); ctx.stroke();
+## Step-by-Step Solution
 
-  // field arrows grid
-  for(let gx=-0.7; gx<=0.7; gx+=0.14){
-    for(let gy=-0.7; gy<=0.7; gy+=0.14){
-      if(Math.hypot(gx+a,gy)<0.06 || Math.hypot(gx-a,gy)<0.06) continue;
-      const {Ex,Ey,Emag} = fieldAt(gx,gy,q,a);
-      const len = Math.min(24, 8 + Math.log10(Emag+1)*3);
-      const ux = Ex/Emag, uy = Ey/Emag;
-      const p = worldToCanvas(gx,gy,scale);
-      drawArrow(p.X,p.Y,p.X+ux*len,p.Y-uy*len,"#9aa7b7");
-    }
-  }
+### Speed after acceleration
 
-  // charges
-  const c1 = worldToCanvas(-a,0,scale);
-  const c2 = worldToCanvas(a,0,scale);
+From energy conservation,
 
-  ctx.beginPath(); ctx.arc(c1.X,c1.Y,14,0,Math.PI*2); ctx.fillStyle = "#e74c3c"; ctx.fill();
-  ctx.beginPath(); ctx.arc(c2.X,c2.Y,18,0,Math.PI*2); ctx.fillStyle = "#c0392b"; ctx.fill();
+$$
+eV = \frac{1}{2}m_e v^2
+$$
 
-  ctx.fillStyle = "#fff"; ctx.font = "16px Arial";
-  ctx.fillText("+q", c1.X-12, c1.Y+5);
-  ctx.fillText("+2q", c2.X-16, c2.Y+5);
+Solve for $v$:
 
-  // selected point
-  const p = worldToCanvas(x,y,scale);
-  ctx.beginPath(); ctx.arc(p.X,p.Y,7,0,Math.PI*2); ctx.fillStyle = "#2e86de"; ctx.fill();
+$$
+v = \sqrt{\frac{2eV}{m_e}}
+$$
 
-  const len = 70;
-  const ux = f.Ex/f.Emag;
-  const uy = f.Ey/f.Emag;
-  drawArrow(p.X,p.Y,p.X+ux*len,p.Y-uy*len,"#27ae60");
+Substitute the values:
 
-  // zero point
-  const zp = worldToCanvas(x0,0,scale);
-  ctx.beginPath(); ctx.arc(zp.X,zp.Y,6,0,Math.PI*2);
-  ctx.fillStyle = "#8e44ad";
-  ctx.fill();
-  ctx.fillStyle = "#111";
-  ctx.fillText("E=0", zp.X+8, zp.Y-8);
-}
+$$
+v = \sqrt{\frac{2(1.60 \times 10^{-19})(5000)}{9.11 \times 10^{-31}}}
+$$
 
-document.getElementById('btn').addEventListener('click', redraw);
-redraw();
-</script>
-</body>
-</html>
+First compute the numerator:
+
+$$
+2eV = 1.60 \times 10^{-15}
+$$
+
+Therefore,
+
+$$
+\frac{2eV}{m_e} \approx 1.756 \times 10^{15}
+$$
+
+and hence
+
+$$
+v \approx 4.19 \times 10^7\,\mathrm{m/s}
+$$
+
+### Radius of the circular path
+
+Use
+
+$$
+r = \frac{m_e v}{eB}
+$$
+
+Substitute the values:
+
+$$
+r = \frac{(9.11 \times 10^{-31})(4.19 \times 10^7)}{(1.60 \times 10^{-19})(0.1)}
+$$
+
+The numerator is approximately
+
+$$
+3.82 \times 10^{-23}
+$$
+
+and the denominator is
+
+$$
+1.60 \times 10^{-20}
+$$
+
+Therefore,
+
+$$
+r \approx 2.39 \times 10^{-3}\,\mathrm{m}
+$$
+
+## Final Result
+
+The radius of the circular path is
+
+$$
+r \approx 2.4 \times 10^{-3}\,\mathrm{m}
+$$
+
+or
+
+$$
+r \approx 2.4\,\mathrm{mm}
+$$
+
+## Interpretation
+
+The electron reaches a high speed after passing through the potential difference, but because its mass is very small, the magnetic field bends it into a tight circular path. This is the basis of cyclotron-type magnetic motion.
