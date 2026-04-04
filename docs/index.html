@@ -1,81 +1,148 @@
-<section class="max-w-7xl mx-auto px-4 py-10">
-  <div class="mb-8 text-center">
-    <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">
-      Waves — Section 3
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Physics Waves Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+  <div class="max-w-7xl mx-auto px-4 py-12">
+
+    <!-- HEADER -->
+    <div class="text-center mb-12">
+      <div class="inline-block px-4 py-1 rounded-full bg-indigo-50 text-indigo-700 font-semibold text-sm border border-indigo-100 mb-4">
+        Waves — Section 3
+      </div>
+
+      <h1 class="text-4xl md:text-5xl font-black mb-4">
+        Interactive Physics Solutions
+      </h1>
+
+      <p class="text-slate-600 max-w-2xl mx-auto">
+        11 fully interactive wave physics problems with animations, simulations, and calculators.
+      </p>
     </div>
-    <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-3">
-      Interactive HTML Solutions
-    </h2>
-    <p class="text-slate-600 max-w-3xl mx-auto">
-      Separate interactive pages for all 11 wave problems, including simulations, calculators, and visualizations.
-    </p>
+
+    <!-- GRID -->
+    <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+      <!-- 1 -->
+      <a href="./wave_01_properties.html" class="card">
+        <span class="tag">Task 01</span>
+        <h2>Wave Properties</h2>
+        <p>Wavelength in different media.</p>
+      </a>
+
+      <!-- 2 -->
+      <a href="./wave_02_string_harmonics.html" class="card">
+        <span class="tag">Task 02</span>
+        <h2>String Harmonics</h2>
+        <p>Fundamental mode and wave speed.</p>
+      </a>
+
+      <!-- 3 -->
+      <a href="./wave_03_standing_wave.html" class="card">
+        <span class="tag">Task 03</span>
+        <h2>Superposition</h2>
+        <p>Standing wave animation.</p>
+      </a>
+
+      <!-- 4 -->
+      <a href="./wave_04_phase_difference.html" class="card">
+        <span class="tag">Task 04</span>
+        <h2>Phase Difference</h2>
+        <p>Interactive phase calculator.</p>
+      </a>
+
+      <!-- 5 -->
+      <a href="./wave_05_echo_ranging.html" class="card">
+        <span class="tag">Task 05</span>
+        <h2>Echo Ranging</h2>
+        <p>Distance from sound reflection.</p>
+      </a>
+
+      <!-- 6 -->
+      <a href="./wave_06_wave_equation_parameters.html" class="card">
+        <span class="tag">Task 06</span>
+        <h2>Wave Equation</h2>
+        <p>Extract wave parameters.</p>
+      </a>
+
+      <!-- 7 -->
+      <a href="./wave_07_standing_wave_modes.html" class="card">
+        <span class="tag">Task 07</span>
+        <h2>Standing Modes</h2>
+        <p>Antinodes and wavelength.</p>
+      </a>
+
+      <!-- 8 -->
+      <a href="./wave_08_traveling_wave_test.html" class="card">
+        <span class="tag">Task 08</span>
+        <h2>Wave Test</h2>
+        <p>Check valid wave functions.</p>
+      </a>
+
+      <!-- 9 -->
+      <a href="./wave_09_damped_oscillator.html" class="card">
+        <span class="tag">Task 09</span>
+        <h2>Damped Oscillator</h2>
+        <p>RK4 simulation + graphs.</p>
+      </a>
+
+      <!-- 10 -->
+      <a href="./wave_10_wave_sources.html" class="card">
+        <span class="tag">Task 10</span>
+        <h2>Wave Sources</h2>
+        <p>Multi-source interference.</p>
+      </a>
+
+      <!-- 11 -->
+      <a href="./wave_11_two_slit_interference.html" class="card">
+        <span class="tag">Task 11</span>
+        <h2>Two-Slit</h2>
+        <p>Young interference simulation.</p>
+      </a>
+
+    </div>
   </div>
 
-  <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-    <a href="./wave_01_properties.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 01</div>
-      <div class="font-black text-xl text-slate-900">Wave Properties</div>
-      <div class="text-slate-600 mt-2">Compute wavelength in air and water from speed and frequency.</div>
-    </a>
+  <!-- STYLE -->
+  <style>
+    .card {
+      display: block;
+      background: white;
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.25s ease;
+    }
 
-    <a href="./wave_02_string_harmonics.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 02</div>
-      <div class="font-black text-xl text-slate-900">String Harmonics</div>
-      <div class="text-slate-600 mt-2">Find the wave speed on a vibrating guitar string.</div>
-    </a>
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
 
-    <a href="./wave_03_standing_wave.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 03</div>
-      <div class="font-black text-xl text-slate-900">Superposition Principle</div>
-      <div class="text-slate-600 mt-2">Standing-wave animation with node positions and superposition.</div>
-    </a>
+    .card h2 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 8px;
+      margin-bottom: 6px;
+    }
 
-    <a href="./wave_04_phase_difference.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 04</div>
-      <div class="font-black text-xl text-slate-900">Phase Difference</div>
-      <div class="text-slate-600 mt-2">Interactive phase shift calculator for point separation on a wave.</div>
-    </a>
+    .card p {
+      color: #64748b;
+      font-size: 14px;
+    }
 
-    <a href="./wave_05_echo_ranging.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 05</div>
-      <div class="font-black text-xl text-slate-900">Echo Ranging</div>
-      <div class="text-slate-600 mt-2">Determine the cliff distance from echo travel time.</div>
-    </a>
+    .tag {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4f46e5;
+    }
+  </style>
 
-    <a href="./wave_06_wave_equation_parameters.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 06</div>
-      <div class="font-black text-xl text-slate-900">Wave Equation</div>
-      <div class="text-slate-600 mt-2">Extract amplitude, wavelength, frequency, and speed.</div>
-    </a>
-
-    <a href="./wave_07_standing_wave_modes.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 07</div>
-      <div class="font-black text-xl text-slate-900">Standing Wave Modes</div>
-      <div class="text-slate-600 mt-2">Relate antinodes and string length to wavelength.</div>
-    </a>
-
-    <a href="./wave_08_traveling_wave_test.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 08</div>
-      <div class="font-black text-xl text-slate-900">Traveling-Wave Test</div>
-      <div class="text-slate-600 mt-2">Check which candidate functions satisfy the wave equation.</div>
-    </a>
-
-    <a href="./wave_09_damped_oscillator.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 09</div>
-      <div class="font-black text-xl text-slate-900">Damped Oscillator</div>
-      <div class="text-slate-600 mt-2">Detailed RK4 simulation with x(t), phase portrait, and damping regimes.</div>
-    </a>
-
-    <a href="./wave_10_wave_sources.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 10</div>
-      <div class="font-black text-xl text-slate-900">Wave Sources</div>
-      <div class="text-slate-600 mt-2">Place multiple sources and observe real-time wave superposition.</div>
-    </a>
-
-    <a href="./wave_11_two_slit_interference.html" class="block bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition">
-      <div class="text-sm font-semibold text-indigo-600 mb-2">Task 11</div>
-      <div class="font-black text-xl text-slate-900">Two-Slit Interference</div>
-      <div class="text-slate-600 mt-2">Real-time Young experiment simulation with adjustable slit spacing and wavelength.</div>
-    </a>
-  </div>
-</section>
+</body>
+</html>
