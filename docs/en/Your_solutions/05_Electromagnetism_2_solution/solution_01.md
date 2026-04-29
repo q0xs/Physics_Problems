@@ -1,4 +1,4 @@
-# Task 01 – Gauss's Law for a Point Charge
+# Task 05.01 – Gauss's Law for a Point Charge
 
 ## Problem Statement
 
@@ -6,54 +6,30 @@ A point charge of $+2 \text{ C}$ is located at the origin. Calculate the electri
 
 ## Theory
 
-Gauss's law states that the total electric flux through any closed surface is equal to the enclosed charge divided by the permittivity of free space:
+Gauss's law states that the net electric flux through a closed surface depends only on the charge enclosed by that surface. For a point charge at the center of a sphere, the field is radial and has the same magnitude everywhere on the surface.
 
 $$
-\Phi_E = \frac{Q_{\text{enc}}}{\varepsilon_0}
+\Phi_E = \oint_S \vec{E}\cdot d\vec{A} = \frac{q_{\text{enc}}}{\varepsilon_0}
 $$
-
-where
-
-- $\Phi_E$ is the electric flux,
-- $Q_{\text{enc}}$ is the total charge enclosed by the surface,
-- $\varepsilon_0 = 8.854 \times 10^{-12} \text{ F/m}$ is the vacuum permittivity.
-
-For a spherical surface centered on a point charge, the electric field is radial and has the same magnitude at every point on the sphere. Therefore, Gauss's law applies directly.
 
 ## Step-by-Step Solution
 
-The enclosed charge is
-
-$$
-Q_{\text{enc}} = 2 \text{ C}
-$$
-
-Using Gauss's law,
-
-$$
-\Phi_E = \frac{Q_{\text{enc}}}{\varepsilon_0}
-$$
-
-Substitute the numerical values:
+The enclosed charge is $q_{\text{enc}}=2\text{ C}$. Substitution into Gauss's law gives
 
 $$
 \Phi_E = \frac{2}{8.854 \times 10^{-12}}
 $$
 
-Evaluate the division:
-
 $$
-\Phi_E \approx 2.26 \times 10^{11} \text{ N m}^2/\text{C}
+\Phi_E = 2.26 \times 10^{11}\ \text{N m}^2\text{/C}
 $$
-
-The radius of the sphere does not affect the total flux, because Gauss's law depends only on the enclosed charge.
 
 ## Final Result
 
 $$
-\Phi_E \approx 2.26 \times 10^{11} \text{ N m}^2/\text{C}
+\Phi_E = 2.26 \times 10^{11}\ \text{N m}^2\text{/C}
 $$
 
 ## Interpretation
 
-The electric flux through the spherical surface is positive because the enclosed charge is positive. A positive flux indicates that the net electric field lines are directed outward through the closed surface. The result is independent of the sphere radius, provided the charge remains enclosed.
+The flux is positive because the electric field leaves the closed surface. The radius does not appear in the final result because the field falls as $1/r^2$ while spherical area grows as $r^2$.

@@ -1,53 +1,29 @@
-# Task 08 – Ordering the Electromagnetic Spectrum
+# Task 05.08 – Ordering the Electromagnetic Spectrum
 
 ## Problem Statement
 
-List the following types of electromagnetic radiation in order of increasing wavelength:
-
-Infrared, Ultraviolet, Microwaves, X-rays, Radio waves, Gamma rays.
+List infrared, ultraviolet, microwaves, X-rays, radio waves, and gamma rays in order of increasing wavelength.
 
 ## Theory
 
-Electromagnetic radiation can be classified according to wavelength or frequency. Since frequency and wavelength are inversely related,
+Increasing wavelength means decreasing photon energy and decreasing frequency. The electromagnetic spectrum is ordered from the most energetic radiation to the longest-wavelength radiation.
 
 $$
-c = \lambda f
+c=f\lambda
 $$
 
-a shorter wavelength corresponds to a higher frequency and higher photon energy.
-
-The general order of the electromagnetic spectrum from shortest wavelength to longest wavelength is:
-
-- Gamma rays
-- X-rays
-- Ultraviolet
-- Visible light
-- Infrared
-- Microwaves
-- Radio waves
-
-Only the requested categories are included in the final ordering.
+$$
+E=hf
+$$
 
 ## Step-by-Step Solution
 
-The task asks for increasing wavelength, which means from shortest wavelength to longest wavelength.
-
-From the standard electromagnetic spectrum order:
-
-$$
-\text{Gamma rays} < \text{X-rays} < \text{Ultraviolet} < \text{Infrared} < \text{Microwaves} < \text{Radio waves}
-$$
-
-This directly provides the required arrangement.
+The shortest wavelengths are gamma rays, followed by X-rays and ultraviolet. Infrared has longer wavelength than visible red light, microwaves are longer still, and radio waves are the longest in the list.
 
 ## Final Result
 
-In order of increasing wavelength:
-
-$$
-\text{Gamma rays} \rightarrow \text{X-rays} \rightarrow \text{Ultraviolet} \rightarrow \text{Infrared} \rightarrow \text{Microwaves} \rightarrow \text{Radio waves}
-$$
+Increasing wavelength: gamma rays, X-rays, ultraviolet, infrared, microwaves, radio waves.
 
 ## Interpretation
 
-Gamma rays have the shortest wavelengths and highest energies, while radio waves have the longest wavelengths and lowest frequencies. This ordering is fundamental for understanding electromagnetic phenomena, spectroscopy, communication systems, and radiation physics.
+This ordering is equivalent to decreasing frequency and decreasing photon energy.

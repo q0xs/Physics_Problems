@@ -1,14 +1,14 @@
-# 07_Measurements_solutions
+# 07 Measurements solution
 
 ## Solutions
 
-- [Solution 1](solution_01.md)
-- [Solution 2](solution_02.md)
-- [Solution 3](solution_03.md)
-- [Solution 4](solution_04.md)
-- [Solution 5](solution_05.md)
-- [Solution 6](solution_06.md)
-- [Solution 7](solution_07.md)
-- [Solution 8](solution_08.md)
-- [Solution 9](solution_09.md)
-- [Solution 10](solution_10.md)
+- [Task 07.01 – Uncertainty in the Volume of a Sphere](solution_01.md)
+- [Task 07.02 – Uncertainty in the Area of a Rectangle](solution_02.md)
+- [Task 07.03 – Ohm's Law Resistance Uncertainty](solution_03.md)
+- [Task 07.04 – Relative Uncertainty of a Speedometer](solution_04.md)
+- [Task 07.05 – Percentage Uncertainty in Time](solution_05.md)
+- [Task 07.06 – Digital Thermometer Precision](solution_06.md)
+- [Task 07.07 – Mean and Standard Deviation of Test Scores](solution_07.md)
+- [Task 07.08 – Mass-Spring Timing Measurement](solution_08.md)
+- [Task 07.09 – Pendulum Timing Measurement](solution_09.md)
+- [Task 07.10 – Microwave Measurement of Light Speed](solution_10.md)
